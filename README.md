@@ -60,18 +60,23 @@ Open the `server` and `client` in separate VSCode workspaces or open the combine
 
 ## System Definition (MS0)
 
-### Purpose
+### ReFlick
 
-2-5 sentences describing what the system does
+#### Purpose
+
+ReFlick randomly matches users with movies, and once they have watched it, they’re invited to join discussions with others who were matched with the same film. Here users can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which may act as talking points for the discussion participants. The discussions are then saved, and can be viewed on the profile of each user.
 
 ### Pages
 
-* Home: 1-3 sentences describing what the page displays and what a user can do
-* Shopping cart: ...
+* Home: Where you get matched and see your matches
+* Profile: Settings and stuff
+* Chat-page: Where you can see all your active chats and go into them and converse
+* Movie-info-page: Here you can see a short description of a selected movie
+* 
 
 ### Entity-Relationship (ER) Diagram
 
-![ER Diagram](./images/er_diagram.png)
+![ER Diagram](./images/ErReFlick.png)
 
 ## Teaser (MS3)
 
