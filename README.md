@@ -68,12 +68,12 @@ ReFlick matches users randomly from a pool of movies, and once they have watched
 
 ### Pages
 
-* **Login page:** First page you are met by if you are not signed in. Here you can enter your credentials to login and end up on the Landing page or sign up to end om on the register page.
+* **Login page:** First page you are met by when you enter the application and are not signed in. Here you can enter your credentials to log in and end up on the Home page or sign up to end om on the Register page.
 * **Register Page:** Here you create an account with a unique email and username.
-* **Landing/Home page:** A dashboard where you are matched with movies and can see your current matches and access current chats.
-* **Chat page:** The page for a chat for a certain movie involving several users.
-* **Profile page:** Contains information about a user and a list of their ratings. Can be accessed from the landing page or by searching for another user.
-* **Movie page:** You can search for a movie to display information about it. Here you can also add it to the random pool of movies.
+* **Home page:** A dashboard where you are matched with movies, can see your current matches and access current active chats.
+* **Chat page:** The cat room for a certain movie involving several users.
+* **Profile page:** Contains information about a user and a list of their ratings. 
+* **Movie page:** You can search for a movie to display information about it. Here you can also add it to the random pool of movies using tokens.
 
 ### Entity-Relationship (ER) Diagram
 
