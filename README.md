@@ -64,19 +64,20 @@ Open the `server` and `client` in separate VSCode workspaces or open the combine
 
 #### Purpose
 
-ReFlick randomly matches users with movies, and once they have watched it, they’re invited to join discussions with others who were matched with the same film. Here users can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which may act as talking points for the discussion participants. The discussions are then saved, and can be viewed on the profile of each user.
+ReFlick matches users randomly from a pool of movies, and once they have watched it, they’re invited to join discussions with others who were matched with the same film. Here users can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which acts as talking points for the discussion participants. The discussions are then saved, and can be viewed on the profile of each user. The pool of movies can be influenced by voting on it with tokes received every 24 hours.
 
 ### Pages
 
-* Home: Where you get matched and see your matches
-* Profile: Settings and stuff
-* Chat-page: Where you can see all your active chats and go into them and converse
-* Movie-info-page: Here you can see a short description of a selected movie
-* 
+* **Login page:** First page you are met by if you are not signed in. Here you can enter your credentials to login and end up on the Landing page or sign up to end om on the register page.
+* **Register Page:** Here you create an account with a unique email and username.
+* **Landing/Home page:** A dashboard where you are matched with movies and can see your current matches and access current chats.
+* **Chat page:** The page for a chat for a certain movie involving several users.
+* **Profile page:** Contains information about a user and a list of their ratings. Can be accessed from the landing page or by searching for another user.
+* **Movie page:** You can search for a movie to display information about it. Here you can also add it to the random pool of movies.
 
 ### Entity-Relationship (ER) Diagram
 
-![ER Diagram](./images/ErReFlick.png)
+![ER Diagram](./images/ErReFlick_v2.png)
 
 ## Teaser (MS3)
 
