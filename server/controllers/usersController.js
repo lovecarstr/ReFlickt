@@ -3,20 +3,19 @@ const mongoose = require('mongoose');
 
 const User = require('../models/user');  // Adjust the path to wherever your User model is defined
 
-const router = express.Router();
 
 // GET all users
-router.get('/users', async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await User.find({});
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve users', error });
+        res.status(500).json({ message: 'Error fetching users', error });
     }
-});
+};
 
 // POST a new user
-router.post('/users', async (req, res) => {
+const createNewUser = async (req, res) => {
     const user = new User(req.body);
     try {
         const savedUser = await user.save();
@@ -24,6 +23,6 @@ router.post('/users', async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: 'Failed to create user', error });
     }
-});
+};
 
-module.exports = router;
+module.exports = {getAllUsers, createNewUser};

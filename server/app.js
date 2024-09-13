@@ -4,7 +4,7 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 var history = require('connect-history-api-fallback');
-var usersController = require('./controllers/usersController');
+var userRoutes = require('./routes/userRoutes');
 
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/animalDevelopmentDB';
@@ -31,7 +31,7 @@ app.options('*', cors());
 app.use(cors());
 
 // Controllers
-app.use('/api', usersController)
+app.use('/api', userRoutes)
 
 // Import routes
 app.get('/api', function(req, res) {
