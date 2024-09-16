@@ -2,7 +2,7 @@ const express = require('express');
 const {getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry } = require('../controllers/movieController');
 const router = express.Router();
 
-router.post('/movies/random/:userId', getRandomMovie); // Matching user with a movie and another user
+router.get('/movies/random', getRandomMovie); // Matching user with a movie and another user
 router.post('/movies/match', createNewMatch); // Creates a new match with a user and a movie entry
 router.post('/movies/match/:matchId/user', addUserToMatch); // Adds a second user to an exisiting match
 router.post('/movies/vote', addMovieEntry); // Spends 1-5 tokens to vote for a movie and add it as an entry
