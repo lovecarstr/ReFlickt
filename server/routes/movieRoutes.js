@@ -1,8 +1,10 @@
 const express = require('express');
-const { createMatch, getCurrentUserMatch } = require('../controllers/movieController');
+const { getRandomMovie, getCurrentUserMatch } = require('../controllers/movieController');
 const router = express.Router();
 
-router.post('/movie/match', createMatch); // Matching user with a movie and another user
-router.get('/match/match/:userId', getCurrentUserMatch); // Returns the current movie match for a user
+router.post('/movies/random', getRandomMovie); // Matching user with a movie and another user
+router.post('/movies/match', createMovieMatch) // Creates a match with users and a movie
+router.get('/movies/match/:userId', getCurrentUserMatch); // Returns the current movie match for a user
+
 
 module.exports = router;
