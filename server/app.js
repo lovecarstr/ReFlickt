@@ -5,6 +5,7 @@ var path = require('path');
 var cors = require('cors');
 var history = require('connect-history-api-fallback');
 var userRoutes = require('./routes/userRoutes');
+var movieRoutes = require('./routes/movieRoutes');
 
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/animalDevelopmentDB';
@@ -31,7 +32,8 @@ app.options('*', cors());
 app.use(cors());
 
 // Controllers
-app.use('/api', userRoutes)
+app.use('/api', userRoutes);
+app.use('/api', movieRoutes);
 
 // Import routes
 app.get('/api', function(req, res) {
