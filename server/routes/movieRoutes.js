@@ -1,11 +1,13 @@
 const express = require('express');
-const {getRandomMovie, createNewMatch, addUserToMatch  } = require('../controllers/movieController');
+const {getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry } = require('../controllers/movieController');
 const router = express.Router();
 
 router.post('/movies/random/:userId', getRandomMovie); // Matching user with a movie and another user
 router.post('/movies/match', createNewMatch); // Creates a new match with a user and a movie entry
 router.post('/movies/match/:matchId/user', addUserToMatch); // Adds a second user to an exisiting match
 router.post('/movies/vote', addMovieEntry); // Spends 1-5 tokens to vote for a movie and add it as an entry
+
+/*
 
 router.patch('/users/:userId/current-match', updateCurrentMatch); // Updates the currentMatch for a user
 router.get('/movies/match/:userId', getCurrentUserMatch); // Returns the current movie match for a user
@@ -14,5 +16,7 @@ router.get('/movies/votes', getAllMovieVotes); // Returns how many votes each mo
 router.get('/movies/votes/:movieId', getAllMovieVotes); // Returns how many a specific movie has
 router.delete('/movies/reset-votes/:movieId', resetMovieVotes); // Resets the votes for a movie
 router.get('/movies/watch-window/:userId', checkWatchWindow); // Checks the remaining time of the 48h watch window for a user
+
+*/
 
 module.exports = router;

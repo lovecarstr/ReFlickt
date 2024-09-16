@@ -78,10 +78,10 @@ const addUserToMatch = async (req, res) => {
 };
 
 const addMovieEntry = async (req, res) => {
-    const { movieId, votes } = req.body; 
+    const { movieId, tokens } = req.body; 
 
     try {
-        for (let i = 0; i < votes; i++) {
+        for (let i = 0; i < tokens; i++) {
             const entry = new MovieEntry({
                 movieId: movieId  
             });
@@ -92,6 +92,8 @@ const addMovieEntry = async (req, res) => {
         res.status(500).json({ error: 'Error adding movie entries' });
     }
 };
+
+/*
 
 const updateCurrentMatch = async (req, res) => {
 
@@ -120,5 +122,7 @@ const checkWatchWindow = async (req, res) => {
 const resetMovieVotes = async (req, res) => {
 
 };
+
+*/
 
 module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry };
