@@ -5,8 +5,8 @@ const Movie = require('../models/movie');
 const MovieEntry = require('../models/movieEntry');
 const MovieMatch = require('../models/movieMatch');
 
-// This method checks open matches to find a movie for a user to be matched with. If there are no 
-// open ones, it will instead select a random one from the list of entries not yet matched with anyone
+// Checks open matches to find a movie for a user to be matched with. If there are no 
+// open matches, it will instead select a random one from the list of entries not yet matched with any users.
 const getRandomMovie = async (userId) => {
     // Check for open matches
     const openMatch = await MovieMatch.findOne({ status: 'Open' });
@@ -34,6 +34,7 @@ const getRandomMovie = async (userId) => {
     throw new Error('No movies available'); // Handle case where no movie is found
 };
 
+// Creates a new, open match for a user with a movie.
 const createNewMatch = async (req, res) => {
     const { movieId, firstUserId } = req.body;
 
@@ -44,7 +45,7 @@ const createNewMatch = async (req, res) => {
             status: 'Open'
         });
 
-        // Increment the count for the movie entry
+        // Increment the count for the movie entry, so that its votes can be reset after the threshold.
         await MovieEntry.findOneAndUpdate(
             { movieId: movieId },
             { $inc: { count: 1 } }
@@ -57,6 +58,7 @@ const createNewMatch = async (req, res) => {
     }
 };
 
+// Matches a second user to an open match, and sets its status to closed.
 const addUserToMatch = async (req, res) => {
     const { matchId, secondUserId } = req.body;
 
