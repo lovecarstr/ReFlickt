@@ -5,6 +5,9 @@ const Movie = require("../models/movie");
 const MovieEntry = require("../models/movieEntry");
 const MovieMatch = require("../models/movieMatch");
 const MovieRating = require("../models/movieRating");
+const User = require('../models/user')
+
+const getMovieRatings = async (req, res) => {};
 
 const getRandomMovie = async (req, res) => {};
 
