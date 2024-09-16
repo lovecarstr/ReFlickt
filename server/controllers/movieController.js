@@ -5,9 +5,33 @@ const Movie = require("../models/movie");
 const MovieEntry = require("../models/movieEntry");
 const MovieMatch = require("../models/movieMatch");
 const MovieRating = require("../models/movieRating");
-const User = require('../models/user')
+const User = require("../models/user");
 
-const getMovieRatings = async (req, res) => {};
+const getMovieRatings = async (req, res) => {
+  const movieId = req.params.movieID;
+  try {
+    // Retrieve all ratings for the specified movie
+    const ratings = await MovieRating.find({ movieId: movieId })
+      .populate("userId", "username") // Populate userId with username
+      .exec();
+
+    // Check if any ratings were found
+    if (ratings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No ratings found for this movie" });
+    }
+
+    // Send JSON response to client
+    res.json({
+      movieId: movieId,
+      ratings: ratings,
+    });
+  } catch (error) {
+    console.error("Error fetching ratings:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 const getRandomMovie = async (req, res) => {};
 
@@ -58,4 +82,4 @@ const rateMovie = async (req, res) => {
   }
 };
 
-module.exports = { rateMovie };
+module.exports = { rateMovie, getMovieRatings };
