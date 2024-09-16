@@ -29,6 +29,10 @@ const userSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "MovieMatch",
     },
+    watchedMovies: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Movie", // Reference to the Movie model
+      }],
   },
   {
     timestamps: true,
