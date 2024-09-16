@@ -25,4 +25,9 @@ const createNewUser = async (req, res) => {
     }
 };
 
+// GET a specific users movie ratings
+const getUserRatings = async (req, res) => {
+
+};
+
 module.exports = {getAllUsers, createNewUser};
