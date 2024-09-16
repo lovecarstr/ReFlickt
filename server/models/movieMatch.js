@@ -12,6 +12,11 @@ const movieMatchSchema = new Schema({
     },
     secondUserID: { 
         type: String,
+    },
+    status: {
+        type: String,
+        enum: ['Open', 'Closed'], // Only allows 'Open' or 'Closed'
+        required: true 
     }
 }, {
     timestamps: true  // Automatically add `createdAt` and `updatedAt` fields
