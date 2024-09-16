@@ -5,6 +5,7 @@ const Movie = require('../models/movie');
 const MovieEntry = require('../models/movieEntry');
 const MovieMatch = require('../models/movieMatch');
 
+
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
 const getRandomMovie = async (userId) => {
@@ -16,10 +17,10 @@ const getRandomMovie = async (userId) => {
         const user = await User.findById(userId);
         const watchedMovies = user.watchedMovies; // Assuming this is an array of movie IDs
 
-        if (!watchedMovies.includes(openMatch.movieID)) {
+        if (!watchedMovies.includes(openMatch.movieId)) {
             // Return the movie ID and match ID
             return {
-                movieId: openMatch.movieID,
+                movieId: openMatch.movieId,
                 matchId: openMatch._id
             };
         }
@@ -76,16 +77,27 @@ const addUserToMatch = async (req, res) => {
     }
 };
 
+const addMovieEntry = async (req, res) => {
+    const { movieId, votes } = req.body; 
+
+    try {
+        for (let i = 0; i < votes; i++) {
+            const entry = new MovieEntry({
+                movieId: movieId  
+            });
+            await entry.save();  // Save each entry in the database
+        }
+        res.status(201).json({ message: 'Movie entries added successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error adding movie entries' });
+    }
+};
+
 const updateCurrentMatch = async (req, res) => {
 
 };
 
 const getCurrentUserMatch = async (req, res) => {
-
-};
-
-const addMovieEntry = async (req, res) => {
-
 
 };
 
