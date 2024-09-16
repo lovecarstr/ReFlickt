@@ -7,6 +7,11 @@ const movieRatingSchema = new Schema({
         ref: 'Movie',
         required: true,
       },
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,  // Reference to User
+        ref: 'User',
+        required: true,
+      },
     recommendation: {
         type: Boolean,
         required: true,
