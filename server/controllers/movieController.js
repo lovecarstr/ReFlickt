@@ -41,8 +41,8 @@ const createNewMatch = async (req, res) => {
 
     try {
         const newMatch = new MovieMatch({
-            movieID: movieId,
-            firstUserID: firstUserId,
+            movieId: movieId,
+            userId: firstUserId,
             status: 'Open'
         });
 
@@ -121,4 +121,4 @@ const resetMovieVotes = async (req, res) => {
 
 };
 
-module.exports = { getRandomMovie, createNewMatch, addUserToMatch };
+module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry };

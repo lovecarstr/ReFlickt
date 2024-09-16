@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const movieMatchSchema = new Schema({
-    movieID: {
+    movieId: {
         typeID: int,
         required: true,
     },
-    firstUserID: { 
+    firstUserId: { 
         type: String,
         required: true,
     },
-    secondUserID: { 
+    secondUserId: { 
         type: String,
     },
     status: {
