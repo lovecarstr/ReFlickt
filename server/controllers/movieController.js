@@ -2,37 +2,46 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Movie = require('../models/movie');
+const User = require('../models/user');
 const MovieEntry = require('../models/movieEntry');
 const MovieMatch = require('../models/movieMatch');
 
 
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
-const getRandomMovie = async (userId) => {
-    // Check for open matches
-    const openMatch = await MovieMatch.findOne({ status: 'Open' });
+const getRandomMovie = async (req, res) => {
+    const { userId } = req.params; // Assuming userId is passed as a parameter
 
-    if (openMatch) {
-        // Check if the user has watched the movie
-        const user = await User.findById(userId);
-        const watchedMovies = user.watchedMovies; // Assuming this is an array of movie IDs
+    try {
+        // Check for open matches
+        const openMatch = await MovieMatch.findOne({ status: 'Open' });
 
-        if (!watchedMovies.includes(openMatch.movieId)) {
-            // Return the movie ID and match ID
-            return {
-                movieId: openMatch.movieId,
-                matchId: openMatch._id
-            };
+        if (openMatch) {
+            // Check if the user has watched the movie
+            const user = await User.findById(userId);
+            const watchedMovies = user.watchedMovies; // Assuming this is an array of movie IDs
+
+            if (!watchedMovies.includes(openMatch.movieId)) {
+                // Return the movie ID and match ID
+                return res.status(200).json({
+                    movieId: openMatch.movieId,
+                    matchId: openMatch._id
+                });
+            }
         }
-    }
 
-    // Fallback: No open matches or all are closed
-    const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]); // Randomly select one entry
-    if (randomEntry.length > 0) {
-        return { movieId: randomEntry[0]._id }; // Return only movieId
-    }
+        // Fallback: No open matches or all matches are watched by the user
+        const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]); // Randomly select one entry
 
-    throw new Error('No movies available'); // Handle case where no movie is found
+        if (randomEntry.length > 0) {
+            return res.status(200).json({ movieId: randomEntry[0]._id }); // Return only movieId
+        }
+
+        return res.status(404).json({ message: 'No movies available' }); // Handle case where no movie is found
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' }); // Handle server errors
+    }
 };
 
 // Creates a new, open match for a user with a movie.
@@ -77,6 +86,7 @@ const addUserToMatch = async (req, res) => {
     }
 };
 
+// Spends tokens to add movies to the movieEntries collection
 const addMovieEntry = async (req, res) => {
     const { movieId, tokens } = req.body; 
 
