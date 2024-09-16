@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const movieRatingSchema = new Schema({
+    movieId: {
+        type: mongoose.Schema.Types.ObjectId,  
+        ref: 'Movie',
+        required: true,
+      },
     recommendation: {
         type: Boolean,
         required: true,
