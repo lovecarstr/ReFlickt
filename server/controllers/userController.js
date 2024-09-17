@@ -14,14 +14,30 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-// POST a new user
 const createNewUser = async (req, res) => {
-  const user = new User(req.body);
+  const { username, password, email } = req.body;
+
+  // Ensure required fields are provided
+  if (!username || !password || !email) {
+    return res.status(400).json({ message: "Username, password, and email are required" });
+  }
+
+  // Create a new user
+  const user = new User({
+    username,
+    password,
+    email,
+  });
+
   try {
     const savedUser = await user.save();
-    res.status(201).json(savedUser);
+    res.status(201).json(savedUser); // Return the created user object
   } catch (error) {
-    res.status(400).json({ message: "Failed to create user", error });
+    // Handle possible validation errors or uniqueness issues (like duplicate email/username)
+    res.status(400).json({
+      message: "Failed to create user",
+      error: error.message || error,
+    });
   }
 };
 
