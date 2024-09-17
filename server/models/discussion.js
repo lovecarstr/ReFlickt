@@ -6,13 +6,21 @@ const discussionSchema = new Schema({
         type: String, // user ID    
         required: true    
     }],
+    movie:{
+        movieID: String,
+        required: true,
+    },
     messages: 
         [messageSchema], // May need import?
        
     discussionName: {        
         type: String,        
         default: 'Unnamed Discussion' 
-    }    
+    },
+    discussionID: {
+        type: int, 
+        required,
+    }   
 },{
     timestamps: true //automatically creates timestamps. 
 });
