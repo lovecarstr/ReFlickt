@@ -10,8 +10,8 @@ const messageSchema = new Schema({
         userID: String,
         required: true
     },
-    receiver: {
-        userID: String,
+    discussionID: {
+        type: int,
         required: true
     }
 },{
