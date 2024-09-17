@@ -45,7 +45,29 @@ const getRemainingUserTokens = async (req, res) => {};
 
 const getMovieOdds = async (req, res) => {};
 
-const getUserMovieRating  = async  (req, res) => {};
+const getUserMovieRating = async (req, res) => {
+  try {
+    const { movieId, userId } = req.params;
+
+    // Query the rating for the specific movie and user
+    const rating = await MovieRating.findOne({ movieId, userId })
+      .populate("userId", "username") // Optionally populate the username if needed
+      .populate("movieId", "title"); // Optionally populate the movie title if needed
+
+    // If no rating is found, send a 404 error
+    if (!rating) {
+      return res
+        .status(404)
+        .json({ message: "No rating found for this user and movie" });
+    }
+
+    // Send the rating in the response
+    res.status(200).json({ rating });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 
 const rateMovie = async (req, res) => {
   try {
