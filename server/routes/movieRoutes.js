@@ -1,5 +1,7 @@
 const express = require('express');
-const {getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, updateCurrentUserMatch } = require('../controllers/movieController');
+const {getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, updateCurrentUserMatch,
+  rateMovie, getUserMovieRating, getMovieRatings
+ } = require('../controllers/movieController');
 const router = express.Router();
 
 router.get('/movies/random', getRandomMovie); // Retrieves a random movie from open matches or movie entries
@@ -7,6 +9,9 @@ router.post('/movies/match/new', createNewMatch); // Creates a new match with a 
 router.post('/movies/match/open', addUserToMatch); // Adds a second user to an exisiting match
 router.post('/movies/vote', addMovieEntry); // Spends 1-5 tokens to vote for a movie and add it as an entry
 router.patch('/users/:userId/current-match', updateCurrentUserMatch); // Updates the currentMatch for a user
+router.post("/movies/rate", rateMovie); // Creates a rating for a movie from a specific user
+router.get("/movies/:movieId/ratings", getMovieRatings); // Returns all ratings saved for a movie
+router.get('/movies/:movieId/ratings/:userId', getUserMovieRating); // Returns a specific users rating for one specific movie
 
 /*
 
