@@ -22,6 +22,10 @@ const movieMatchSchema = new Schema(
       type: String,
       enum: ['Open', 'Closed'], // Only allows 'Open' or 'Closed'
       required: true 
+    },
+    matchClosedAt: { // Tracks when second user joins, which is the start of the watch window
+      type: Date,
+      default: null, 
   }
   },
   {
