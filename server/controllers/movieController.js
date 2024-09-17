@@ -10,7 +10,7 @@ const MovieMatch = require('../models/movieMatch');
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
 const getRandomMovie = async (req, res) => {
-    const { userId } = req.params; // Assuming userId is passed as a parameter
+    const { userId } = req.params; 
 
     try {
         // Check for open matches
@@ -19,7 +19,7 @@ const getRandomMovie = async (req, res) => {
         if (openMatch) {
             // Check if the user has watched the movie
             const user = await User.findById(userId);
-            const watchedMovies = user.watchedMovies; // Assuming this is an array of movie IDs
+            const watchedMovies = user.watchedMovies;
 
             if (!watchedMovies.includes(openMatch.movieId)) {
                 // Return the movie ID and match ID
@@ -88,9 +88,16 @@ const addUserToMatch = async (req, res) => {
 
 // Spends tokens to add movies to the movieEntries collection
 const addMovieEntry = async (req, res) => {
-    const { movieId, tokens } = req.body; 
+    const { userId, movieId, tokens } = req.body; 
 
     try {
+        const user = await User.findById(userId);
+
+        // Check if the user has enough tokens
+        if (tokens > user.tokens) {
+            return res.status(400).json({ error: 'Not enough tokens' });
+        }
+
         for (let i = 0; i < tokens; i++) {
             const entry = new MovieEntry({
                 movieId: movieId  
