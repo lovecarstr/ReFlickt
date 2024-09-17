@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const chatSchema = new Schema({
+const discussionSchema = new Schema({
     participants: [{        
         type: String, // user ID    
         required: true    
@@ -9,14 +9,14 @@ const chatSchema = new Schema({
     messages: 
         [messageSchema], // May need import?
        
-    chatName: {        
+    discussionName: {        
         type: String,        
-        default: 'Unnamed Chat' 
+        default: 'Unnamed Discussion' 
     }    
 },{
     timestamps: true //automatically creates timestamps. 
 });
 
-const Chat = mongoose.model('Chat', chatSchema);
+const Discussion = mongoose.model('discussion', discussionSchema);
 
-module.exports = Chat;
+module.exports = Discussion;
