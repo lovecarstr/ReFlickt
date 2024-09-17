@@ -17,6 +17,6 @@ const discussionSchema = new Schema({
     timestamps: true //automatically creates timestamps. 
 });
 
-const Discussion = mongoose.model('discussion', discussionSchema);
+const Discussion = mongoose.model("Discussion", discussionSchema);
 
 module.exports = Discussion;
