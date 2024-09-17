@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const MovieMatch = require("./movieMatch");
-const Movie = require("./movie");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
