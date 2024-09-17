@@ -80,7 +80,7 @@ const addUserToMatch = async (req, res) => {
 
         await match.save();
 
-        res.status(200).json({ message: 'User added to match', matchId: match._id });
+        res.status(200).json({ message: 'User added to match', match: match });
     } catch (error) {
         res.status(500).json({ error: 'Error adding user to match' });
     }
@@ -110,11 +110,24 @@ const addMovieEntry = async (req, res) => {
     }
 };
 
-/*
+const updateCurrentUserMatch = async (userId, matchId) => {
+    try {
+        const match = await MovieMatch.findById(matchId);
 
-const updateCurrentMatch = async (req, res) => {
+        if (!match) {
+            return res.status(404).json({ error: 'Match not found' });
+        }
 
+        // Update the current user's match (you could use a method to update the user schema)
+        await User.findByIdAndUpdate(userId, { currentMatch: matchId });
+
+        return res.status(200).json({ message: 'User match updated successfully', match });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error updating user match' });
+    }
 };
+
+/*
 
 const getCurrentUserMatch = async (req, res) => {
 
