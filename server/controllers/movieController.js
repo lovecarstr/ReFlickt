@@ -155,4 +155,5 @@ const resetMovieVotes = async (req, res) => {
 
 */
 
-module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry };
+module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, 
+    updateCurrentUserMatch };
