@@ -45,6 +45,8 @@ const getRemainingUserTokens = async (req, res) => {};
 
 const getMovieOdds = async (req, res) => {};
 
+const getUserMovieRating  = async  (req, res) => {};
+
 const rateMovie = async (req, res) => {
   try {
     const {
@@ -86,4 +88,4 @@ const rateMovie = async (req, res) => {
   }
 };
 
-module.exports = { rateMovie, getMovieRatings };
+module.exports = { rateMovie, getMovieRatings, getUserMovieRating };
