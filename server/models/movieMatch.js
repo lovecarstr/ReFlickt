@@ -1,21 +1,22 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const User = require('../models/user');
 
 const movieMatchSchema = new Schema(
   {
     movieId: {
-      type: Number,
+      type: String,
       required: true,
     },
     firstUserId: {
-      type: mongoose.Schema.Types.ObjectId, // Use ObjectId to reference User
+      type: Schema.Types.ObjectId, // Use ObjectId to reference User
       ref: "User",
       required: true,
     },
     secondUserId: {
-      type: mongoose.Schema.Types.ObjectId, // Use ObjectId to reference User
+      type: Schema.Types.ObjectId, // Use ObjectId to reference User
       ref: "User",
-      required: true,
+      required: false,
     },
     status: {
       type: String,
