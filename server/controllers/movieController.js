@@ -46,14 +46,15 @@ const getRandomMovie = async (req, res) => {
 
 // Creates a new, open match for a user with a movie.
 const createNewMatch = async (req, res) => {
-    const { movieId, firstUserId } = req.body;
+    const { movieId, userId } = req.body;
 
     try {
-        const newMatch = new MovieMatch({
-            movieId: movieId,
-            userId: firstUserId,
-            status: 'Open'
-        });
+      const newMatch = new MovieMatch({
+        movieId: movieId,  
+        firstUserId: userId, 
+        secondUserId: null,
+        status: 'Open'
+      });
 
         // Increment the count for the movie entry, so that its votes can be reset after the threshold.
         await MovieEntry.findOneAndUpdate(
@@ -70,12 +71,12 @@ const createNewMatch = async (req, res) => {
 
 // Matches a second user to an open match, and sets its status to closed.
 const addUserToMatch = async (req, res) => {
-    const { matchId, secondUserId } = req.body;
+    const { matchId, userId } = req.body;
 
     try {
         const match = await MovieMatch.findById(matchId);
 
-        match.secondUserID = secondUserId;
+        match.secondUserId = userId;
         match.status = 'Closed';
 
         await match.save();
@@ -110,21 +111,27 @@ const addMovieEntry = async (req, res) => {
     }
 };
 
-const updateCurrentUserMatch = async (userId, matchId) => {
-    try {
-        const match = await MovieMatch.findById(matchId);
+const updateCurrentUserMatch = async (req, res) => {
+  const { userId, matchId } = req.body;
 
-        if (!match) {
-            return res.status(404).json({ error: 'Match not found' });
-        }
+  try {
+      const updatedUser = await User.findByIdAndUpdate(
+          userId, 
+          { currentMatch: matchId },
+          { new: true }
+      );
 
-        // Update the current user's match (you could use a method to update the user schema)
-        await User.findByIdAndUpdate(userId, { currentMatch: matchId });
+      // If the user was not found
+      if (!updatedUser) {
+          return res.status(404).json({ error: 'User not found' });
+      }
 
-        return res.status(200).json({ message: 'User match updated successfully', match });
-    } catch (error) {
-        return res.status(500).json({ error: 'Error updating user match' });
-    }
+      // Send back the updated user
+      return res.status(200).json({ message: 'User match updated successfully', user: updatedUser });
+
+  } catch (error) {
+      return res.status(500).json({ error: 'Error updating user match', details: error.message });
+  }
 };
 
 const getMovieRatings = async (req, res) => {
