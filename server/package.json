@@ -27,7 +27,7 @@
     "connect-history-api-fallback": "^2.0.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "mongoose": "^8.5.4",
+    "mongoose": "^8.6.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
