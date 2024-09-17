@@ -49,6 +49,7 @@ const rateMovie = async (req, res) => {
   try {
     const {
       movieId,
+      userId,
       recommendation,
       story,
       performances,
@@ -57,12 +58,15 @@ const rateMovie = async (req, res) => {
       sound,
     } = req.body;
 
-    const movie = await Movie.findById(movieId);
-    if (!movie) {
-      return res.status(404).json({ message: "Movie not found" });
-    }
+    // We need to check that the movieID is a valid one
+    //const movie = await Movie.findById(movieId);
+    //if (!movie) {
+    //  return res.status(404).json({ message: "Movie not found" });
+    //}
 
     const newRating = new movieRating({
+      movieId,
+      userId,
       recommendation,
       story,
       performances,
