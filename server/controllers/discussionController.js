@@ -23,7 +23,10 @@ const createNewDiscussion = async(req, res) => {
             messages: [], //no messages in a brand new conversation
             discussionName: movie.title + "Discussion" || "Unnamed Discussion", //names the conversation after the movie 
         })
-        res.status(201).json({message: 'new discussion created successfully', newDiscussion: start}); 
+
+        const savedDiscussion = await newDiscussion.save(); 
+
+        res.status(201).json({message: 'new discussion created successfully', newDiscussion: savedDiscussion}); //new discussion created successfully
     }
     catch (error){
         res.status(500).json({ error: 'Error creating new discussion' });
