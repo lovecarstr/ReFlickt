@@ -8,15 +8,20 @@ const Message = require('../models/message');
 const Discussion = require('../models/discussion');
 
 const createNewDiscussion = async(req, res) => {
-    const {discussionID, discussionName, movieID, senderID, receiverID} = req.body;
+    const {MovieMatch} = req.body;
 
+    //generate a new discussionId 
+    const totalDiscussions = await Discussion.countDocuments();
+    const discussionId = totalDiscussions + 1; 
+
+    const movie = Movie.findOne({ movieId: MovieMatch.movieId }); //finds the movie in the database
     try {
         const newDiscussion = new Discussion ({
-            participants: {senderID, receiverID},
-            movie: movieID,
-            discussionID: discussionID,
-            messages: {},
-            discussionName: discussionName,
+            participants: [MovieMatch.firstUserId, MovieMatch.secondUserId],
+            movie: MovieMatch.movieId,
+            discussionId: discussionId, 
+            messages: [], //no messages in a brand new conversation
+            discussionName: movie.title + "Discussion" || "Unnamed Discussion", //names the conversation after the movie 
         })
         res.status(201).json({message: 'new discussion created successfully', newDiscussion: start}); 
     }
@@ -97,8 +102,8 @@ const getAllMovieDiscussions = async (req, res) => {
 const getDiscussion = async (req, res) => {
     const discussionID = req.params.discussionID;
     try {
-        const discussion = await User.findById(discussionID); // Check if discussion exists
-        if (!discussion) {
+        const discussion = await User.findById(discussionID); 
+        if (!discussion) {// Check if discussion exists
             return res.status(404).json({ message: "discussion not found" });
         }
         //sends all the discussions
@@ -109,4 +114,27 @@ const getDiscussion = async (req, res) => {
     }
 }
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion};
+const getLatestMessage = async (req, res) => {
+    const discussionID = req.params.discussionID;
+
+    try {
+        const discussion = await Discussion.findOne({ discussionID })
+            .select('messages') // Only fetch the 'messages' field
+            .sort({ 'messages.createdAt': -1 }); // Sorts messages in descending order by 'createdAt'
+
+        if (!discussion || discussion.messages.length === 0) {
+            return res.status(404).json({ message: "discussion not found or it is empty" });
+        }
+
+
+        // Return the latest message (last in the array)
+        const latestMessage = discussion.messages[discussion.messages.length - 1];
+        
+        res.status(200).json({latestMessage});
+    }
+    catch (error){
+        res.status(500).json({ error: 'Error when getting discussions' });
+    }
+}
+
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage};

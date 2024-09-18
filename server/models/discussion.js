@@ -12,12 +12,12 @@ const discussionSchema = new Schema({
     },
     messages: 
         [messageSchema], // May need import?
-       
+
     discussionName: {        
         type: String,        
         default: 'Unnamed Discussion' 
     },
-    discussionID: {
+    discussionId: {
         type: int, 
         required,
     }   

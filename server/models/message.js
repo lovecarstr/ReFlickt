@@ -10,7 +10,7 @@ const messageSchema = new Schema({
         userID: String,
         required: true
     },
-    discussionID: {
+    discussionId: {
         type: int,
         required: true
     }
