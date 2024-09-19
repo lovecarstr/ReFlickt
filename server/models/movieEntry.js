@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const movieEntrySchema = new Schema({
     movieId: {
-        type: String,
+        type: Number,
         required: true
     },
     matchCount: { // Count needed to track how many times a movie has been matched with users 

@@ -5,7 +5,7 @@ const User = require('../models/user');
 const movieMatchSchema = new Schema(
   {
     movieId: {
-      type: String,
+      type: Number,
       required: true,
     },
     firstUserId: {

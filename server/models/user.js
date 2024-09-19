@@ -25,7 +25,7 @@ const userSchema = new Schema(
       default: 5, // Start users off with 5 tokens
     },
     watchedMovies: [{
-        type: String
+        type: Number
     }],
     currentMatch: { // The current movie a user is matched with.
         type: Schema.Types.ObjectId,
