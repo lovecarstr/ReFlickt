@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const movieService = require('../services/movieService');
 
 const User = require('../models/user');
 const MovieEntry = require('../models/movieEntry');
@@ -10,9 +11,11 @@ const MOVIE_WATCH_WINDOW = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed to be created before movie entries are deleted
 
 
+const movieController = {
+
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
-const getRandomMovie = async (req, res) => {
+getRandomMovie: async (req, res) => {
     const { userId } = req.params; 
 
     try {
@@ -45,10 +48,10 @@ const getRandomMovie = async (req, res) => {
         console.error(error);
         return res.status(500).json({ message: 'Server error' }); // Handle server errors
     }
-};
+},
 
 // Creates a new, open match for a user with a movie.
-const createNewMatch = async (req, res) => {
+createNewMatch: async (req, res) => {
     const { movieId, userId } = req.body;
 
     try {
@@ -70,10 +73,10 @@ const createNewMatch = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Error creating new match' });
     }
-};
+},
 
 // Matches a second user to an open match, and sets its status to closed.
-const addUserToMatch = async (req, res) => {
+addUserToMatch: async (req, res) => {
   const { matchId, userId } = req.body;
 
   try {
@@ -93,10 +96,10 @@ const addUserToMatch = async (req, res) => {
   } catch (error) {
       res.status(500).json({ error: 'Error adding user to match' });
   }
-};
+},
 
 // Spends tokens to add movies to the movieEntries collection
-const addMovieEntry = async (req, res) => {
+addMovieEntry: async (req, res) => {
     const { userId, movieId, tokens } = req.body; 
 
     try {
@@ -117,9 +120,9 @@ const addMovieEntry = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Error adding movie entries' });
     }
-};
+},
 
-const updateCurrentUserMatch = async (req, res) => {
+updateCurrentUserMatch: async (req, res) => {
   const { userId, matchId } = req.body;
 
   try {
@@ -140,9 +143,9 @@ const updateCurrentUserMatch = async (req, res) => {
   } catch (error) {
       return res.status(500).json({ error: 'Error updating user match', details: error.message });
   }
-};
+},
 
-const getCurrentUserMatch = async (req, res) => {
+getCurrentUserMatch: async (req, res) => {
   const { userId } = req.params; // Get userId from the route parameters
 
   try {
@@ -163,9 +166,9 @@ const getCurrentUserMatch = async (req, res) => {
   } catch (error) {
       return res.status(500).json({ error: 'Error retrieving current match' });
   }
-};
+},
 
-const getMovieRatings = async (req, res) => {
+getMovieRatings: async (req, res) => {
   const movieId = req.params.movieId;
   try {
     // Retrieve all ratings for the specified movie
@@ -189,9 +192,9 @@ const getMovieRatings = async (req, res) => {
     console.error("Error fetching ratings:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-};
+},
 
-const getUserMovieRating = async (req, res) => {
+getUserMovieRating: async (req, res) => {
   try {
     const { movieId, userId } = req.params;
 
@@ -213,9 +216,9 @@ const getUserMovieRating = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error", error });
   }
-};
+},
 
-const rateMovie = async (req, res) => {
+rateMovie: async (req, res) => {
   try {
     const { movieId, userId, recommendation, story, performances, directing, visuals, sound } = req.body;
 
@@ -241,9 +244,9 @@ const rateMovie = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-};
+},
 
-const getUserTokens = async (req, res) => {
+getUserTokens: async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -255,10 +258,9 @@ const getUserTokens = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching user tokens' });
   }
-};
+},
 
-
-const getAllMovieVotes = async (req, res) => {
+getAllMovieVotes: async (req, res) => {
   try {
     const movieVotes = await MovieEntry.aggregate([
       { $group: { _id: '$movieId', voteCount: { $sum: 1 } } }, // Group by movieId and count occurrences
@@ -269,9 +271,9 @@ const getAllMovieVotes = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching movie votes' });
   }
-};
+},
 
-const getMovieVotes = async (req, res) => {
+getMovieVotes: async (req, res) => {
   const { movieId } = req.params;
 
   try {
@@ -280,10 +282,10 @@ const getMovieVotes = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching movie votes' });
   }
-};
+},
 
 // Check if the watch window is still open for a specific match
-const checkWatchWindow = async (req, res) => {
+checkWatchWindow: async (req, res) => {
   const { matchId } = req.params;
 
   try {
@@ -304,9 +306,9 @@ const checkWatchWindow = async (req, res) => {
   } catch (error) {
       return res.status(500).json({ error: 'Error checking watch window' });
   }
-};
+},
 
-const resetMovieVotes = async (req, res) => {
+resetMovieVotes: async (req, res) => {
   const { movieId } = req.params;
 
   try {
@@ -335,10 +337,48 @@ const resetMovieVotes = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error resetting movie votes' });
   }
+},
+
+
+searchMovie: async (req, res) => {
+  const { title } = req.query;
+  try {
+      const movies = await movieService.searchMovieByTitle(title);
+      res.json(movies);
+  } catch (error) {
+      if (error.response) {
+          // Error response from TMDb
+          res.status(error.response.status).json({ error: error.response.data.status_message });
+      } else if (error.request) {
+          // No response received
+          res.status(503).json({ error: 'Service unavailable. Please try again later.' });
+      } else {
+          // Other errors
+          res.status(400).json({ error: 'Invalid request. Please check your input.' });
+      }
+  }
+},
+
+getMovieDetails: async (req, res) => {
+  const { movieId } = req.params;
+  try {
+      const movieDetails = await movieService.getMovieDetails(movieId);
+      res.json(movieDetails);
+  } catch (error) {
+      if (error.response) {
+          // Error response from TMDb
+          res.status(error.response.status).json({ error: error.response.data.status_message });
+      } else if (error.request) {
+          // No response received
+          res.status(503).json({ error: 'Service unavailable. Please try again later.' });
+      } else {
+          // Other errors
+          res.status(400).json({ error: 'Invalid request. Please check your input.' });
+      }
+  }
+}
+
 };
 
 
-
-module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, updateCurrentUserMatch, getCurrentUserMatch,
-  rateMovie, getMovieRatings, getUserMovieRating, getUserTokens, getAllMovieVotes, getMovieVotes, checkWatchWindow, resetMovieVotes };
-
+module.exports = movieController;
