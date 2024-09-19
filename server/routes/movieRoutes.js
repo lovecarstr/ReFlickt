@@ -18,7 +18,7 @@ router.get('/movies/:movieId/ratings/:userId', getUserMovieRating); // Returns a
 router.get('/movies/match/:userId', getCurrentUserMatch); // Returns the current movie match for a user
 router.get('/movies/tokens/:userId', getUserTokens); // Returns remaining vote tokens for a user
 router.get('/movies/votes', getAllMovieVotes); // Returns how many votes each movie has
-router.get('/movies/votes/:movieId', getAllMovieVotes); // Returns how many a specific movie has
+router.get('/movies/votes/:movieId', getMovieVotes); // Returns how many a specific movie has
 router.delete('/movies/reset-votes/:movieId', resetMovieVotes); // Resets the votes for a movie
 router.get('/movies/watch-window/:userId', checkWatchWindow); // Checks the remaining time of the 48h watch window for a user
 
