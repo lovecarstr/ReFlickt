@@ -18,10 +18,17 @@ router.get('/movies/votes/:movieId', movieController.getMovieVotes); // Returns 
 router.delete('/movies/reset-votes', movieController.resetMovieVotes); // Resets the votes for a movie
 router.get('/movies/watch-window/:userId', movieController.checkWatchWindow); // Checks the remaining time of the 48h watch window for a user
 
-// To be added:
+// To be added/fixed:
+
 // - Fix route naming according to conventions / best practices. For example: movies/matches not match
-// - PATCH: Reset user tokens to 5
+// - Should getUserRatings be here and not in userController?
+// - PATCH: Reset user tokens to daily amount
 // - PUT: Update a user rating
+// - GET: All matches (collection)
+// - GET: All entries (collection, raw, no manipulation)
+// - GET: All ratings (collection, maybe filter/paginate based on movieId)
+// - DELETE: Delete all entries (collection)
+// - DELETE: Delete all matches (collection)
 
 
 // TMDB (tested and working)
