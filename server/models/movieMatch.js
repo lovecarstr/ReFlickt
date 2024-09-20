@@ -16,7 +16,7 @@ const movieMatchSchema = new Schema(
     secondUserId: {
       type: Schema.Types.ObjectId, // Use ObjectId to reference User
       ref: "User",
-      required: false,
+      default: null,
     },
     status: {
       type: String,
