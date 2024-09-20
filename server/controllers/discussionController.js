@@ -136,9 +136,9 @@ const getLatestMessage = async (req, res) => {
 }
 const renameDiscussion = async (req, res) => {
     const {discussionId, newName} = req.body;
-    
-    const discussion = await Discussion.findOne({ discussionId })
-    try {  
+    try {
+        const discussion = await Discussion.findOne({ discussionId })
+     
         if (!discussion) {
             return res.status(404).json({ message: "Discussion not found" });
         } 
@@ -155,5 +155,23 @@ const renameDiscussion = async (req, res) => {
     }
 }
 
+const deleteDiscussion = async (req, res) => {
+    const {discussionId} = req.params.discussionId; 
+
+    try {
+        const discussion = await Discussion.findOne({ _id: discussionId })
+     
+        if (!discussion) {
+            return res.status(404).json({ message: "Discussion not found" });
+        } 
+
+        await Discussion.deleteOne({ _id: discussionId })
+
+        res.status(200).json({message: "Discussion Successfully deleted"})
+    }
+    catch (error){
+        res.status(500).json({message: "Error deleting message"})
+    }
+}
 
 module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion};
