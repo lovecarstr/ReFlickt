@@ -135,8 +135,25 @@ const getLatestMessage = async (req, res) => {
     }
 }
 const renameDiscussion = async (req, res) => {
-    const discussionId = req.params.discussionId
+    const {discussionId, newName} = req.body;
+    
+    const discussion = await Discussion.findOne({ discussionId })
+    try {  
+        if (!discussion) {
+            return res.status(404).json({ message: "Discussion not found" });
+        } 
+        if (!newName || newName.length === 0) {
+            return res.status(404).json({ message: "New discussion name was not found or left blank" });
+        }
+        
+        discussion.discussionName = newName;
+        discussion.save(); 
+        res.status(204).json({message: "Discussion name sucessfully updated"})
+    }
+    catch (error) {
+        res.status(304).json({message: "Discussion name update was unsuccessfull"})
+    }
 }
 
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion};
