@@ -17,10 +17,6 @@ const discussionSchema = new Schema({
         type: String,        
         default: 'Unnamed Discussion' 
     },
-    discussionId: {
-        type: int, 
-        required,
-    }   
 },{
     timestamps: true //automatically creates timestamps. 
 });
