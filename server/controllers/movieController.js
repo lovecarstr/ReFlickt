@@ -40,7 +40,7 @@ getRandomMovie: async (req, res) => {
         const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]); // Randomly select one entry
 
         if (randomEntry.length > 0) {
-            return res.status(200).json({ movieId: randomEntry[0]._id }); // Return only movieId
+            return res.status(200).json({ movieId: randomEntry[0].movieId }); // Return only movieId
         }
 
         return res.status(404).json({ message: 'No movies available' }); // Handle case where no movie is found
@@ -55,6 +55,9 @@ createNewMatch: async (req, res) => {
     const { movieId, userId } = req.body;
 
     try {
+
+      const user = await User.findById(userId);
+
       const newMatch = new MovieMatch({
         movieId: movieId,  
         firstUserId: userId, 
@@ -69,6 +72,8 @@ createNewMatch: async (req, res) => {
         );
 
         await newMatch.save();
+        user.currentMatch = newMatch;
+        await user.save();
         res.status(201).json({ message: 'New match created', match: newMatch });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new match' });
@@ -80,6 +85,11 @@ addUserToMatch: async (req, res) => {
   const { matchId, userId } = req.body;
 
   try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+      
       const match = await MovieMatch.findById(matchId);
       if (!match) {
           return res.status(404).json({ error: 'Match not found' });
@@ -91,6 +101,9 @@ addUserToMatch: async (req, res) => {
       match.matchClosedAt = new Date(); // Set the closing time to now, beginning movie watch window
 
       await match.save();
+      
+      user.currentMatch = matchId;
+      await user.save();
 
       res.status(200).json({ message: 'User added to match', match: match });
   } catch (error) {
@@ -115,7 +128,10 @@ addMovieEntry: async (req, res) => {
                 movieId: movieId  
             });
             await entry.save();  // Save each entry in the database
+            user.tokens -= 1; // Decrement tokens by one for each vote
         }
+        await user.save();
+
         res.status(201).json({ message: 'Movie entries added successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error adding movie entries' });
@@ -264,7 +280,8 @@ getAllMovieVotes: async (req, res) => {
   try {
     const movieVotes = await MovieEntry.aggregate([
       { $group: { _id: '$movieId', voteCount: { $sum: 1 } } }, // Group by movieId and count occurrences
-      { $sort: { voteCount: -1 } } // Sort descending by vote count
+      { $sort: { voteCount: -1 } }, // Sort descending by vote count
+      { $project: { movieId: '$_id', voteCount: 1, _id: 0 } } // Rename _id to movieId and remove the original _id field
     ]);
 
     return res.status(200).json(movieVotes);
@@ -275,25 +292,36 @@ getAllMovieVotes: async (req, res) => {
 
 getMovieVotes: async (req, res) => {
   const { movieId } = req.params;
+  
+  // Convert movieId to a number since req.params makes it a string
+  const movieIdAsNumber = parseInt(movieId, 10);
 
   try {
-    const voteCount = await MovieEntry.countDocuments({ movieId });
-    return res.status(200).json({ movieId, voteCount });
+    const voteCount = await MovieEntry.countDocuments({ movieId: movieIdAsNumber });
+    return res.status(200).json({ movieId: movieIdAsNumber, voteCount });
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching movie votes' });
   }
 },
 
-// Check if the watch window is still open for a specific match
+// Check if the watch window is still open for the current match of a specific user
 checkWatchWindow: async (req, res) => {
-  const { matchId } = req.params;
+  const { userId } = req.params; 
 
   try {
+      const user = await User.findById(userId);
+      if (!user || !user.currentMatch) {
+          return res.status(404).json({ error: 'User or current match not found' });
+      }
+
+      const matchId = user.currentMatch;
+
       const match = await MovieMatch.findById(matchId);
       if (!match) {
           return res.status(404).json({ error: 'Match not found' });
       }
 
+      // Check if the match has been closed
       if (match.matchClosedAt) {
           const expired = Date.now() > new Date(match.matchClosedAt).getTime() + MOVIE_WATCH_WINDOW;
           if (expired) {
@@ -309,30 +337,28 @@ checkWatchWindow: async (req, res) => {
 },
 
 resetMovieVotes: async (req, res) => {
-  const { movieId } = req.params;
-
   try {
-    // Step 1: Sum the `count` values for all entries with the given movieId
-    const totalMovieCount = await MovieEntry.aggregate([
-      { $match: { movieId: movieId } },  // Match entries with the given movieId
-      { $group: { _id: '$movieId', totalCount: { $sum: '$count' } } }  // Sum the count fields
+    // Step 1: Aggregate the total matchCount for each movieId
+    const movieVoteSums = await MovieEntry.aggregate([
+      { 
+        $group: { 
+          _id: '$movieId', 
+          totalMatchCount: { $sum: '$matchCount' }  // Sum the matchCount for each movieId
+        } 
+      }
     ]);
 
-    // Check if totalMovieCount is empty (if no entries were found)
-    if (totalMovieCount.length === 0) {
-      return res.status(404).json({ error: 'No entries found for this movieId' });
+    // Step 2: Iterate over the aggregated results
+    for (const movie of movieVoteSums) {
+      if (movie.totalMatchCount > MAX_AMOUNT_MATCHES) {
+        // Step 3: Delete all entries for this movieId if the total matchCount exceeds MAX_AMOUNT_MATCHES
+        await MovieEntry.deleteMany({ movieId: movie._id });
+        console.log(`Movie entries reset for movieId: ${movie._id}`);
+      }
     }
 
-    // Step 2: Check if the total count exceeds 5
-    if (totalMovieCount[0].totalCount > MAX_AMOUNT_MATCHES) {
-      // Step 3: Delete all entries with the given movieId
-      await MovieEntry.deleteMany({ movieId: movieId });
-
-      return res.status(200).json({ message: 'Movie votes reset (entries deleted)' });
-    }
-
-    // If total count is 5 or less, do nothing
-    return res.status(200).json({ message: 'Movie votes do not exceed 5, no reset needed' });
+    // Send a response after processing all movies
+    return res.status(200).json({ message: 'Movie votes reset where applicable.' });
 
   } catch (error) {
     return res.status(500).json({ error: 'Error resetting movie votes' });
