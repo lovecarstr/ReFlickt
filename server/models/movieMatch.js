@@ -5,7 +5,7 @@ const User = require('../models/user');
 const movieMatchSchema = new Schema(
   {
     movieId: {
-      type: String,
+      type: Number,
       required: true,
     },
     firstUserId: {
@@ -16,12 +16,16 @@ const movieMatchSchema = new Schema(
     secondUserId: {
       type: Schema.Types.ObjectId, // Use ObjectId to reference User
       ref: "User",
-      required: false,
+      default: null,
     },
     status: {
       type: String,
       enum: ['Open', 'Closed'], // Only allows 'Open' or 'Closed'
       required: true 
+    },
+    matchClosedAt: { // Tracks when second user joins, which is the start of the watch window
+      type: Date,
+      default: null, 
   }
   },
   {

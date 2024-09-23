@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 
 const movieRatingSchema = new Schema({
     movieId: {
-        type: mongoose.Schema.Types.ObjectId,  // Reference to Movie
-        ref: 'Movie',
+        type: Number,
         required: true,
       },
       userId: {

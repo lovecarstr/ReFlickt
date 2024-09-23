@@ -24,8 +24,12 @@ const userSchema = new Schema(
       type: Number,
       default: 5, // Start users off with 5 tokens
     },
+    tokensRefilled: {
+      type: Date,
+      default: Date.now(), // Keeps track of when daily tokens for a user is refilled
+    },
     watchedMovies: [{
-        type: String
+        type: Number
     }],
     currentMatch: { // The current movie a user is matched with.
         type: Schema.Types.ObjectId,
