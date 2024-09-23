@@ -84,7 +84,8 @@ createNewMatch: async (req, res) => {
 
 // Matches a second user to an open match, and sets its status to closed.
 addUserToMatch: async (req, res) => {
-  const { matchId, userId } = req.body;
+  const { userId } = req.body; // Only userId is passed in the body
+  const { matchId } = req.params; // matchId is retrieved from the route parameters
 
   try {
       const user = await User.findById(userId);
@@ -97,6 +98,11 @@ addUserToMatch: async (req, res) => {
           return res.status(404).json({ error: 'Match not found' });
       }
 
+      // Check if the match already has two users
+      if (match.secondUserId) {
+          return res.status(400).json({ error: 'Match already has two users' });
+      }
+
       // Set the second user and close the match
       match.secondUserId = userId;
       match.status = 'Closed';
@@ -104,11 +110,12 @@ addUserToMatch: async (req, res) => {
 
       await match.save();
       
-      user.currentMatch = matchId;
+      user.currentMatch = matchId; // Optionally update the user with the current match
       await user.save();
 
-      res.status(200).json({ message: 'User added to match', match: match });
+      res.status(200).json({ message: 'User added to match', match });
   } catch (error) {
+      console.error(error); // Log the error for debugging
       res.status(500).json({ error: 'Error adding user to match' });
   }
 },
@@ -141,7 +148,7 @@ addMovieEntry: async (req, res) => {
 },
 
 updateCurrentUserMatch: async (req, res) => {
-  const { userId, matchId } = req.body;
+  const { userId, matchId } = req.params; 
 
   try {
       const updatedUser = await User.findByIdAndUpdate(
@@ -456,7 +463,88 @@ refillUserTokens: async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error refilling tokens' });
   }
-}
+},
+
+getAllMatches: async (req, res) => {
+  try {
+    const matches = await MovieMatch.find();
+    return res.status(200).json(matches);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching matches' });
+  }
+},
+
+getAllRatings: async (req, res) => {
+  const { movieId } = req.query; // Optional query parameter
+
+  try {
+    const query = movieId ? { movieId } : {}; // Filter by movieId if provided
+    const ratings = await MovieRating.find(query);
+    return res.status(200).json(ratings);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching ratings' });
+  }
+},
+
+deleteAllEntries: async (req, res) => {
+  try {
+    await MovieEntry.deleteMany();
+    return res.status(200).json({ message: 'All entries deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting movie entries' });
+  }
+},
+
+deleteAllMatches: async (req, res) => {
+  try {
+    await MovieMatch.deleteMany();
+    return res.status(200).json({ message: 'All matches deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting matches' });
+  }
+},
+
+getMatchById: async (req, res) => {
+  const { matchId } = req.params; // Get matchId from the route parameters
+
+  try {
+    // Find the match by ID
+    const match = await MovieMatch.findById(matchId)
+      .populate('firstUserId') // Assuming you want to populate user details
+      .populate('secondUserId'); // Assuming a second user reference exists
+
+    // If the match was not found
+    if (!match) {
+      return res.status(404).json({ error: 'Match not found' });
+    }
+
+    // Return the found match
+    return res.status(200).json({ match });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error retrieving match', details: error.message });
+  }
+},
+
+deleteMovieRating: async (req, res) => {
+  const { ratingId } = req.params; 
+
+  try {
+    // Find and delete the movie rating by ID
+    const deletedRating = await MovieRating.findByIdAndDelete(ratingId);
+
+    // If the rating was not found
+    if (!deletedRating) {
+      return res.status(404).json({ error: 'Rating not found' });
+    }
+
+    // Return success message
+    return res.status(200).json({ message: 'Rating deleted successfully', deletedRating });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting rating', details: error.message });
+  }
+},
+
+
 
 };
 
