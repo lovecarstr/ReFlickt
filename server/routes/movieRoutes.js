@@ -17,12 +17,13 @@ router.get('/movies/votes', movieController.getAllMovieVotes); // Returns how ma
 router.get('/movies/votes/:movieId', movieController.getMovieVotes); // Returns how many a specific movie has
 router.delete('/movies/reset-votes', movieController.resetMovieVotes); // Resets the votes for a movie
 router.get('/movies/watch-window/:userId', movieController.checkWatchWindow); // Checks the remaining time of the 48h watch window for a user
+router.patch('/users/:userId/tokens/refill', movieController.refillUserTokens); // Refills user tokens if enough time has passed since last refill
 
 // To be added/fixed:
 
 // - Fix route naming according to conventions / best practices. For example: movies/matches not match
-// - Should getUserRatings be here and not in userController?
-// - PATCH: Reset user tokens to daily amount
+// - Should getUserRatings, refillUserTokens be in userController?
+// - PATCH: Reset user tokens to daily amount [X]
 // - PUT: Update a user rating
 // - GET: All matches (collection)
 // - GET: All entries (collection, raw, no manipulation)
