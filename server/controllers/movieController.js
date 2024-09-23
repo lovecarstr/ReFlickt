@@ -9,6 +9,8 @@ const MovieRating = require('../models/movieRating');
 
 const MOVIE_WATCH_WINDOW = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed to be created before movie entries are deleted
+const HOURS_BETWEEN_TOKEN_REFILLS = 24;
+const DAILY_TOKEN_AMOUNT = 5;
 
 
 const movieController = {
@@ -401,6 +403,35 @@ getMovieDetails: async (req, res) => {
           // Other errors
           res.status(400).json({ error: 'Invalid request. Please check your input.' });
       }
+  }
+},
+
+refillUserTokens: async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const now = new Date();
+    const hoursSinceLastRefill = (now.getTime() - user.tokensRefilled.getTime()) / (1000 * 60 * 60);
+
+    // Check if correct amount of hours have passed since the last refill
+    if (hoursSinceLastRefill >= HOURS_BETWEEN_TOKEN_REFILLS) {
+      user.tokens = DAILY_TOKEN_AMOUNT;  
+      user.tokensRefilled = now;  // This if off by 2 hours currently
+      await user.save();  
+
+      return res.status(200).json({ message: 'Tokens refilled', tokens: user.tokens });
+    } else {
+      const hoursLeft = HOURS_BETWEEN_TOKEN_REFILLS - hoursSinceLastRefill;
+      return res.status(400).json({ message: `Tokens refill not available yet. Try again in ${hoursLeft.toFixed(2)} hours.` });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: 'Error refilling tokens' });
   }
 }
 
