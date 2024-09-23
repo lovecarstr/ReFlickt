@@ -2,6 +2,17 @@ const express = require('express');
 const movieController = require('../controllers/movieController');
 const router = express.Router();
 
+
+// UNCATEGORIZED
+router.get("/movies/search", movieController.searchMovie); // Search the database for a movie based on title
+router.get('/movies/random', movieController.getRandomMovie); // Retrieves a random movie from open matches or movie entries
+router.get("/movies/:movieId/details", movieController.getMovieDetails);
+router.get('/users/:userId/matches/window', movieController.checkWatchWindow);// Checks the remaining time of the 48h watch window for a user
+router.put('/movies/:movieId/ratings/:userId', movieController.updateMovieRating); // Update user rating
+router.patch('/users/:userId/matches/:matchId', movieController.updateCurrentUserMatch); // Updates the currentMatch for a user
+router.patch('/users/:userId/tokens', movieController.refillUserTokens); // Refills user tokens if enough time has passed since last refill
+
+
 // POST (collection)
 router.post('/movies', movieController.addMovieEntry); // Spends 1-5 tokens to vote for a movie and add it as an entry to the pool
 router.post('/movies/matches', movieController.createNewMatch); // Creates a new match with a single user and a movie entry
@@ -21,7 +32,7 @@ router.get('/movies/:movieId', movieController.getMovieVotes); // Returns a movi
 router.get('/movies/matches/:matchId', movieController.getMatchById); // Returns a match
 
 // PUT (individual)
-TODO: "Add 1-2 endpoints"
+
 
 // PATCH (individual)
 router.patch('/movies/matches/:matchId', movieController.addUserToMatch); // Adds a second user to an exisiting match
@@ -30,7 +41,7 @@ router.patch('/movies/matches/:matchId', movieController.addUserToMatch); // Add
 router.delete('/movies/ratings/:ratingId', movieController.deleteMovieRating);
 
 // POST (relationship, example: /cars/:car_id/drivers)
-TODO: "Add 1-2 endpoints"
+
 
 // GET (relationship, example: /cars/:car_id/drivers)
 router.get("/movies/:movieId/ratings", movieController.getMovieRatings); // Returns all ratings saved for a movie
@@ -40,15 +51,6 @@ router.get('/users/:userId/tokens', movieController.getUserTokens); // Returns r
 router.get('/movies/:movieId/ratings/:userId', movieController.getUserMovieRating); // Returns a specific users rating for one specific movie
 
 // DELETE (double relationship, example: /cars/:car_id/drivers/:driver_id)
-TODO: "Add 1 endpoint"
 
-// UNCATEGORIZED
-router.get('/movies/random', movieController.getRandomMovie); // Retrieves a random movie from open matches or movie entries
-router.get("/movies/search", movieController.searchMovie);
-router.get("/movies/:movieId/details", movieController.getMovieDetails);
-router.get('/users/:userId/matches/window', movieController.checkWatchWindow);// Checks the remaining time of the 48h watch window for a user
-router.put('/movies/:movieId/ratings/:userId', movieController.updateMovieRating); // Update user rating
-router.patch('/users/:userId/matches/:matchId', movieController.updateCurrentUserMatch); // Updates the currentMatch for a user
-router.patch('/users/:userId/tokens', movieController.refillUserTokens); // Refills user tokens if enough time has passed since last refill
 
 module.exports = router;
