@@ -1,10 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const Movie = require('../models/movie');
 const User = require('../models/user');
 const MovieEntry = require('../models/movieEntry');
 const MovieMatch = require('../models/movieMatch');
+const MovieRating = require('../models/movieRating');
+
+const MOVIE_WATCH_WINDOW = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed to be created before movie entries are deleted
 
 
 // Checks open matches to find a movie for a user to be matched with. If there are no 
@@ -56,10 +59,10 @@ const createNewMatch = async (req, res) => {
         status: 'Open'
       });
 
-        // Increment the count for the movie entry, so that its votes can be reset after the threshold.
+        // Increment the matchCount for the movie entry, so that its votes can be reset after the threshold.
         await MovieEntry.findOneAndUpdate(
             { movieId: movieId },
-            { $inc: { count: 1 } }
+            { $inc: { matchCount: 1 } }
         );
 
         await newMatch.save();
@@ -71,20 +74,25 @@ const createNewMatch = async (req, res) => {
 
 // Matches a second user to an open match, and sets its status to closed.
 const addUserToMatch = async (req, res) => {
-    const { matchId, userId } = req.body;
+  const { matchId, userId } = req.body;
 
-    try {
-        const match = await MovieMatch.findById(matchId);
+  try {
+      const match = await MovieMatch.findById(matchId);
+      if (!match) {
+          return res.status(404).json({ error: 'Match not found' });
+      }
 
-        match.secondUserId = userId;
-        match.status = 'Closed';
+      // Set the second user and close the match
+      match.secondUserId = userId;
+      match.status = 'Closed';
+      match.matchClosedAt = new Date(); // Set the closing time to now, beginning movie watch window
 
-        await match.save();
+      await match.save();
 
-        res.status(200).json({ message: 'User added to match', match: match });
-    } catch (error) {
-        res.status(500).json({ error: 'Error adding user to match' });
-    }
+      res.status(200).json({ message: 'User added to match', match: match });
+  } catch (error) {
+      res.status(500).json({ error: 'Error adding user to match' });
+  }
 };
 
 // Spends tokens to add movies to the movieEntries collection
@@ -134,8 +142,31 @@ const updateCurrentUserMatch = async (req, res) => {
   }
 };
 
+const getCurrentUserMatch = async (req, res) => {
+  const { userId } = req.params; // Get userId from the route parameters
+
+  try {
+      // Find the user by userId and populate the currentMatch field
+      const user = await User.findById(userId).populate('currentMatch');
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Check if there is a current match
+      if (!user.currentMatch) {
+          return res.status(200).json({ message: 'No current match found for this user' });
+      }
+
+      // Return the current match
+      return res.status(200).json({ match: user.currentMatch });
+  } catch (error) {
+      return res.status(500).json({ error: 'Error retrieving current match' });
+  }
+};
+
 const getMovieRatings = async (req, res) => {
-  const movieId = req.params.movieID;
+  const movieId = req.params.movieId;
   try {
     // Retrieve all ratings for the specified movie
     const ratings = await MovieRating.find({ movieId: movieId })
@@ -186,32 +217,19 @@ const getUserMovieRating = async (req, res) => {
 
 const rateMovie = async (req, res) => {
   try {
-    const {
-      movieId,
-      userId,
-      recommendation,
-      story,
-      performances,
-      directing,
-      visuals,
-      sound,
-    } = req.body;
+    const { movieId, userId, recommendation, story, performances, directing, visuals, sound } = req.body;
 
-    // We need to check that the movieID is a valid one
-    //const movie = await Movie.findById(movieId);
-    //ifaw (!movie) {
-    //  return res.status(404).json({ message: "Movie not found" });
-    //}
-
-    const newRating = new movieRating({
-      movieId,
-      userId,
-      recommendation,
-      story,
-      performances,
-      directing,
-      visuals,
-      sound,
+    // We need to check that the movieID is a valid one here
+   
+    const newRating = new MovieRating({
+      movieId: movieId,
+      userId: userId,
+      recommendation: recommendation,
+      story: story,
+      performances: performances,
+      directing: directing,
+      visuals: visuals,
+      sound: sound,
     });
 
     await newRating.save();
@@ -225,31 +243,102 @@ const rateMovie = async (req, res) => {
   }
 };
 
-/*
-
 const getUserTokens = async (req, res) => {
+  const { userId } = req.params;
 
+  try {
+    const user = await User.findById(userId).select('tokens'); 
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    return res.status(200).json({ tokens: user.tokens });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching user tokens' });
+  }
 };
 
-const getAllMovieVotes = async (req, res) => {
 
+const getAllMovieVotes = async (req, res) => {
+  try {
+    const movieVotes = await MovieEntry.aggregate([
+      { $group: { _id: '$movieId', voteCount: { $sum: 1 } } }, // Group by movieId and count occurrences
+      { $sort: { voteCount: -1 } } // Sort descending by vote count
+    ]);
+
+    return res.status(200).json(movieVotes);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching movie votes' });
+  }
 };
 
 const getMovieVotes = async (req, res) => {
+  const { movieId } = req.params;
 
+  try {
+    const voteCount = await MovieEntry.countDocuments({ movieId });
+    return res.status(200).json({ movieId, voteCount });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching movie votes' });
+  }
 };
 
+// Check if the watch window is still open for a specific match
 const checkWatchWindow = async (req, res) => {
+  const { matchId } = req.params;
 
+  try {
+      const match = await MovieMatch.findById(matchId);
+      if (!match) {
+          return res.status(404).json({ error: 'Match not found' });
+      }
+
+      if (match.matchClosedAt) {
+          const expired = Date.now() > new Date(match.matchClosedAt).getTime() + MOVIE_WATCH_WINDOW;
+          if (expired) {
+              return res.status(400).json({ message: 'Watch window has expired' });
+          }
+          return res.status(200).json({ message: 'Watch window is still open' });
+      }
+
+      return res.status(400).json({ message: 'No match has been closed yet' });
+  } catch (error) {
+      return res.status(500).json({ error: 'Error checking watch window' });
+  }
 };
 
 const resetMovieVotes = async (req, res) => {
+  const { movieId } = req.params;
 
+  try {
+    // Step 1: Sum the `count` values for all entries with the given movieId
+    const totalMovieCount = await MovieEntry.aggregate([
+      { $match: { movieId: movieId } },  // Match entries with the given movieId
+      { $group: { _id: '$movieId', totalCount: { $sum: '$count' } } }  // Sum the count fields
+    ]);
+
+    // Check if totalMovieCount is empty (if no entries were found)
+    if (totalMovieCount.length === 0) {
+      return res.status(404).json({ error: 'No entries found for this movieId' });
+    }
+
+    // Step 2: Check if the total count exceeds 5
+    if (totalMovieCount[0].totalCount > MAX_AMOUNT_MATCHES) {
+      // Step 3: Delete all entries with the given movieId
+      await MovieEntry.deleteMany({ movieId: movieId });
+
+      return res.status(200).json({ message: 'Movie votes reset (entries deleted)' });
+    }
+
+    // If total count is 5 or less, do nothing
+    return res.status(200).json({ message: 'Movie votes do not exceed 5, no reset needed' });
+
+  } catch (error) {
+    return res.status(500).json({ error: 'Error resetting movie votes' });
+  }
 };
 
-*/
 
 
-module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, 
-    updateCurrentUserMatch, rateMovie, getMovieRatings, getUserMovieRating };
+module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, updateCurrentUserMatch, getCurrentUserMatch,
+  rateMovie, getMovieRatings, getUserMovieRating, getUserTokens, getAllMovieVotes, getMovieVotes, checkWatchWindow, resetMovieVotes };
 
