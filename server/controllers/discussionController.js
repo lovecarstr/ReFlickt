@@ -1,162 +1,189 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const movieService = require('../services/movieService');
 
-const Movie = require('../models/movie');
 const User = require('../models/user');
 const MovieMatch = require('../models/movieMatch');
 const Message = require('../models/message');
 const Discussion = require('../models/discussion');
 
-const createNewDiscussion = async(req, res) => {
-    const {MovieMatch} = req.body; 
 
-    const movie = Movie.findOne({ movieId: MovieMatch.movieId }); //finds the movie in the database
+const createNewDiscussion = async (req, res) => {
+    const { matchId } = req.body; 
+
     try {
-        const newDiscussion = new Discussion ({
-            participants: [MovieMatch.firstUserId, MovieMatch.secondUserId],
-            movie: MovieMatch.movieId,
-            messages: [], //no messages in a brand new conversation
-            discussionName: movie.title + "Discussion" || "Unnamed Discussion", //names the conversation after the movie 
-        })
+        const movieMatch = await MovieMatch.findById(matchId);
+
+        if (!movieMatch) {
+            return res.status(404).json({ error: 'Movie match not found' });
+        }
+
+        // Fetch movie details using the movieId from MovieMatch
+        const movieDetails = await movieService.getMovieDetails(movieMatch.movieId);
+
+
+        // Create a new discussion with the fetched movie details
+        const newDiscussion = new Discussion({
+            participants: [movieMatch.firstUserId, movieMatch.secondUserId],
+            movieId: movieDetails.movieId, // Use the correct movieId
+            messages: [], // No messages in a brand new conversation
+            discussionName: `${movieDetails.title} Discussion`, // Names the conversation after the movie 
+        });
 
         const savedDiscussion = await newDiscussion.save(); 
 
-        res.status(201).json({message: 'new discussion created successfully', newDiscussion: savedDiscussion}); //new discussion created successfully
+        res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion });
+    } catch (error) {
+        res.status(500).json({ error: 'Error creating new discussion', details: error.message });
     }
-    catch (error){
-        res.status(500).json({ error: 'Error creating new discussion' });
-    }
-}
+};
 
 const createNewMessage = async (req, res) => {
-    const {senderId, discussionId, content } = req.body
-    
+    const { userId, discussionId, content } = req.body;
+
     try {
-        
-        //Creates a new message
-        const newMessage = new Message ({
+        const userExists = await User.findById(userId);
+        if (!userExists) {
+            return res.status(404).json({ error: 'Sender not found' });
+        }
+
+        const newMessage = new Message({
             content: content,
-            sender: senderId,
-            discussionId: discussionId,
+            sender: userId, 
         });
-        
-        //saves the message in the discussion
-        const discussion = await Discussion.findById(discussionId)
 
-        discussion.messages.push(newMessage)
+        await newMessage.save();
 
+        // Find the discussion and push the new message to its messages array
+        const discussion = await Discussion.findById(discussionId);
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion not found' });
+        }
+
+        discussion.messages.push(newMessage._id); // Push only the message ID if messages are referenced
         await discussion.save();
 
-        res.status(201).json({newMessage})
+        res.status(201).json({ newMessage });
+    } catch (error) {
+        res.status(500).json({ error: 'Error creating new message', details: error.message });
     }
-    catch (error) {
-        res.status(500).json({ error: 'Error creating new message' });
-    }
-}
+};
 
-//get a all user discussion
+// get a all user discussion. TODO: Maybe populate?
 const getAllUserDiscussions = async (req, res) => {
     const userId = req.params.userId;
+    
     try {
         const user = await User.findById(userId); // Check if user exists
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        const discussions = await Discussion.find({ userId })
-        if (discussions.length === 0){
-            return res.status(404).json({message: "no disscusions found for this user."})
+
+        // Find discussions where the user is a participant
+        const discussions = await Discussion.find({ participants: userId });
+
+        if (discussions.length === 0) {
+            return res.status(404).json({ message: "No discussions found for this user." });
         }
 
-        //sends all the discussions
+        // Sends all the discussions
         res.status(200).json({ discussions });
-    }
-    catch (error){
+    } catch (error) {
         res.status(500).json({ error: 'Error when getting discussions' });
     }
-}
+};
 
 //get all discussions from a movie
 const getAllMovieDiscussions = async (req, res) => {
-    const movieId = req.params.movieId;
+    const movieId = Number(req.params.movieId);
+
     try {
-        const movie = await User.findById(movieId); // Check if movie exists
-        if (!movie) {
-            return res.status(404).json({ message: "movie not found" });
-        }
-        const discussions = await Discussion.find({ movieId })
-        if (discussions.length === 0){
-            return res.status(404).json({message: "no disscusions found for this user."})
+        // Find discussions related to the specified movieId
+        const discussions = await Discussion.find({ movieId: movieId });
+
+        if (discussions.length === 0) {
+            return res.status(404).json({ message: "No discussions found for this movie." });
         }
 
-        //sends all the discussions
+        // Send all the discussions
         res.status(200).json({ discussions });
-    }
-    catch (error){
+    } catch (error) {
         res.status(500).json({ error: 'Error when getting discussions' });
     }
-}
+};
 
 //get a specific discussion
 const getDiscussion = async (req, res) => {
-    const discussionId = req.params.discussionId;
+    const { discussionId } = req.params;
+
     try {
-        const discussion = await User.findById(discussionId); 
-        if (!discussion) {// Check if discussion exists
-            return res.status(404).json({ message: "discussion not found" });
+        // Fetch the discussion and populate the 'messages' and 'participants' fields
+        const discussion = await Discussion.findById(discussionId)
+            .populate('messages')  
+            .populate('participants', 'username'); 
+
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion not found' });
         }
-        //sends all the discussions
-        res.status(200).json({ discussions });
+
+        res.status(200).json(discussion);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching discussion', details: error.message });
     }
-    catch (error){
-        res.status(500).json({ error: 'Error when getting discussions' });
-    }
-}
+};
 
 const getLatestMessage = async (req, res) => {
-    const discussionId = req.params.discussionId;
+    const { discussionId } = req.params; 
 
     try {
-        const discussion = await Discussion.findOne({ discussionId })
-            .select('messages') // Only fetch the 'messages' field
-            .sort({ 'messages.createdAt': -1 }); // Sorts messages in descending order by 'createdAt'
+        // Fetch the discussion by ID and populate the 'messages' field
+        const discussion = await Discussion.findById(discussionId)
+            .select('messages') // Only select the 'messages' field
+            .populate({
+                path: 'messages',
+                options: { sort: { createdAt: -1 }, limit: 1 } 
+            });
 
         if (!discussion || discussion.messages.length === 0) {
-            return res.status(404).json({ message: "discussion not found or it is empty" });
+            return res.status(404).json({ message: "Discussion not found or it is empty" });
         }
 
+        // Return the first (most recent) message after sorting
+        const latestMessage = discussion.messages[0];
 
-        // Return the latest message (last in the array)
-        const latestMessage = discussion.messages[discussion.messages.length - 1];
-        
-        res.status(200).json({latestMessage});
+        res.status(200).json({ latestMessage });
+    } catch (error) {
+        res.status(500).json({ error: 'Error when getting the latest message', details: error.message });
     }
-    catch (error){
-        res.status(500).json({ error: 'Error when getting discussions' });
-    }
-}
+};
+
+
 const renameDiscussion = async (req, res) => {
-    const {discussionId, newName} = req.body;
+    const { discussionId } = req.params; 
+    const { newName } = req.body;
+
     try {
-        const discussion = await Discussion.findOne({ discussionId })
-     
+        const discussion = await Discussion.findById(discussionId);
+
         if (!discussion) {
             return res.status(404).json({ message: "Discussion not found" });
-        } 
-        if (!newName || newName.length === 0) {
-            return res.status(404).json({ message: "New discussion name was not found or left blank" });
         }
-        
+
+        if (!newName || newName.trim().length === 0) {
+            return res.status(400).json({ message: "New discussion name was not found or left blank" });
+        }
+
         discussion.discussionName = newName;
-        discussion.save(); 
-        res.status(204).json({message: "Discussion name sucessfully updated"})
+        await discussion.save(); 
+
+        res.status(200).json({ message: "Discussion name successfully updated", updatedDiscussion: discussion });
+    } catch (error) {
+        res.status(500).json({ message: "Discussion name update was unsuccessful", error: error.message });
     }
-    catch (error) {
-        res.status(304).json({message: "Discussion name update was unsuccessfull"})
-    }
-}
+};
 
 const deleteDiscussion = async (req, res) => {
-    const {discussionId} = req.params.discussionId; 
+    const {discussionId} = req.params; 
 
     try {
         const discussion = await Discussion.findOne({ _id: discussionId })
