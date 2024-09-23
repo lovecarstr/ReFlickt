@@ -174,4 +174,4 @@ const deleteDiscussion = async (req, res) => {
     }
 }
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion};
