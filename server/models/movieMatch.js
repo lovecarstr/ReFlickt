@@ -1,22 +1,34 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const User = require('../models/user');
 
-const movieMatchSchema = new Schema({
-    movieID: {
-        typeID: int,
-        required: true,
+const movieMatchSchema = new Schema(
+  {
+    movieId: {
+      type: String,
+      required: true,
     },
-    firstUserID: { 
-        type: String,
-        required: true,
+    firstUserId: {
+      type: Schema.Types.ObjectId, // Use ObjectId to reference User
+      ref: "User",
+      required: true,
     },
-    secondUserID: { 
-        type: String,
-    }
-}, {
-    timestamps: true  // Automatically add `createdAt` and `updatedAt` fields
-});
+    secondUserId: {
+      type: Schema.Types.ObjectId, // Use ObjectId to reference User
+      ref: "User",
+      required: false,
+    },
+    status: {
+      type: String,
+      enum: ['Open', 'Closed'], // Only allows 'Open' or 'Closed'
+      required: true 
+  }
+  },
+  {
+    timestamps: true, // Automatically add `createdAt` and `updatedAt` fields
+  }
+);
 
-const MovieMatch = mongoose.model('MovieMatch', movieMatchSchema);
+const MovieMatch = mongoose.model("MovieMatch", movieMatchSchema);
 
 module.exports = MovieMatch;

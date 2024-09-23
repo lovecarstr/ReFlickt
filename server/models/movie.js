@@ -1,46 +1,47 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const movieSchema = new Schema ({
-    _id: {
-        type: String,
-        required: true,
-        unique: true,  
-    },
+    movieId: {
+      type: String,
+      required: true
+    }, 
     title: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     director: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    writers: [{
+    writers: [
+      {
         type: String,
-        required: true
-    }],
-    year: {
-        type: Number,
         required: true,
+      },
+    ],
+    year: {
+      type: Number,
+      required: true,
     },
     runtime: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     description: {
-        type: String,
-        required: false
+      type: String,
+      required: false,
     },
     imdbRating: {
-        type: Number,
-        required: false
-    }
+      type: Number,
+      required: false,
+    },
+  },
+  {
+    timestamps: true, // Automatically add `createdAt` and `updatedAt` fields
+  }
+);
 
-
-}, {
-    timestamps: true  // Automatically add `createdAt` and `updatedAt` fields
-});
-
-const Movie = mongoose.model('Movie', movieSchema);
+const Movie = mongoose.model("Movie", movieSchema);
 
 module.exports = Movie;
