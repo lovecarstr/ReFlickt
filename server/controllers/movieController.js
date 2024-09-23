@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const movieService = require('../services/movieService');
 
 const User = require('../models/user');
 const MovieEntry = require('../models/movieEntry');
@@ -8,11 +9,15 @@ const MovieRating = require('../models/movieRating');
 
 const MOVIE_WATCH_WINDOW = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed to be created before movie entries are deleted
+const HOURS_BETWEEN_TOKEN_REFILLS = 24;
+const DAILY_TOKEN_AMOUNT = 5;
 
+
+const movieController = {
 
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
-const getRandomMovie = async (req, res) => {
+getRandomMovie: async (req, res) => {
     const { userId } = req.params; 
 
     try {
@@ -37,7 +42,7 @@ const getRandomMovie = async (req, res) => {
         const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]); // Randomly select one entry
 
         if (randomEntry.length > 0) {
-            return res.status(200).json({ movieId: randomEntry[0]._id }); // Return only movieId
+            return res.status(200).json({ movieId: randomEntry[0].movieId }); // Return only movieId
         }
 
         return res.status(404).json({ message: 'No movies available' }); // Handle case where no movie is found
@@ -45,13 +50,16 @@ const getRandomMovie = async (req, res) => {
         console.error(error);
         return res.status(500).json({ message: 'Server error' }); // Handle server errors
     }
-};
+},
 
 // Creates a new, open match for a user with a movie.
-const createNewMatch = async (req, res) => {
+createNewMatch: async (req, res) => {
     const { movieId, userId } = req.body;
 
     try {
+
+      const user = await User.findById(userId);
+
       const newMatch = new MovieMatch({
         movieId: movieId,  
         firstUserId: userId, 
@@ -66,20 +74,33 @@ const createNewMatch = async (req, res) => {
         );
 
         await newMatch.save();
+        user.currentMatch = newMatch;
+        await user.save();
         res.status(201).json({ message: 'New match created', match: newMatch });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new match' });
     }
-};
+},
 
 // Matches a second user to an open match, and sets its status to closed.
-const addUserToMatch = async (req, res) => {
-  const { matchId, userId } = req.body;
+addUserToMatch: async (req, res) => {
+  const { userId } = req.body; // Only userId is passed in the body
+  const { matchId } = req.params; // matchId is retrieved from the route parameters
 
   try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+      
       const match = await MovieMatch.findById(matchId);
       if (!match) {
           return res.status(404).json({ error: 'Match not found' });
+      }
+
+      // Check if the match already has two users
+      if (match.secondUserId) {
+          return res.status(400).json({ error: 'Match already has two users' });
       }
 
       // Set the second user and close the match
@@ -88,15 +109,19 @@ const addUserToMatch = async (req, res) => {
       match.matchClosedAt = new Date(); // Set the closing time to now, beginning movie watch window
 
       await match.save();
+      
+      user.currentMatch = matchId; // Optionally update the user with the current match
+      await user.save();
 
-      res.status(200).json({ message: 'User added to match', match: match });
+      res.status(200).json({ message: 'User added to match', match });
   } catch (error) {
+      console.error(error); // Log the error for debugging
       res.status(500).json({ error: 'Error adding user to match' });
   }
-};
+},
 
 // Spends tokens to add movies to the movieEntries collection
-const addMovieEntry = async (req, res) => {
+addMovieEntry: async (req, res) => {
     const { userId, movieId, tokens } = req.body; 
 
     try {
@@ -112,15 +137,18 @@ const addMovieEntry = async (req, res) => {
                 movieId: movieId  
             });
             await entry.save();  // Save each entry in the database
+            user.tokens -= 1; // Decrement tokens by one for each vote
         }
+        await user.save();
+
         res.status(201).json({ message: 'Movie entries added successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error adding movie entries' });
     }
-};
+},
 
-const updateCurrentUserMatch = async (req, res) => {
-  const { userId, matchId } = req.body;
+updateCurrentUserMatch: async (req, res) => {
+  const { userId, matchId } = req.params; 
 
   try {
       const updatedUser = await User.findByIdAndUpdate(
@@ -140,9 +168,9 @@ const updateCurrentUserMatch = async (req, res) => {
   } catch (error) {
       return res.status(500).json({ error: 'Error updating user match', details: error.message });
   }
-};
+},
 
-const getCurrentUserMatch = async (req, res) => {
+getCurrentUserMatch: async (req, res) => {
   const { userId } = req.params; // Get userId from the route parameters
 
   try {
@@ -163,9 +191,9 @@ const getCurrentUserMatch = async (req, res) => {
   } catch (error) {
       return res.status(500).json({ error: 'Error retrieving current match' });
   }
-};
+},
 
-const getMovieRatings = async (req, res) => {
+getMovieRatings: async (req, res) => {
   const movieId = req.params.movieId;
   try {
     // Retrieve all ratings for the specified movie
@@ -189,9 +217,9 @@ const getMovieRatings = async (req, res) => {
     console.error("Error fetching ratings:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-};
+},
 
-const getUserMovieRating = async (req, res) => {
+getUserMovieRating: async (req, res) => {
   try {
     const { movieId, userId } = req.params;
 
@@ -213,11 +241,12 @@ const getUserMovieRating = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error", error });
   }
-};
+},
 
-const rateMovie = async (req, res) => {
+rateMovie: async (req, res) => {
+  const { movieId, userId, recommendation, story, performances, directing, visuals, sound } = req.body;
+  
   try {
-    const { movieId, userId, recommendation, story, performances, directing, visuals, sound } = req.body;
 
     // We need to check that the movieID is a valid one here
    
@@ -241,9 +270,31 @@ const rateMovie = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-};
+},
 
-const getUserTokens = async (req, res) => {
+updateMovieRating: async (req, res) => {
+  const { userId, movieId } = req.params;
+  const { story, performances, directing, visuals, sound, recommendation } = req.body;
+
+  try {
+    // Find and update the movie rating
+    const updatedRating = await MovieRating.findOneAndUpdate(
+      { userId, movieId },
+      { story, performances, directing, visuals, sound, recommendation },
+      { new: true }  // Return the updated document
+    );
+
+    if (!updatedRating) {
+      return res.status(404).json({ error: 'Rating not found' });
+    }
+
+    return res.status(200).json(updatedRating);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error updating rating' });
+  }
+},
+
+getUserTokens: async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -255,43 +306,54 @@ const getUserTokens = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching user tokens' });
   }
-};
+},
 
-
-const getAllMovieVotes = async (req, res) => {
+getAllMovieVotes: async (req, res) => {
   try {
     const movieVotes = await MovieEntry.aggregate([
       { $group: { _id: '$movieId', voteCount: { $sum: 1 } } }, // Group by movieId and count occurrences
-      { $sort: { voteCount: -1 } } // Sort descending by vote count
+      { $sort: { voteCount: -1 } }, // Sort descending by vote count
+      { $project: { movieId: '$_id', voteCount: 1, _id: 0 } } // Rename _id to movieId and remove the original _id field
     ]);
 
     return res.status(200).json(movieVotes);
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching movie votes' });
   }
-};
+},
 
-const getMovieVotes = async (req, res) => {
+getMovieVotes: async (req, res) => {
   const { movieId } = req.params;
+  
+  // Convert movieId to a number since req.params makes it a string
+  const movieIdAsNumber = parseInt(movieId, 10);
 
   try {
-    const voteCount = await MovieEntry.countDocuments({ movieId });
-    return res.status(200).json({ movieId, voteCount });
+    const voteCount = await MovieEntry.countDocuments({ movieId: movieIdAsNumber });
+    return res.status(200).json({ movieId: movieIdAsNumber, voteCount });
   } catch (error) {
     return res.status(500).json({ error: 'Error fetching movie votes' });
   }
-};
+},
 
-// Check if the watch window is still open for a specific match
-const checkWatchWindow = async (req, res) => {
-  const { matchId } = req.params;
+// Check if the watch window is still open for the current match of a specific user
+checkWatchWindow: async (req, res) => {
+  const { userId } = req.params; 
 
   try {
+      const user = await User.findById(userId);
+      if (!user || !user.currentMatch) {
+          return res.status(404).json({ error: 'User or current match not found' });
+      }
+
+      const matchId = user.currentMatch;
+
       const match = await MovieMatch.findById(matchId);
       if (!match) {
           return res.status(404).json({ error: 'Match not found' });
       }
 
+      // Check if the match has been closed
       if (match.matchClosedAt) {
           const expired = Date.now() > new Date(match.matchClosedAt).getTime() + MOVIE_WATCH_WINDOW;
           if (expired) {
@@ -304,41 +366,187 @@ const checkWatchWindow = async (req, res) => {
   } catch (error) {
       return res.status(500).json({ error: 'Error checking watch window' });
   }
-};
+},
 
-const resetMovieVotes = async (req, res) => {
-  const { movieId } = req.params;
-
+resetMovieVotes: async (req, res) => {
   try {
-    // Step 1: Sum the `count` values for all entries with the given movieId
-    const totalMovieCount = await MovieEntry.aggregate([
-      { $match: { movieId: movieId } },  // Match entries with the given movieId
-      { $group: { _id: '$movieId', totalCount: { $sum: '$count' } } }  // Sum the count fields
+    // Step 1: Aggregate the total matchCount for each movieId
+    const movieVoteSums = await MovieEntry.aggregate([
+      { 
+        $group: { 
+          _id: '$movieId', 
+          totalMatchCount: { $sum: '$matchCount' }  // Sum the matchCount for each movieId
+        } 
+      }
     ]);
 
-    // Check if totalMovieCount is empty (if no entries were found)
-    if (totalMovieCount.length === 0) {
-      return res.status(404).json({ error: 'No entries found for this movieId' });
+    // Step 2: Iterate over the aggregated results
+    for (const movie of movieVoteSums) {
+      if (movie.totalMatchCount > MAX_AMOUNT_MATCHES) {
+        // Step 3: Delete all entries for this movieId if the total matchCount exceeds MAX_AMOUNT_MATCHES
+        await MovieEntry.deleteMany({ movieId: movie._id });
+        console.log(`Movie entries reset for movieId: ${movie._id}`);
+      }
     }
 
-    // Step 2: Check if the total count exceeds 5
-    if (totalMovieCount[0].totalCount > MAX_AMOUNT_MATCHES) {
-      // Step 3: Delete all entries with the given movieId
-      await MovieEntry.deleteMany({ movieId: movieId });
-
-      return res.status(200).json({ message: 'Movie votes reset (entries deleted)' });
-    }
-
-    // If total count is 5 or less, do nothing
-    return res.status(200).json({ message: 'Movie votes do not exceed 5, no reset needed' });
+    // Send a response after processing all movies
+    return res.status(200).json({ message: 'Movie votes reset where applicable.' });
 
   } catch (error) {
     return res.status(500).json({ error: 'Error resetting movie votes' });
   }
+},
+
+
+searchMovie: async (req, res) => {
+  const { title } = req.query;
+  try {
+      const movies = await movieService.searchMovieByTitle(title);
+      res.json(movies);
+  } catch (error) {
+      if (error.response) {
+          // Error response from TMDb
+          res.status(error.response.status).json({ error: error.response.data.status_message });
+      } else if (error.request) {
+          // No response received
+          res.status(503).json({ error: 'Service unavailable. Please try again later.' });
+      } else {
+          // Other errors
+          res.status(400).json({ error: 'Invalid request. Please check your input.' });
+      }
+  }
+},
+
+getMovieDetails: async (req, res) => {
+  const { movieId } = req.params;
+  try {
+      const movieDetails = await movieService.getMovieDetails(movieId);
+      res.json(movieDetails);
+  } catch (error) {
+      if (error.response) {
+          // Error response from TMDb
+          res.status(error.response.status).json({ error: error.response.data.status_message });
+      } else if (error.request) {
+          // No response received
+          res.status(503).json({ error: 'Service unavailable. Please try again later.' });
+      } else {
+          // Other errors
+          res.status(400).json({ error: 'Invalid request. Please check your input.' });
+      }
+  }
+},
+
+refillUserTokens: async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const now = new Date();
+    const hoursSinceLastRefill = (now.getTime() - user.tokensRefilled.getTime()) / (1000 * 60 * 60);
+
+    // Check if correct amount of hours have passed since the last refill
+    if (hoursSinceLastRefill >= HOURS_BETWEEN_TOKEN_REFILLS) {
+      user.tokens = DAILY_TOKEN_AMOUNT;  
+      user.tokensRefilled = now;  // This if off by 2 hours currently
+      await user.save();  
+
+      return res.status(200).json({ message: 'Tokens refilled', tokens: user.tokens });
+    } else {
+      const hoursLeft = HOURS_BETWEEN_TOKEN_REFILLS - hoursSinceLastRefill;
+      return res.status(400).json({ message: `Tokens refill not available yet. Try again in ${hoursLeft.toFixed(2)} hours.` });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: 'Error refilling tokens' });
+  }
+},
+
+getAllMatches: async (req, res) => {
+  try {
+    const matches = await MovieMatch.find();
+    return res.status(200).json(matches);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching matches' });
+  }
+},
+
+getAllRatings: async (req, res) => {
+  const { movieId } = req.query; // Optional query parameter
+
+  try {
+    const query = movieId ? { movieId } : {}; // Filter by movieId if provided
+    const ratings = await MovieRating.find(query);
+    return res.status(200).json(ratings);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error fetching ratings' });
+  }
+},
+
+deleteAllEntries: async (req, res) => {
+  try {
+    await MovieEntry.deleteMany();
+    return res.status(200).json({ message: 'All entries deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting movie entries' });
+  }
+},
+
+deleteAllMatches: async (req, res) => {
+  try {
+    await MovieMatch.deleteMany();
+    return res.status(200).json({ message: 'All matches deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting matches' });
+  }
+},
+
+getMatchById: async (req, res) => {
+  const { matchId } = req.params; // Get matchId from the route parameters
+
+  try {
+    // Find the match by ID
+    const match = await MovieMatch.findById(matchId)
+      .populate('firstUserId') // Assuming you want to populate user details
+      .populate('secondUserId'); // Assuming a second user reference exists
+
+    // If the match was not found
+    if (!match) {
+      return res.status(404).json({ error: 'Match not found' });
+    }
+
+    // Return the found match
+    return res.status(200).json({ match });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error retrieving match', details: error.message });
+  }
+},
+
+deleteMovieRating: async (req, res) => {
+  const { ratingId } = req.params; 
+
+  try {
+    // Find and delete the movie rating by ID
+    const deletedRating = await MovieRating.findByIdAndDelete(ratingId);
+
+    // If the rating was not found
+    if (!deletedRating) {
+      return res.status(404).json({ error: 'Rating not found' });
+    }
+
+    // Return success message
+    return res.status(200).json({ message: 'Rating deleted successfully', deletedRating });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting rating', details: error.message });
+  }
+},
+
+
+
 };
 
 
-
-module.exports = { getRandomMovie, createNewMatch, addUserToMatch, addMovieEntry, updateCurrentUserMatch, getCurrentUserMatch,
-  rateMovie, getMovieRatings, getUserMovieRating, getUserTokens, getAllMovieVotes, getMovieVotes, checkWatchWindow, resetMovieVotes };
-
+module.exports = movieController;
