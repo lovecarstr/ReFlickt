@@ -237,8 +237,9 @@ getUserMovieRating: async (req, res) => {
 },
 
 rateMovie: async (req, res) => {
+  const { movieId, userId, recommendation, story, performances, directing, visuals, sound } = req.body;
+  
   try {
-    const { movieId, userId, recommendation, story, performances, directing, visuals, sound } = req.body;
 
     // We need to check that the movieID is a valid one here
    
@@ -261,6 +262,28 @@ rateMovie: async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+},
+
+updateMovieRating: async (req, res) => {
+  const { userId, movieId } = req.params;
+  const { story, performances, directing, visuals, sound, recommendation } = req.body;
+
+  try {
+    // Find and update the movie rating
+    const updatedRating = await MovieRating.findOneAndUpdate(
+      { userId, movieId },
+      { story, performances, directing, visuals, sound, recommendation },
+      { new: true }  // Return the updated document
+    );
+
+    if (!updatedRating) {
+      return res.status(404).json({ error: 'Rating not found' });
+    }
+
+    return res.status(200).json(updatedRating);
+  } catch (error) {
+    return res.status(500).json({ error: 'Error updating rating' });
   }
 },
 
