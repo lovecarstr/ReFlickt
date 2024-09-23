@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const User = require('../models/user');
+const Discussion = require('../models/discussion'); 
+
 const messageSchema = new Schema({
     content: {
         type: String,
-        required: true 
+        required: true, 
     },
     sender: {
-        userID: String,
-        required: true
+        type: Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
     },
-    discussionId: {
-        type: int,
-        required: true
-    }
-},{
-    timestamps: true //automatically creates timestamps. 
+}, {
+    timestamps: true // Automatically creates timestamps. 
 });
 
 const Message = mongoose.model("Message", messageSchema);

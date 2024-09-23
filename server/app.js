@@ -6,6 +6,7 @@ var cors = require('cors');
 var history = require('connect-history-api-fallback');
 var userRoutes = require('./routes/userRoutes');
 var movieRoutes = require('./routes/movieRoutes');
+var discussionRoutes = require('./routes/discussionRoutes');
 
 // Variables
 var mongoURI =
@@ -38,6 +39,7 @@ app.use(cors());
 // Controllers
 app.use('/api', userRoutes);
 app.use('/api', movieRoutes);
+app.use('/api', discussionRoutes);
 
 // Import routes
 app.get("/api", function (req, res) {
