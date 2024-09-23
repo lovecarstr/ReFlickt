@@ -1,24 +1,28 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Message = require('../models/message'); // Adjust the path accordingly
+
 const discussionSchema = new Schema({
     participants: [{        
-        type: String, // user ID    
+        type: Schema.Types.ObjectId, // Change to ObjectId for User references
+        ref: 'User', // Reference to the User model
         required: true    
     }],
-    movie:{
-        movieID: String,
+    movieId: {
+        type: Number,
         required: true,
     },
-    messages: 
-        [messageSchema], // May need import?
-
+    messages: [{
+        type: Schema.Types.ObjectId, 
+        ref: 'Message' 
+    }],
     discussionName: {        
         type: String,        
         default: 'Unnamed Discussion' 
     },
-},{
-    timestamps: true //automatically creates timestamps. 
+}, {
+    timestamps: true // Automatically creates timestamps. 
 });
 
 const Discussion = mongoose.model("Discussion", discussionSchema);
