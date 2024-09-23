@@ -7,13 +7,17 @@ const messageSchema = new Schema({
         required: true 
     },
     sender: {
-        userID: int,
+        userID: String,
+        required: true
+    },
+    discussionId: {
+        type: int,
         required: true
     }
 },{
     timestamps: true //automatically creates timestamps. 
 });
 
-const Message = mongoose.model('Message', messageSchema);
+const Message = mongoose.model("Message", messageSchema);
 
 module.exports = Message;
