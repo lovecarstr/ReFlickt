@@ -6,7 +6,7 @@ var cors = require("cors");
 var history = require("connect-history-api-fallback");
 var userRoutes = require("./routes/userRoutes");
 var authRoutes = require("./routes/authRoutes");
-require("dotenv").config();
+require('dotenv').config();
 
 // Variables
 var mongoURI =
