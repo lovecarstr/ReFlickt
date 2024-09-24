@@ -4,6 +4,47 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const sendEmail = require("../utils/sendEmail");
 
+const changePassword = async (req, res) => {
+  try {
+    // Extract user ID from the authenticated user (set by authMiddleware)
+    const userId = req.user.userId;
+    const { oldPassword, newPassword } = req.body;
+
+    // **Input Validation**
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Old password and new password are required." });
+    }
+
+    // **Find the User in the Database**
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // **Verify Old Password**
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Old password is incorrect." });
+    }
+
+    // **Hash the New Password**
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // **Update Password**
+    user.password = hashedPassword;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Password has been changed successfully." });
+  } catch (error) {
+    console.error("Change Password Error:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+};
+
 const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
@@ -89,4 +130,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { requestPasswordReset, resetPassword };
+module.exports = { requestPasswordReset, resetPassword, changePassword };
