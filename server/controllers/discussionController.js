@@ -39,7 +39,8 @@ const createNewDiscussion = async (req, res) => {
 };
 
 const createNewMessage = async (req, res) => {
-    const { userId, discussionId, content } = req.body;
+    const { discussionId } = req.params;
+    const { userId, content } = req.body;
 
     try {
         const userExists = await User.findById(userId);
