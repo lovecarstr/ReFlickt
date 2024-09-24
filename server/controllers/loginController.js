@@ -6,6 +6,12 @@ const logInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Input validation
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required." });
+    }
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
@@ -26,7 +32,7 @@ const logInUser = async (req, res) => {
     );
 
     // Send the token in response
-    res.status(200).json({ token });
+    res.status(200).json({ message: "Login successful.", token });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
