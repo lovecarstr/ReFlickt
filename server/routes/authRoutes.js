@@ -4,7 +4,7 @@ const { logInUser } = require("../controllers/loginController");
 const {
   requestPasswordReset,
   resetPassword,
-} = require("../controllers/passwordResetController"); // Import password reset functions
+} = require("../controllers/passwordController"); // Import password reset functions
 const router = express.Router();
 
 router.post("/register", registerUser);
