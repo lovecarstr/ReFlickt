@@ -6,6 +6,7 @@ const {
   resetPassword,
 } = require("../controllers/passwordController"); // Import password reset functions
 const { changePassword } = require("../controllers/passwordController");
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.post("/register", registerUser);
