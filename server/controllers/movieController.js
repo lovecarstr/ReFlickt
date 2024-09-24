@@ -273,15 +273,15 @@ rateMovie: async (req, res) => {
 },
 
 updateMovieRating: async (req, res) => {
-  const { userId, movieId } = req.params;
+  const { ratingId } = req.params; // Get ratingId from the route parameters
   const { story, performances, directing, visuals, sound, recommendation } = req.body;
 
   try {
-    // Find and update the movie rating
-    const updatedRating = await MovieRating.findOneAndUpdate(
-      { userId, movieId },
+    // Find and update the movie rating by ratingId
+    const updatedRating = await MovieRating.findByIdAndUpdate(
+      ratingId,
       { story, performances, directing, visuals, sound, recommendation },
-      { new: true }  // Return the updated document
+      { new: true } 
     );
 
     if (!updatedRating) {
@@ -290,7 +290,7 @@ updateMovieRating: async (req, res) => {
 
     return res.status(200).json(updatedRating);
   } catch (error) {
-    return res.status(500).json({ error: 'Error updating rating' });
+    return res.status(500).json({ error: 'Error updating rating', details: error.message });
   }
 },
 
@@ -544,7 +544,35 @@ deleteMovieRating: async (req, res) => {
   }
 },
 
+ deleteWatchedMovieFromUser: async (req, res) => {
+  const { userId, movieId } = req.params;
 
+  try {
+      // Find the user by ID
+      const user = await User.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Check if the movie exists in the watchedMovies array
+      const movieIndex = user.watchedMovies.indexOf(movieId);
+
+      if (movieIndex === -1) {
+          return res.status(404).json({ error: 'Movie not found in user\'s watched list' });
+      }
+
+      // Remove the movie from the watchedMovies array
+      user.watchedMovies.splice(movieIndex, 1);
+
+      // Save the updated user
+      await user.save();
+
+      res.status(200).json({ message: 'Movie removed from user\'s watched list successfully' });
+  } catch (error) {
+      res.status(500).json({ error: 'Error removing movie from watched list', details: error.message });
+  }
+}
 
 };
 
