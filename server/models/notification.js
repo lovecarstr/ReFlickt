@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const discussionSchema = new Schema({
-    Message: 
+const notificationSchema = new Schema({
+    message: {
+        Type: String
+    },
+    Discussion: {
+        type: Schema.Types.ObjectId,
+        ref: "Discussion",
+    },
 }, {
     timestamps: true // Automatically creates timestamps. 
 });
 
-const Discussion = mongoose.model("Discussion", discussionSchema);
+const Notification = mongoose.model("Notification", notificationSchema);
 
 module.exports = Discussion;
