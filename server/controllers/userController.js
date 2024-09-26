@@ -68,5 +68,21 @@ const getUserRatings = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const getUserNotifications = async (req, res) => {
+  const userId = req.params.userID;
+  try{
+    const user = await User.findById(userId).populate('notifications');; // Check if user exists
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } 
+    if (user.notifications.length === 0){
+      return res.status(200).json({ message: "No notifications found", notifications: [] });
+    }
 
-module.exports = { getAllUsers, createNewUser, getUserRatings };
+    res.status(200).json({notifications: user.notifications});
+  } catch(error){
+    res.status(500).json({error: error.message})
+  }
+}
+
+module.exports = { getAllUsers, createNewUser, getUserRatings, getUserNotifications };
