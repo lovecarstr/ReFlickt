@@ -9,6 +9,10 @@ const notificationSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Discussion',
     },
+    Status: {   //Status if the notifcation has been read. 
+        type: Boolean,
+        default: True
+    }
 }, {
     timestamps: true // Automatically creates timestamps. 
 });
