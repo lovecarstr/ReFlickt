@@ -119,7 +119,7 @@ const getDiscussion = async (req, res) => {
 
     try {
         // Fetch the discussion and populate the 'messages' and 'participants' fields
-        const discussion = await Discussion.findById(discussionId)
+        const discussion = await Discussion.findById({ _id: discussionId })
             .populate('messages')  
             .populate('participants', 'username'); 
 
@@ -138,7 +138,7 @@ const getLatestMessage = async (req, res) => {
 
     try {
         // Fetch the discussion by ID and populate the 'messages' field
-        const discussion = await Discussion.findById(discussionId)
+        const discussion = await Discussion.findById({ _id: discussionId })
             .select('messages') // Only select the 'messages' field
             .populate({
                 path: 'messages',
@@ -164,7 +164,7 @@ const renameDiscussion = async (req, res) => {
     const { newName } = req.body;
 
     try {
-        const discussion = await Discussion.findById(discussionId);
+        const discussion = await Discussion.findById({ _id: discussionId });
 
         if (!discussion) {
             return res.status(404).json({ message: "Discussion not found" });
@@ -201,5 +201,19 @@ const deleteDiscussion = async (req, res) => {
         res.status(500).json({message: "Error deleting message"})
     }
 }
+const updateMessage = async (req, res) => {
+    const {messageId, sender, newContent} = req.body; 
+    try{
+        const updatedMessage = await Message.findByIdAndUpdate({ sender, newContent },
+            { new: true } )
+        if (!updatedMessage) {
+            return res.status(404).json({ error: 'Message not found' });
+        }
+        res.status(200).json ({message: "message updated", updatedMessage})
+        
+    } catch(error){
+        res.status(500).json ({error: error.message})
+    }
+}
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage};
