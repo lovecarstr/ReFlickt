@@ -7,7 +7,7 @@ const notificationSchema = new Schema({
     },
     Discussion: {
         type: Schema.Types.ObjectId,
-        ref: "Discussion",
+        ref: 'Discussion',
     },
 }, {
     timestamps: true // Automatically creates timestamps. 
