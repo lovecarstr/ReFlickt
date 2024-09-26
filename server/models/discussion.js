@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Message = require('../models/message'); // Adjust the path accordingly
+const Message = require('../models/message'); 
 
 const discussionSchema = new Schema({
     participants: [{        
