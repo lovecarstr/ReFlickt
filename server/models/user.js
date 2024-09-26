@@ -35,7 +35,12 @@ const userSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: 'MovieMatch',
         default: null 
-    }
+    },
+    notifications: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Notification',
+      default: null
+    }]
 }, {
     timestamps: true 
 });
