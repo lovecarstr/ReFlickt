@@ -3,15 +3,16 @@ const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema({
     message: {
-        Type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Message',
     },
-    Discussion: {
+    discussion: {
         type: Schema.Types.ObjectId,
         ref: 'Discussion',
     },
-    Status: {   //Status if the notifcation has been read. 
+    status: {   //Status if the notifcation has been read. 
         type: Boolean,
-        default: True
+        default: true
     }
 }, {
     timestamps: true // Automatically creates timestamps. 
@@ -19,4 +20,4 @@ const notificationSchema = new Schema({
 
 const Notification = mongoose.model("Notification", notificationSchema);
 
-module.exports = Discussion;
+module.exports = Notification;

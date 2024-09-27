@@ -85,4 +85,34 @@ const getUserNotifications = async (req, res) => {
   }
 }
 
-module.exports = { getAllUsers, createNewUser, getUserRatings, getUserNotifications };
+const markNotificationsAsRead = async (req, res) => {
+  const {discussionId, userId} = req.body;
+  try{
+    const user = await User.findById({_id: userId})
+    if (!user) {
+      res.status(404).json({message: "No user was found"})
+    } 
+
+    const notifications = user.notifications; 
+    if (notifications.length === 0 || !notifications){
+      res.status(404).json({message: "No nofications found"})
+    }
+
+    discussionNotifications = notifications.filter(
+      (notifications) => notifications.discussionId.toString() === discussionId
+    );
+    if (discussionNotifications.length === 0 || !discussionNotifications){
+      res.status(404).json({message: "No nofications found for this discussion"})
+    }
+
+    for (const notification of discussionNotifications){
+      notification.status = false;
+      await notification.save(); 
+    }
+    res.status(200).json({message: "notification successfully markes as read"})
+  } catch (error){
+    res.status(500).json({ error: 'Error marking notifications as read', details: error.message });
+  }
+}
+
+module.exports = { getAllUsers, createNewUser, getUserRatings, getUserNotifications, markNotificationsAsRead};

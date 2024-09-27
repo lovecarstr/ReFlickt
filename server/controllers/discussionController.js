@@ -43,15 +43,15 @@ const createNewMessage = async (req, res) => {
     const { userId, content } = req.body;
 
     try {
-        const userExists = await User.findById(userId);
-        if (!userExists) {
+        const sendingUser = await User.findById(userId);
+        if (!sendingUser) {
             return res.status(404).json({ error: 'Sender not found' });
         }
 
         const newMessage = new Message({
             content: content,
             sender: userId, 
-        });
+        }); 
 
         await newMessage.save();
 
@@ -60,7 +60,27 @@ const createNewMessage = async (req, res) => {
         if (!discussion) {
             return res.status(404).json({ error: 'Discussion not found' });
         }
+        const notification = new Notification({
+            message: newMessage,
+            discussion: discussionId,
+        })
+        await notification.save();
 
+        if (discussion.firstUserId.toString() === sendingUser._id.toString()) {
+            const secondUser = await User.findById(discussion.secondUserId);
+            if (secondUser) {
+                secondUser.notifications.push(newMessage._id);
+                await secondUser.save();
+            }
+        } else if (discussion.secondUserId.toString() === sendingUser._id.toString()) {
+            const firstUser = await User.findById(discussion.firstUserId);
+            if (firstUser) {
+                firstUser.notifications.push(newMessage._id);
+                await firstUser.save();
+            }
+        } else {
+            return res.status(404).json({ message: 'User was not in the discussion' });
+        }
         discussion.messages.push(newMessage._id); // Push only the message ID if messages are referenced
         await discussion.save();
 
