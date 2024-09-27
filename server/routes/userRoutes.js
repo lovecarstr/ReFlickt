@@ -9,11 +9,8 @@ const router = express.Router();
 // Public route (no authentication required)
 router.post("/createNewUser", createNewUser);
 
-// Apply authMiddleware to all routes defined after this point
-router.use(authMiddleware);
-
 // Protected routes (authentication required)
-router.get("/getAllUsers", getAllUsers);
+router.get("/getAllUsers", getAllUsers); // Can add authMiddleware as argument to make protected.
 
 // Add more protected routes here
 // router.get("/users/profile", getUserProfile); should we include a method like this?

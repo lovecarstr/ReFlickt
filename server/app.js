@@ -33,8 +33,8 @@ app.use(morgan("dev"));
 app.use(cors());
 app.options("*", cors());
 
-app.use("/auth", authRoutes);
 app.use("/api", userRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/api", function (req, res) {
   res.json({ message: "Welcome to your DIT342 backend ExpressJS project!" });
