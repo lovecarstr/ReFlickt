@@ -35,6 +35,14 @@ const userSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: 'MovieMatch',
         default: null 
+    },
+    lastMovieRoll: {
+      type: Date,
+      default: null
+    },
+    currentMovieRoll: {
+      type: Number,
+      default: null
     }
 }, {
     timestamps: true 
