@@ -122,7 +122,7 @@ addUserToMatch: async (req, res) => {
 
 // Spends tokens to add movies to the movieEntries collection
 addMovieEntry: async (req, res) => {
-    const { userId, movieId, tokens } = req.body; 
+    const { userId, movieId, movieTitle, moviePoster, tokens } = req.body; 
 
     try {
         const user = await User.findById(userId);
@@ -134,7 +134,10 @@ addMovieEntry: async (req, res) => {
 
         for (let i = 0; i < tokens; i++) {
             const entry = new MovieEntry({
-                movieId: movieId  
+                movieId: movieId,
+                movieTitle: movieTitle,
+                moviePoster: moviePoster
+
             });
             await entry.save();  // Save each entry in the database
             user.tokens -= 1; // Decrement tokens by one for each vote
