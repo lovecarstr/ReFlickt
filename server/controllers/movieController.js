@@ -346,9 +346,17 @@ getUserTokens: async (req, res) => {
 getAllMovieVotes: async (req, res) => {
   try {
     const movieVotes = await MovieEntry.aggregate([
-      { $group: { _id: '$movieId', voteCount: { $sum: 1 } } }, // Group by movieId and count occurrences
+      { $group: { _id: { movieId: '$movieId', movieTitle: '$movieTitle', moviePoster: '$moviePoster' }, voteCount: { $sum: 1 } } }, // Group by movieId, movieTitle, and moviePoster
       { $sort: { voteCount: -1 } }, // Sort descending by vote count
-      { $project: { movieId: '$_id', voteCount: 1, _id: 0 } } // Rename _id to movieId and remove the original _id field
+      {
+        $project: {
+          movieId: '$_id.movieId', // Project movieId from the group
+          movieTitle: '$_id.movieTitle', // Project movieTitle from the group
+          moviePoster: '$_id.moviePoster', // Project moviePoster from the group
+          voteCount: 1,
+          _id: 0 // Remove the original _id field
+        }
+      }
     ]);
 
     return res.status(200).json(movieVotes);
