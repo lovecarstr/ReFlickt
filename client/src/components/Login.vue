@@ -39,7 +39,7 @@ export default {
       localStorage.setItem('authToken', token);
       this.$store.commit('setToken', token); // Commits a mutation, which updates the state. must be synchronous
       await this.$store.dispatch('fetchUser');
-      this.$router.push('/'); // Redirect to home or dashboard
+      this.$router.push('/dashboard'); // Redirect to home or dashboard
     } catch (error) {
       this.errorMessage = 'Invalid email or password.';
       console.error(error);
