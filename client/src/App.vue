@@ -1,12 +1,32 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <nav>
       <router-link to="/">Home</router-link>
-    </div>
-    <!-- Render the content of the current page view -->
-    <router-view/>
+      <router-link v-if="!loggedIn" to="/login">Login</router-link>
+      <router-link v-if="!loggedIn" to="/register">Register</router-link>
+      <logout-button v-if="loggedIn"></logout-button>
+    </nav>
+    <router-view />
   </div>
 </template>
+<script>
+import { mapState } from 'vuex';
+import LogoutButton from '@/components/LogoutButton.vue';
+import { Api } from '@Api';
+
+export default {
+  components: {
+    LogoutButton,
+  },
+  computed: {
+    ...mapState(['token']),
+    loggedIn() {
+      return !!this.token;
+    },
+  },
+};
+
+</script>
 
 <style>
 #app {

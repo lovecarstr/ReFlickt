@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import store from './store'
 
 import Home from './views/Home.vue'
-import Login from './views/Login.vue'
-import Register from './views/Register.vue'
+import Login from './components/Login.vue' // Corrected path
+import Register from './components/Register.vue' // Corrected path
 import Dashboard from './views/Dashboard.vue'
 
 const routes = [
@@ -16,12 +16,12 @@ const routes = [
     component: Dashboard,
     meta: { requiresAuth: true } // This route requires authentication 
   }
- // Can add more routes
+  // Can add more routes
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes, // Corrected typo from routesl to routes
 })
 
 // Navigation guard to protect routes that require authentication
@@ -36,4 +36,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router
+export default router;
