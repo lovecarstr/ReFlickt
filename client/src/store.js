@@ -1,4 +1,5 @@
 import { createStore } from 'vuex' // No need to import 'Vue' itself
+import { Api } from '@Api';
 
 export default createStore({
   state: {
@@ -23,7 +24,7 @@ export default createStore({
       if (!this.state.token) return
 
       try {
-        const response = await Api.get('/users/me/profile') // Assuming an API endpoint
+        const response = await Api.get('/users/profile') // Assuming an API endpoint
         commit('setUser', response.data.user)
       } catch (error) {
         console.error('Error fetching user:', error)
