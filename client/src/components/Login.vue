@@ -19,5 +19,35 @@
 <script>
 import { Api } from '@Api';
 
-
+export default {
+  name: 'Login',
+  data() {
+    return {
+      email: '',
+      password: '',
+      errorMessage: '',
+    };
+  },
+  methods: {
+    async loginUser() {
+      try {
+        const response = await Api.post('/auth/login', {
+          email: this.email,
+          password: this.password,
+        });
+        const token = response.data.token;
+        localStorage.setItem('authToken', token);
+        // Optionally, fetch user info and store it
+        this.$router.push('/'); // Redirect to home or dashboard
+      } catch (error) {
+        this.errorMessage = 'Invalid email or password.';
+        console.error(error);
+      }
+    },
+  },
+};
 </script>
+
+<style scoped>
+/* Add styles */
+</style>
