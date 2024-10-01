@@ -37,6 +37,7 @@ router.patch('/movies/matches/:matchId', movieController.addUserToMatch); // Add
 
 // DELETE (individual)
 router.delete('/movies/ratings/:ratingId', movieController.deleteMovieRating);
+// Could add DELETE individual entry which removes one entry (even if not used in frontend)
 
 // POST (relationship, example: /cars/:car_id/drivers)
 // Exists in discussionRoutes
