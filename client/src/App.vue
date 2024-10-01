@@ -4,6 +4,7 @@
       <router-link to="/">Home</router-link>
       <router-link v-if="!loggedIn" to="/login">Login</router-link>
       <router-link v-if="!loggedIn" to="/register">Register</router-link>
+      <router-link v-if="loggedIn" to="/dashboard">Dashboard</router-link>
       <logout-button v-if="loggedIn"></logout-button>
     </nav>
     <router-view />
