@@ -43,11 +43,17 @@ const userSchema = new Schema(
     currentMovieRoll: {
       type: Number,
       default: null
-    }
+    },
+      passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
+    },
 }, {
     timestamps: true 
 });
-
+ 
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
