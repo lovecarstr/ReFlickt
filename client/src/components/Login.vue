@@ -29,22 +29,23 @@ export default {
     };
   },
   methods: {
-    async loginUser() {
-      try {
-        const response = await Api.post('/auth/login', {
-          email: this.email,
-          password: this.password,
-        });
-        const token = response.data.token;
-        localStorage.setItem('authToken', token);
-        // Optionally, fetch user info and store it
-        this.$router.push('/'); // Redirect to home or dashboard
-      } catch (error) {
-        this.errorMessage = 'Invalid email or password.';
-        console.error(error);
-      }
-    },
+  async loginUser() {
+    try {
+      const response = await Api.post('/auth/login', {
+        email: this.email,
+        password: this.password,
+      });
+      const token = response.data.token;
+      localStorage.setItem('authToken', token);
+      this.$store.commit('setToken', token); // Commits a mutation, which updates the state. must be synchronous
+      await this.$store.dispatch('fetchUser');
+      this.$router.push('/'); // Redirect to home or dashboard
+    } catch (error) {
+      this.errorMessage = 'Invalid email or password.';
+      console.error(error);
+    }
   },
+},
 };
 </script>
 
