@@ -36,7 +36,15 @@ const userSchema = new Schema(
         ref: 'MovieMatch',
         default: null 
     },
-    passwordResetToken: {
+    lastMovieRoll: {
+      type: Date,
+      default: null
+    },
+    currentMovieRoll: {
+      type: Number,
+      default: null
+    },
+      passwordResetToken: {
       type: String,
     },
     passwordResetExpires: {
