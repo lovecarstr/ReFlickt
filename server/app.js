@@ -1,33 +1,34 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var morgan = require('morgan');
-var path = require('path');
-var cors = require('cors');
-var history = require('connect-history-api-fallback');
-var userRoutes = require('./routes/userRoutes');
+var express = require("express");
+var mongoose = require("mongoose");
+var morgan = require("morgan");
+var path = require("path");
+var cors = require("cors");
+var history = require("connect-history-api-fallback");
+var userRoutes = require("./routes/userRoutes");
+var authRoutes = require("./routes/authRoutes");
 var movieRoutes = require('./routes/movieRoutes');
 var discussionRoutes = require('./routes/discussionRoutes');
+require("dotenv").config();
 
-// Variables
 var mongoURI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/animalDevelopmentDB";
 var port = process.env.PORT || 3000;
 
-// Connect to MongoDB
 mongoose
-  .connect(mongoURI)
-  .catch(function (err) {
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log(`Connected to MongoDB with URI: ${mongoURI}`);
+  })
+  .catch((err) => {
     console.error(`Failed to connect to MongoDB with URI: ${mongoURI}`);
     console.error(err.stack);
     process.exit(1);
-  })
-  .then(function () {
-    console.log(`Connected to MongoDB with URI: ${mongoURI}`); // mistake when forward porting
   });
 
-// Create Express app
 var app = express();
-// Parse requests of content-type 'application/json'
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // HTTP request logger
@@ -35,13 +36,14 @@ app.use(morgan("dev"));
 // Enable cross-origin resource sharing for frontend must be registered before api
 app.options("*", cors());
 app.use(cors());
+app.options("*", cors());
 
 // Controllers
 app.use('/api', userRoutes);
 app.use('/api', movieRoutes);
 app.use('/api', discussionRoutes);
+app.use("/auth", authRoutes);
 
-// Import routes
 app.get("/api", function (req, res) {
   res.json({ message: "Welcome to your DIT342 backend ExpressJS project!" });
 });
