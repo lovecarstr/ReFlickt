@@ -1,6 +1,7 @@
 <template>
-  <div>
-      <MovieEntries />
+  <div class="home-container">
+    <MovieSearch />
+    <MovieEntries />
   </div>
 </template>
 
@@ -8,11 +9,13 @@
 // @ is an alias to /src
 // import { Api } from '@/Api'
 import MovieEntries from '@/components/MovieEntryList.vue' // Import MovieEntries component
+import MovieSearch from '@/components/MovieSearch.vue'
 
 export default {
   name: 'home',
   components: {
-    MovieEntries // Register MovieEntries component
+    MovieEntries,
+    MovieSearch
   },
   data() {
     return {
@@ -22,8 +25,11 @@ export default {
 }
 </script>
 
-<style>
-.btn_message {
-  margin-bottom: 1em;
+<style scoped>
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 </style>
