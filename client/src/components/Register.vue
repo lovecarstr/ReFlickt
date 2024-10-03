@@ -38,7 +38,13 @@
                   class="form-control"
                   placeholder="Enter password"
                   required
+                  @input="checkPasswordStrength"
                 />
+                <div class="mt-1">
+                  <small :class="passwordStrengthClass">{{
+                    passwordStrengthText
+                  }}</small>
+                </div>
               </div>
               <div class="mb-3">
                 <label for="confirmPassword" class="form-label"
@@ -82,13 +88,31 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
-      errorMessage: ''
+      errorMessage: '',
+      passwordStrengthText: '',
+      passwordStrengthClass: ''
     }
   },
   methods: {
     isValidEmail(email) {
       const re = /\S+@\S+\.\S+/
       return re.test(email)
+    },
+    checkPasswordStrength() {
+      const length = this.password.length
+      if (length === 0) {
+        this.passwordStrengthText = ''
+        this.passwordStrengthClass = ''
+      } else if (length < 6) {
+        this.passwordStrengthText = 'Weak'
+        this.passwordStrengthClass = 'text-danger'
+      } else if (length < 10) {
+        this.passwordStrengthText = 'Medium'
+        this.passwordStrengthClass = 'text-warning'
+      } else {
+        this.passwordStrengthText = 'Strong'
+        this.passwordStrengthClass = 'text-success'
+      }
     },
     async registerUser() {
       // Check if email is valid
