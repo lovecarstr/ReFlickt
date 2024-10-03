@@ -146,13 +146,16 @@ export default {
 <style scoped>
 .card {
   border: none;
-  border-radius: 10px;
-  background-color: var(--color-lightest-blue);
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.card-body {
+  padding: 2rem;
 }
 
 .btn-primary {
-  background-color: var(--color-medium-blue);
-  border-color: var(--color-medium-blue);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-primary:hover {
@@ -160,8 +163,9 @@ export default {
   border-color: var(--color-medium-dark-blue);
 }
 
-.form-control {
-  border-radius: 5px;
+.form-control:focus {
+  border-color: var(--color-light-blue);
+  box-shadow: 0 0 5px rgba(0, 150, 199, 0.5);
 }
 
 h2 {
