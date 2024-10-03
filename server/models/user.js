@@ -40,11 +40,25 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Notification',
       default: null
-    }]
+    }],
+    lastMovieRoll: {
+      type: Date,
+      default: null
+    },
+    currentMovieRoll: {
+      type: Number,
+      default: null
+    },
+      passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
+    },
 }, {
     timestamps: true 
 });
-
+ 
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

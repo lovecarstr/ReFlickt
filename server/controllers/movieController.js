@@ -11,6 +11,7 @@ const MOVIE_WATCH_WINDOW = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed to be created before movie entries are deleted
 const HOURS_BETWEEN_TOKEN_REFILLS = 24;
 const DAILY_TOKEN_AMOUNT = 5;
+const TIME_BETWEEN_ROLLS = 24;
 
 
 const movieController = {
@@ -18,39 +19,70 @@ const movieController = {
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
 getRandomMovie: async (req, res) => {
-    const { userId } = req.params; 
+  const { userId } = req.body; 
 
-    try {
-        // Check for open matches
-        const openMatch = await MovieMatch.findOne({ status: 'Open' });
+  try {
+      // Find the user and update the lastMovieRoll field
+      const user = await User.findById(userId);
 
-        if (openMatch) {
-            // Check if the user has watched the movie
-            const user = await User.findById(userId);
-            const watchedMovies = user.watchedMovies;
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
 
-            if (!watchedMovies.includes(openMatch.movieId)) {
-                // Return the movie ID and match ID
-                return res.status(200).json({
-                    movieId: openMatch.movieId,
-                    matchId: openMatch._id
-                });
-            }
-        }
+      // Check if 24 hours have passed since the last roll
+      const lastRoll = user.lastMovieRoll;
+      const now = new Date();
 
-        // Fallback: No open matches or all matches are watched by the user
-        const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]); // Randomly select one entry
+      if (lastRoll) {
+          const timeSinceLastRoll = (now - new Date(lastRoll)) / (1000 * 60 * 60); // Convert ms to hours
 
-        if (randomEntry.length > 0) {
-            return res.status(200).json({ movieId: randomEntry[0].movieId }); // Return only movieId
-        }
+          if (timeSinceLastRoll < TIME_BETWEEN_ROLLS) {
+              const timeRemaining = TIME_BETWEEN_ROLLS - timeSinceLastRoll;
+              return res.status(403).json({
+                  message: `You need to wait ${timeRemaining.toFixed(2)} more hours before rolling again.`
+              });
+          }
+      }
 
-        return res.status(404).json({ message: 'No movies available' }); // Handle case where no movie is found
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Server error' }); // Handle server errors
-    }
+      // Check for open matches
+      const openMatch = await MovieMatch.findOne({ status: 'Open' });
+
+      if (openMatch) {
+          const watchedMovies = user.watchedMovies;
+
+          if (!watchedMovies.includes(openMatch.movieId)) {
+              // Update the lastMovieRoll to the current date/time
+              user.lastMovieRoll = new Date();
+              user.currentMovieRoll = openMatch.movieId;
+              await user.save();
+
+              // Return the movie ID and match ID
+              return res.status(200).json({
+                  movieId: openMatch.movieId,
+                  matchId: openMatch._id
+              });
+          }
+      }
+
+      // Fallback: No open matches or all matches are watched by the user
+      const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]);
+
+      if (randomEntry.length > 0) {
+          // Update the lastMovieRoll to the current date/time
+          user.lastMovieRoll = new Date();
+          user.currentMovieRoll = randomEntry[0].movieId;
+          await user.save();
+
+          return res.status(200).json({ movieId: randomEntry[0].movieId });
+      }
+
+      return res.status(404).json({ message: 'No movies available' });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Server error' });
+  }
 },
+
 
 // Creates a new, open match for a user with a movie.
 createNewMatch: async (req, res) => {
@@ -122,7 +154,7 @@ addUserToMatch: async (req, res) => {
 
 // Spends tokens to add movies to the movieEntries collection
 addMovieEntry: async (req, res) => {
-    const { userId, movieId, tokens } = req.body; 
+    const { userId, movieId, movieTitle, moviePoster, tokens } = req.body; 
 
     try {
         const user = await User.findById(userId);
@@ -134,7 +166,10 @@ addMovieEntry: async (req, res) => {
 
         for (let i = 0; i < tokens; i++) {
             const entry = new MovieEntry({
-                movieId: movieId  
+                movieId: movieId,
+                movieTitle: movieTitle,
+                moviePoster: moviePoster
+
             });
             await entry.save();  // Save each entry in the database
             user.tokens -= 1; // Decrement tokens by one for each vote
