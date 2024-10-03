@@ -9,6 +9,7 @@ import '@/assets/styles/variables.css'
 // Import Bootstrap CSS files
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
+import 'bootstrap';
 
 // Import BootstrapVueNext plugin
 import { createBootstrap } from 'bootstrap-vue-next'
