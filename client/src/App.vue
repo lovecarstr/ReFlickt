@@ -13,7 +13,7 @@
 <script>
 import { mapState } from 'vuex';
 import LogoutButton from '@/components/LogoutButton.vue';
-import { Api } from '@Api';
+import { Api } from '@Api'; // /@Api?
 
 export default {
   components: {
@@ -30,11 +30,42 @@ export default {
 </script>
 
 <style>
+@import '@/assets/styles/variables.css';
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Arial', Helvetica, sans-serif;
   text-align: center;
-  color: #2c3e50;
+  color: var(--color-dark-blue);
+}
+
+nav {
+  background-color: var(--color-medium-blue);
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: var(--color-lightest-blue);
+}
+
+nav a.router-link-exact-active {
+  border-bottom: 2px solid var(--color-lightest-blue);
+}
+
+logout-button {
+  margin-left: 15px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-lightest-blue);
 }
 </style>
