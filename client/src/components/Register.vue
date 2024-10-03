@@ -41,7 +41,9 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <label for="confirmPassword" class="form-label"
+                  >Confirm Password</label
+                >
                 <input
                   type="password"
                   id="confirmPassword"
@@ -51,8 +53,12 @@
                   required
                 />
               </div>
-              <button type="submit" class="btn btn-primary w-100">Register</button>
-              <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
+              <button type="submit" class="btn btn-primary w-100">
+                Register
+              </button>
+              <p v-if="errorMessage" class="text-danger mt-3">
+                {{ errorMessage }}
+              </p>
             </form>
             <p class="mt-3 text-center">
               Already have an account?
@@ -66,7 +72,7 @@
 </template>
 
 <script>
-import { Api } from '@/Api';
+import { Api } from '@/Api'
 
 export default {
   name: 'Register',
@@ -76,29 +82,41 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
-      errorMessage: '',
-    };
+      errorMessage: ''
+    }
   },
   methods: {
+    isValidEmail(email) {
+      const re = /\S+@\S+\.\S+/
+      return re.test(email)
+    },
     async registerUser() {
-      if (this.password !== this.confirmPassword) {
-        this.errorMessage = 'Passwords do not match.';
-        return;
+      // Check if email is valid
+      if (!this.isValidEmail(this.email)) {
+        this.errorMessage = 'Please enter a valid email address.'
+        return
       }
+
+      // Check if passwords match
+      if (this.password !== this.confirmPassword) {
+        this.errorMessage = 'Passwords do not match.'
+        return
+      }
+
       try {
         await Api.post('/auth/register', {
           username: this.username,
           email: this.email,
-          password: this.password,
-        });
-        this.$router.push('/login'); // Redirect to login after successful registration
+          password: this.password
+        })
+        this.$router.push('/login') // Redirect to login after successful registration
       } catch (error) {
-        this.errorMessage = 'Registration failed. Please try again.';
-        console.error(error);
+        this.errorMessage = 'Registration failed. Please try again.'
+        console.error(error)
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
