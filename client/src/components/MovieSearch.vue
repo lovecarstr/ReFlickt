@@ -24,7 +24,7 @@
             class="img-fluid movie-poster me-2"
             alt="Movie Poster"
           />
-          <span>{{ movie.title }} ({{ movie.year }})</span> <!-- Display title and year -->
+          <span>{{ movie.title }} ({{ movie.year }})</span>
         </div>
       </div>
       <div v-else-if="showDropdown" class="mt-3">No results found</div>
@@ -39,7 +39,7 @@ export default {
     return {
       query: '',
       movies: [],
-      showDropdown: false // Control dropdown visibility
+      showDropdown: false
     }
   },
   methods: {
@@ -47,18 +47,18 @@ export default {
       if (this.query.trim().length > 0) {
         try {
           const response = await Api.get('/movies/search', {
-            params: { title: this.query } // Pass the query to the API
+            params: { title: this.query }
           })
-          this.movies = response.data || [] // Assign to movies directly
-          this.showDropdown = this.movies.length > 0 // Show dropdown if there are movies
+          this.movies = response.data || []
+          this.showDropdown = this.movies.length > 0
         } catch (error) {
           console.error('Error fetching movies:', error)
-          this.movies = [] // Clear movies on error
-          this.showDropdown = false // Hide dropdown on error
+          this.movies = []
+          this.showDropdown = false
         }
       } else {
-        this.movies = [] // Clear results if query is empty
-        this.showDropdown = false // Hide dropdown
+        this.movies = []
+        this.showDropdown = false
       }
     },
     hideDropdown() {
@@ -68,8 +68,8 @@ export default {
       }, 200)
     },
     selectMovie(movie) {
-      this.query = movie.title // Populate input with selected movie title
-      this.showDropdown = false // Hide dropdown after selection
+      this.query = movie.title
+      this.showDropdown = false
       this.$router.push({ name: 'MoviePage', params: { movieId: movie.movieId } })
     }
   }
@@ -78,38 +78,38 @@ export default {
 
 <style scoped>
 .search-container {
-  position: relative; /* Keep this to position the dropdown absolutely */
-  width: 100%; /* Full width for the container */
-  max-width: 600px; /* Optional: adjust based on your layout */
+  position: relative;
+  width: 100%;
+  max-width: 600px;
 }
 
 .dropdown-list {
-  background-color: white; /* Background color of the dropdown */
-  border: 1px solid #ccc; /* Border to define the dropdown area */
-  border-radius: 4px; /* Rounded corners */
-  max-height: 300px; /* Maximum height for the dropdown */
-  overflow-y: auto; /* Enable vertical scrolling if needed */
-  z-index: 1000; /* Ensure dropdown is above other components */
-  width: 100%; /* Full width of the search container */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  margin-top: 5px; /* Space between the input and dropdown */
-  position: absolute; /* Position the dropdown absolutely */
-  top: 100%; /* Position directly below the input */
-  left: 0; /* Align with the left edge of the container */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  position: absolute;
+  top: 100%;
+  left: 0;
 }
 
 .dropdown-item {
-  padding: 10px; /* Padding for dropdown items */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s; /* Smooth transition for hover effect */
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .dropdown-item:hover {
-  background-color: #f0f0f0; /* Light background on hover */
+  background-color: #f0f0f0;
 }
 
 .movie-poster {
-  width: 40px; /* Set desired width for posters */
-  height: auto; /* Maintain aspect ratio */
+  width: 40px;
+  height: auto;
 }
 </style>
