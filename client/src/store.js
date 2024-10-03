@@ -1,5 +1,5 @@
-import { createStore } from 'vuex' // No need to import 'Vue' itself
-import { Api } from '@Api';
+import { createStore } from 'vuex'
+import { Api } from '@Api'
 
 export default createStore({
   state: {
@@ -13,6 +13,7 @@ export default createStore({
     },
     clearToken(state) {
       state.token = null
+      state.user = null
       localStorage.removeItem('authToken') // Remove token from localStorage
     },
     setUser(state, user) {

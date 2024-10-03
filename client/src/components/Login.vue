@@ -1,23 +1,45 @@
 <template>
-    <div>
-        <h1>Login </h1>
-        <form @submit.prevent="loginUser">
-        <div>
-            <label>Email:</label>
-            <input type="email" v-model="email" required />
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg">
+          <div class="card-body">
+            <h2 class="text-center mb-4">Login</h2>
+            <form @submit.prevent="loginUser">
+              <div class="mb-3">
+                <label class="form-label">Email address</label>
+                <input
+                  type="email"
+                  v-model="email"
+                  class="form-control"
+                  placeholder="Enter email"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input
+                  type="password"
+                  v-model="password"
+                  class="form-control"
+                  placeholder="Enter password"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Login</button>
+              <p v-if="errorMessage" class="text-danger mt-3">
+                {{ errorMessage }}
+              </p>
+            </form>
+          </div>
         </div>
-        <div>
-            <label>Password:</label>
-            <input type="password" v-model="password" required />
-        </div>
-            <button type="submit">Login</button>
-            <p v-if="errorMessage">{{ errorMessage }}</p>
-        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import { Api } from '@Api';
+import { Api } from '@/Api'
 
 export default {
   name: 'Login',
@@ -25,30 +47,57 @@ export default {
     return {
       email: '',
       password: '',
-      errorMessage: '',
-    };
-  },
-  methods: {
-  async loginUser() {
-    try {
-      const response = await Api.post('/auth/login', {
-        email: this.email,
-        password: this.password,
-      });
-      const token = response.data.token;
-      localStorage.setItem('authToken', token);
-      this.$store.commit('setToken', token); // Commits a mutation, which updates the state. must be synchronous
-      await this.$store.dispatch('fetchUser');
-      this.$router.push('/dashboard'); // Redirect to home or dashboard
-    } catch (error) {
-      this.errorMessage = 'Invalid email or password.';
-      console.error(error);
+      errorMessage: ''
     }
   },
-},
-};
+  methods: {
+    async loginUser() {
+      try {
+        const response = await Api.post('/auth/login', {
+          email: this.email,
+          password: this.password
+        })
+        const token = response.data.token
+        localStorage.setItem('authToken', token)
+        this.$store.commit('setToken', token)
+        await this.$store.dispatch('fetchUser')
+        this.$router.push('/dashboard') // Redirect to dashboard after login
+      } catch (error) {
+        this.errorMessage = 'Invalid email or password.'
+        console.error(error)
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
-/* Add styles */
+.card {
+  border: none;
+  border-radius: 10px;
+  background-color: var(--color-lightest-blue);
+}
+
+.btn-primary {
+  background-color: var(--color-medium-blue);
+  border-color: var(--color-medium-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-medium-dark-blue);
+  border-color: var(--color-medium-dark-blue);
+}
+
+.form-control {
+  border-radius: 5px;
+}
+
+h2 {
+  color: var(--color-dark-blue);
+}
+
+.text-danger {
+  font-weight: bold;
+}
+
 </style>

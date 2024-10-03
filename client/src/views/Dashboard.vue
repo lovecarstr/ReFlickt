@@ -1,24 +1,28 @@
 <template>
-    <div>
-        <h1>Welcome, {{ user.username }}!</h1>
-        <p>This is your dashboard.</p>
-        <!-- Add more info as we notice we need. -->
+  <div>
+    <div v-if="user">
+      <h1>Welcome, {{ user.username }}!</h1>
+      <!-- Rest of your component -->
     </div>
+    <div v-else>
+      <p>Loading...</p>
+    </div>
+  </div>
 </template>
 
 <script>
-import { Api } from '@Api';
+import { Api } from '@Api'
 import { mapState } from 'vuex'
 
 export default {
   name: 'Dashboard',
   data() {
     return {
-      recentActivities: [], // Can implement this as QoL feature
+      recentActivities: [] // Can implement this as QoL feature
     }
   },
   computed: {
-    ...mapState(['user']),
+    ...mapState(['user'])
   },
   async created() {
     try {
@@ -27,9 +31,8 @@ export default {
     } catch (error) {
       console.error('Error fetching recent activities:', error)
     }
-  },
+  }
 }
-
 </script>
 
 <style scoped>
