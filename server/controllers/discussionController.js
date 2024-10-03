@@ -32,28 +32,6 @@ const createNewDiscussion = async (req, res) => {
         
         const savedDiscussion = await newDiscussion.save(); 
 
-        firstUser = await User.findById({_id: movieMatch.firstUserId})
-        secondUser = await User.findById({_id: movieMatch.secondUserId})
-
-        newDiscussionMessage = new Message ({
-            content: content,
-            sender: userId, 
-        })
-
-        await newDiscussionMessage.save();
-
-        const notification = new Notification({
-            message: newDiscussionMessage,
-            discussion: discussionId,
-        })
-        await notification.save();
-        secondUser.notifications.push(notification._id);
-        firstUser.notifications.push(notification._id);
-
-        secondUser.save();
-        firstUser.save();
-        
-
         res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new discussion', details: error.message });
@@ -82,31 +60,11 @@ const createNewMessage = async (req, res) => {
         if (!discussion) {
             return res.status(404).json({ error: 'Discussion not found' });
         }
-        const notification = new Notification({
-            message: newMessage,
-            discussion: discussionId,
-        })
-        await notification.save();
 
-        if (discussion.firstUserId.toString() === sendingUser._id.toString()) {
-            const secondUser = await User.findById(discussion.secondUserId);
-            if (secondUser) {
-                secondUser.notifications.push(notification._id);
-                await secondUser.save();
-            }
-        } else if (discussion.secondUserId.toString() === sendingUser._id.toString()) {
-            const firstUser = await User.findById(discussion.firstUserId);
-            if (firstUser) {
-                firstUser.notifications.push(notification._id);
-                await firstUser.save();
-            }
-        } else {
-            return res.status(404).json({ message: 'User was not in the discussion' });
-        }
         discussion.messages.push(newMessage._id); // Push only the message ID if messages are referenced
         await discussion.save();
 
-        res.status(201).json({ newMessage });
+        res.status(201).json({ newMessage, _id:newMessage});
     } catch (error) {
         res.status(500).json({ error: 'Error creating new message', details: error.message });
     }
