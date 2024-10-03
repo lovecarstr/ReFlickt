@@ -1,15 +1,48 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link>
-      <router-link v-if="!loggedIn" to="/login">Login</router-link>
-      <router-link v-if="!loggedIn" to="/register">Register</router-link>
-      <router-link v-if="loggedIn" to="/dashboard">Dashboard</router-link>
-      <logout-button v-if="loggedIn"></logout-button>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <router-link class="navbar-brand" to="/">ReFlick</router-link>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <router-link class="nav-link" to="/">Home</router-link>
+            </li>
+            <li class="nav-item" v-if="!loggedIn">
+              <router-link class="nav-link" to="/login">Login</router-link>
+            </li>
+            <li class="nav-item" v-if="!loggedIn">
+              <router-link class="nav-link" to="/register"
+                >Register</router-link
+              >
+            </li>
+            <li class="nav-item" v-if="loggedIn">
+              <router-link class="nav-link" to="/dashboard"
+                >Dashboard</router-link
+              >
+            </li>
+            <li class="nav-item" v-if="loggedIn">
+              <logout-button class="nav-link btn btn-link"></logout-button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
     <router-view />
   </div>
 </template>
+
 <script>
 import { mapState } from 'vuex'
 import LogoutButton from '@/components/LogoutButton.vue'
@@ -47,7 +80,8 @@ body {
 
 nav {
   padding: 10px;
-  opacity: 0.9;
+  background-color: rgba(8, 110, 255, 0);
+  opacity: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,5 +104,4 @@ nav a.router-link-exact-active {
 logout-button {
   margin-left: 15px;
 }
-
 </style>
