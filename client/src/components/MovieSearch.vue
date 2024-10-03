@@ -11,9 +11,6 @@
         @input="onSearch"
       />
 
-      <!-- Search button -->
-      <button @click="onSearch" class="btn btn-primary">Search</button>
-
       <!-- Display results in a dropdown list -->
       <div v-if="showDropdown && movies.length > 0" class="dropdown-list position-absolute mt-2">
         <div
@@ -73,7 +70,7 @@ export default {
     selectMovie(movie) {
       this.query = movie.title // Populate input with selected movie title
       this.showDropdown = false // Hide dropdown after selection
-      // Add any additional logic you want after selecting a movie
+      this.$router.push({ name: 'MoviePage', params: { movieId: movie.movieId } })
     }
   }
 }
