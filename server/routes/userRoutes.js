@@ -7,6 +7,6 @@ router.get('/users', getAllUsers);
 router.post('/users', createNewUser);
 router.get('/users/:userId/ratings', getUserRatings); // Retrieves ratings from a specific user
 router.get('/users/:userId/notifications', getUserNotifications); //Retrives a specific users notifications
-router.put('/users/:userId/notifications', markNotificationsAsRead)
+router.put('/users/:userId/notifications/:discussionId', markNotificationsAsRead)
 
 module.exports = router;
