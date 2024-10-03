@@ -1,8 +1,7 @@
 const express = require('express');
-const { getUserRatings, getUserNotifications, markNotificationsAsRead, createDiscussionNotification, createMessageNotification} = require('../controllers/notificationController');;
+const { getUserNotifications, markNotificationsAsRead, createDiscussionNotification, createMessageNotification} = require('../controllers/notificationController');;
 const router = express.Router();
 
-router.get('/users/:userId/ratings', getUserRatings); // Retrieves ratings from a specific user
 router.get('/users/:userId/notifications', getUserNotifications); //Retrives a specific users notifications
 router.put('/users/:userId/notifications/:discussionId', markNotificationsAsRead) //marks all notifications for a specific discussion as read. 
 
