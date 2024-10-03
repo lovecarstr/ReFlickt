@@ -3,7 +3,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store' // Import Vuex store
-import '@/assets/styles/variables.css';
+import '@/assets/styles/variables.css'
 //import '@/assets/styles/global.css';
 
 // Import Bootstrap CSS files
@@ -18,6 +18,10 @@ const app = createApp(App)
 
 // Use BootstrapVueNext
 app.use(createBootstrap())
+
+if (store.state.token) {
+  store.dispatch('fetchUser')
+}
 
 // Use the router and store in the app
 app.use(router)
