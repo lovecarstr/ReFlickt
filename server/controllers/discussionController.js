@@ -29,8 +29,30 @@ const createNewDiscussion = async (req, res) => {
             messages: [], // No messages in a brand new conversation
             discussionName: `${movieDetails.title} Discussion`, // Names the conversation after the movie 
         });
-
+        
         const savedDiscussion = await newDiscussion.save(); 
+
+        firstUser = await User.findById({_id: movieMatch.firstUserId})
+        secondUser = await User.findById({_id: movieMatch.secondUserId})
+
+        newDiscussionMessage = new Message ({
+            content: content,
+            sender: userId, 
+        })
+
+        await newDiscussionMessage.save();
+
+        const notification = new Notification({
+            message: newDiscussionMessage,
+            discussion: discussionId,
+        })
+        await notification.save();
+        secondUser.notifications.push(notification._id);
+        firstUser.notifications.push(notification._id);
+
+        secondUser.save();
+        firstUser.save();
+        
 
         res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion });
     } catch (error) {
@@ -69,13 +91,13 @@ const createNewMessage = async (req, res) => {
         if (discussion.firstUserId.toString() === sendingUser._id.toString()) {
             const secondUser = await User.findById(discussion.secondUserId);
             if (secondUser) {
-                secondUser.notifications.push(newMessage._id);
+                secondUser.notifications.push(notification._id);
                 await secondUser.save();
             }
         } else if (discussion.secondUserId.toString() === sendingUser._id.toString()) {
             const firstUser = await User.findById(discussion.firstUserId);
             if (firstUser) {
-                firstUser.notifications.push(newMessage._id);
+                firstUser.notifications.push(notification._id);
                 await firstUser.save();
             }
         } else {
@@ -135,17 +157,18 @@ const getAllMovieDiscussions = async (req, res) => {
 
 //get a specific discussion
 const getDiscussion = async (req, res) => {
-    const { discussionId } = req.params;
+    const { discussionId, userId} = req.params;
 
     try {
         // Fetch the discussion and populate the 'messages' and 'participants' fields
         const discussion = await Discussion.findById({ _id: discussionId })
             .populate('messages')  
+            .populate('messages', 'sender')  
             .populate('participants', 'username'); 
 
         if (!discussion) {
             return res.status(404).json({ error: 'Discussion not found' });
-        }
+        } 
 
         res.status(200).json(discussion);
     } catch (error) {
