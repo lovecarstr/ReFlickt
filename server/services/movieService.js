@@ -37,7 +37,7 @@ const movieService = {
           
           const movie = response.data;
           const credits = movie.credits.crew;
-          const cast = movie.credits.cast.slice(0, 5);  // Limit the number of actors
+          const cast = movie.credits.cast.slice(0, 8);  // Limit the number of actors
     
           // Get director(s) and writer(s)
           const directors = credits.filter(member => member.job === 'Director').map(director => director.name);
