@@ -11,22 +11,21 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex';
-import LogoutButton from '@/components/LogoutButton.vue';
-import { Api } from '@Api'; // /@Api?
+import { mapState } from 'vuex'
+import LogoutButton from '@/components/LogoutButton.vue'
+import { Api } from '@Api' // /@Api?
 
 export default {
   components: {
-    LogoutButton,
+    LogoutButton
   },
   computed: {
     ...mapState(['token']),
     loggedIn() {
-      return !!this.token;
-    },
-  },
-};
-
+      return !!this.token
+    }
+  }
+}
 </script>
 
 <style>
@@ -38,9 +37,17 @@ export default {
   color: var(--color-dark-blue);
 }
 
+body {
+  margin: 0;
+  background-color: #086eff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg stroke='%23000' stroke-width='66.7' stroke-opacity='0.09' %3E%3Ccircle fill='%23086EFF' cx='0' cy='0' r='1800'/%3E%3Ccircle fill='%23006df4' cx='0' cy='0' r='1700'/%3E%3Ccircle fill='%23006be9' cx='0' cy='0' r='1600'/%3E%3Ccircle fill='%230068dc' cx='0' cy='0' r='1500'/%3E%3Ccircle fill='%230065cf' cx='0' cy='0' r='1400'/%3E%3Ccircle fill='%230061c1' cx='0' cy='0' r='1300'/%3E%3Ccircle fill='%23005db3' cx='0' cy='0' r='1200'/%3E%3Ccircle fill='%230058a4' cx='0' cy='0' r='1100'/%3E%3Ccircle fill='%23005396' cx='0' cy='0' r='1000'/%3E%3Ccircle fill='%23004e87' cx='0' cy='0' r='900'/%3E%3Ccircle fill='%23004879' cx='0' cy='0' r='800'/%3E%3Ccircle fill='%2300436b' cx='0' cy='0' r='700'/%3E%3Ccircle fill='%23003d5d' cx='0' cy='0' r='600'/%3E%3Ccircle fill='%23003750' cx='0' cy='0' r='500'/%3E%3Ccircle fill='%23003144' cx='0' cy='0' r='400'/%3E%3Ccircle fill='%23002b38' cx='0' cy='0' r='300'/%3E%3Ccircle fill='%2300252e' cx='0' cy='0' r='200'/%3E%3Ccircle fill='%23011F24' cx='0' cy='0' r='100'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+  background-size: cover;
+}
+
 nav {
-  background-color: var(--color-medium-blue);
   padding: 10px;
+  opacity: 0.9;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,8 +71,4 @@ logout-button {
   margin-left: 15px;
 }
 
-body {
-  margin: 0;
-  background-color: var(--color-lightest-blue);
-}
 </style>
