@@ -36,6 +36,11 @@ const userSchema = new Schema(
         ref: 'MovieMatch',
         default: null 
     },
+    notifications: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Notification',
+      default: null
+    }],
     lastMovieRoll: {
       type: Date,
       default: null

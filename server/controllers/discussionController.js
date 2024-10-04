@@ -29,7 +29,7 @@ const createNewDiscussion = async (req, res) => {
             messages: [], // No messages in a brand new conversation
             discussionName: `${movieDetails.title} Discussion`, // Names the conversation after the movie 
         });
-
+        
         const savedDiscussion = await newDiscussion.save(); 
 
         res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion });
@@ -43,15 +43,15 @@ const createNewMessage = async (req, res) => {
     const { userId, content } = req.body;
 
     try {
-        const userExists = await User.findById(userId);
-        if (!userExists) {
+        const sendingUser = await User.findById(userId);
+        if (!sendingUser) {
             return res.status(404).json({ error: 'Sender not found' });
         }
 
         const newMessage = new Message({
             content: content,
             sender: userId, 
-        });
+        }); 
 
         await newMessage.save();
 
@@ -64,7 +64,7 @@ const createNewMessage = async (req, res) => {
         discussion.messages.push(newMessage._id); // Push only the message ID if messages are referenced
         await discussion.save();
 
-        res.status(201).json({ newMessage });
+        res.status(201).json({ newMessage, _id:newMessage});
     } catch (error) {
         res.status(500).json({ error: 'Error creating new message', details: error.message });
     }
@@ -115,17 +115,18 @@ const getAllMovieDiscussions = async (req, res) => {
 
 //get a specific discussion
 const getDiscussion = async (req, res) => {
-    const { discussionId } = req.params;
+    const { discussionId, userId} = req.params;
 
     try {
         // Fetch the discussion and populate the 'messages' and 'participants' fields
-        const discussion = await Discussion.findById(discussionId)
+        const discussion = await Discussion.findById({ _id: discussionId })
             .populate('messages')  
+            .populate('messages', 'sender')  
             .populate('participants', 'username'); 
 
         if (!discussion) {
             return res.status(404).json({ error: 'Discussion not found' });
-        }
+        } 
 
         res.status(200).json(discussion);
     } catch (error) {
@@ -138,7 +139,7 @@ const getLatestMessage = async (req, res) => {
 
     try {
         // Fetch the discussion by ID and populate the 'messages' field
-        const discussion = await Discussion.findById(discussionId)
+        const discussion = await Discussion.findById({ _id: discussionId })
             .select('messages') // Only select the 'messages' field
             .populate({
                 path: 'messages',
@@ -164,7 +165,7 @@ const renameDiscussion = async (req, res) => {
     const { newName } = req.body;
 
     try {
-        const discussion = await Discussion.findById(discussionId);
+        const discussion = await Discussion.findById({ _id: discussionId });
 
         if (!discussion) {
             return res.status(404).json({ message: "Discussion not found" });
@@ -201,5 +202,19 @@ const deleteDiscussion = async (req, res) => {
         res.status(500).json({message: "Error deleting message"})
     }
 }
+const updateMessage = async (req, res) => {
+    const {messageId, sender, newContent} = req.body; 
+    try{
+        const updatedMessage = await Message.findByIdAndUpdate({ sender, newContent },
+            { new: true } )
+        if (!updatedMessage) {
+            return res.status(404).json({ error: 'Message not found' });
+        }
+        res.status(200).json ({message: "message updated", updatedMessage})
+        
+    } catch(error){
+        res.status(500).json ({error: error.message})
+    }
+}
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage};
