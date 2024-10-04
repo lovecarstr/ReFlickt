@@ -31,5 +31,11 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  overflow: hidden;
+}
+
+.home-container > * {
+  width: 100%;
+  margin-bottom: 1rem;
 }
 </style>
