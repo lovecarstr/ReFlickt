@@ -86,14 +86,14 @@ getRandomMovie: async (req, res) => {
 
 // Creates a new, open match for a user with a movie.
 createNewMatch: async (req, res) => {
-    const { movieId, userId } = req.body;
+    const { userId } = req.body;
 
     try {
 
       const user = await User.findById(userId);
 
       const newMatch = new MovieMatch({
-        movieId: movieId,  
+        movieId: user.currentMovieRoll,  
         firstUserId: userId, 
         secondUserId: null,
         status: 'Open'
@@ -101,7 +101,7 @@ createNewMatch: async (req, res) => {
 
         // Increment the matchCount for the movie entry, so that its votes can be reset after the threshold.
         await MovieEntry.findOneAndUpdate(
-            { movieId: movieId },
+            { movieId: user.currentMovieRoll },
             { $inc: { matchCount: 1 } }
         );
 
