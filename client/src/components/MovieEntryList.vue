@@ -5,6 +5,8 @@
         v-for="movie in movieEntries"
         :key="movie.movieId"
         class="movie-item text-center"
+        @click="goToMovie(movie.movieId)"
+        style="cursor: pointer;"
       >
         <img :src="movie.moviePoster" class="img-fluid movie-poster" />
         <p>Votes: {{ movie.voteCount }}</p>
@@ -33,6 +35,9 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    },
+    goToMovie(movieId) {
+      this.$router.push({ name: 'MoviePage', params: { movieId } })
     }
   }
 }
