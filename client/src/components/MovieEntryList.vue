@@ -1,17 +1,17 @@
 <template>
-    <div>
-      <div class="d-flex overflow-auto movie-list">
-        <div
-          v-for="movie in movieEntries"
-          :key="movie.movieId"
-          class="movie-item text-center"
-        >
-          <img :src="movie.moviePoster" class="img-fluid movie-poster" />
-          <p>Votes: {{ movie.voteCount }}</p>
-        </div>
+  <div>
+    <div class="d-flex overflow-auto movie-list">
+      <div
+        v-for="movie in movieEntries"
+        :key="movie.movieId"
+        class="movie-item text-center"
+      >
+        <img :src="movie.moviePoster" class="img-fluid movie-poster" />
+        <p>Votes: {{ movie.voteCount }}</p>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import { Api } from '@/Api'
@@ -40,8 +40,16 @@ export default {
 
 <style scoped>
 .movie-list {
+  display: flex;
   gap: 1rem;
   padding: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+.movie-list::-webkit-scrollbar {
+  height: 6px;
 }
 
 .movie-item {
@@ -53,5 +61,6 @@ export default {
 .movie-poster {
   border-radius: 10px;
   object-fit: cover;
+  max-width: 100%;
 }
 </style>
