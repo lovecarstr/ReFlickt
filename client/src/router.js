@@ -1,39 +1,57 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import store from './store'
+import { createRouter, createWebHistory } from 'vue-router';
+import store from '@/store';
 
-import Home from './views/Home.vue'
-import Login from './components/Login.vue' // Corrected path
-import Register from './components/Register.vue' // Corrected path
-import Dashboard from './views/Dashboard.vue'
+import Home from '@/views/Home.vue';
+import Login from '@/views/Login.vue';
+import Register from '@/views/Register.vue';
+import Dashboard from '@/views/Dashboard.vue';
+import RequestPasswordReset from '@/views/RequestPasswordReset.vue';
+import ResetPassword from '@/views/ResetPassword.vue';
+import ChangePassword from '@/views/ChangePassword.vue';
 
 const routes = [
   { path: '/', name: 'home', component: Home },
-  { path: '/login', name: 'login', component: Login },
-  { path: '/register', name: 'register', component: Register },
+  { path: '/login', name: 'login', component: Login, meta: { requiresGuest: true } },
+  { path: '/register', name: 'register', component: Register, meta: { requiresGuest: true } },
+  { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: Dashboard,
-    meta: { requiresAuth: true } // This route requires authentication 
-  }
-  // Can add more routes
-]
+    path: '/request-password-reset',
+    name: 'requestPasswordReset',
+    component: RequestPasswordReset,
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/reset-password/:token',
+    name: 'resetPassword',
+    component: ResetPassword,
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/change-password',
+    name: 'changePassword',
+    component: ChangePassword,
+    meta: { requiresAuth: true },
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes, 
-})
+  routes,
+});
 
-// Navigation guard to protect routes that require authentication
+// // Navigation guard to protect routes that require authentication
 router.beforeEach((to, from, next) => {
-  const loggedIn = store.state.token
+  const loggedIn = store.state.token;
 
+  
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
     // Redirect to the login page if not logged in
-    next('/login')
+    next('/login');
+  } else if (to.matched.some((record) => record.meta.requiresGuest) && loggedIn) {
+    next('/dashboard');
   } else {
-    next() // Proceed to the route
+    next();
   }
-})
+});
 
 export default router;
