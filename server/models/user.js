@@ -36,13 +36,10 @@ const userSchema = new Schema(
         ref: 'MovieMatch',
         default: null 
     },
-    lastMovieRoll: {
-      type: Date,
-      default: null
-    },
-    currentMovieRoll: {
-      type: Number,
-      default: null
+    currentMovieRoll: {       
+      movieId: { type: Number, default: null }, 
+      matchId: { type: Schema.Types.ObjectId, ref: 'MovieMatch', default: null },
+      canRollAgainAt: { type: Date, default: null },
     },
       passwordResetToken: {
       type: String,
