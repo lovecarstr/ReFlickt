@@ -1,4 +1,3 @@
-<!-- src/views/ResetPassword.vue -->
 <template>
     <div class="container my-5">
       <div class="row justify-content-center">
@@ -88,8 +87,3 @@
     },
   };
   </script>
-  
-  <style scoped>
-  /* Add any component-specific styles here */
-  </style>
-  

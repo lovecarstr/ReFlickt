@@ -1,4 +1,3 @@
-<!-- src/views/RequestPasswordReset.vue -->
 <template>
     <div class="container my-5">
       <div class="row justify-content-center">
