@@ -12,6 +12,7 @@ const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed 
 const HOURS_BETWEEN_TOKEN_REFILLS = 24;
 const DAILY_TOKEN_AMOUNT = 5;
 const TIME_BETWEEN_ROLLS = 24;
+const TIME_LIMIT_FOR_RESERVATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 
 const movieController = {
@@ -19,67 +20,78 @@ const movieController = {
 // Checks open matches to find a movie for a user to be matched with. If there are no 
 // open matches, it will instead select a random one from the list of entries not yet matched with any users.
 getRandomMovie: async (req, res) => {
-  const { userId } = req.body; 
+  const { userId } = req.query; // Retrieve userId from query parameters
 
   try {
-      // Find the user and update the lastMovieRoll field
-      const user = await User.findById(userId);
+    const user = await User.findById(userId);
 
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if 24 hours have passed since the last roll
+    const lastRoll = user.lastMovieRoll;
+    const now = new Date();
+
+    if (lastRoll) {
+      const timeSinceLastRoll = (now - new Date(lastRoll)) / (1000 * 60 * 60); // Convert ms to hours
+
+      if (timeSinceLastRoll < TIME_BETWEEN_ROLLS) {
+        const timeRemaining = TIME_BETWEEN_ROLLS - timeSinceLastRoll;
+        return res.status(403).json({
+          message: `You need to wait ${timeRemaining.toFixed(2)} more hours before rolling again.`
+        });
       }
+    }
 
-      // Check if 24 hours have passed since the last roll
-      const lastRoll = user.lastMovieRoll;
-      const now = new Date();
+    // Check for open matches that are not reserved or have expired
+    const openMatch = await MovieMatch.findOne({
+      status: 'Open',
+      $or: [
+        { reservedBy: null }, // Not reserved
+        { reservationExpiresAt: { $lt: now } } // Expired reservations
+      ]
+    });
 
-      if (lastRoll) {
-          const timeSinceLastRoll = (now - new Date(lastRoll)) / (1000 * 60 * 60); // Convert ms to hours
+    if (openMatch) {
+      const watchedMovies = user.watchedMovies;
 
-          if (timeSinceLastRoll < TIME_BETWEEN_ROLLS) {
-              const timeRemaining = TIME_BETWEEN_ROLLS - timeSinceLastRoll;
-              return res.status(403).json({
-                  message: `You need to wait ${timeRemaining.toFixed(2)} more hours before rolling again.`
-              });
-          }
+      // Check if the user has already watched the movie in the open match
+      if (!watchedMovies.includes(openMatch.movieId)) {
+        // Reserve this match for the user
+        openMatch.reservedBy = userId;
+        openMatch.reservationExpiresAt = new Date(now.getTime() + TIME_LIMIT_FOR_RESERVATION);
+        await openMatch.save();
+
+        // Update the lastMovieRoll to the current date/time
+        user.lastMovieRoll = new Date();
+        user.currentMovieRoll = openMatch.movieId;
+        await user.save();
+
+        // Return the movie ID and match ID
+        return res.status(200).json({
+          movieId: openMatch.movieId,
+          matchId: openMatch._id
+        });
       }
+    }
 
-      // Check for open matches
-      const openMatch = await MovieMatch.findOne({ status: 'Open' });
+    // Fallback: No open matches or all matches are watched by the user
+    const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]);
 
-      if (openMatch) {
-          const watchedMovies = user.watchedMovies;
+    if (randomEntry.length > 0) {
+      // Update the lastMovieRoll to the current date/time
+      user.lastMovieRoll = new Date();
+      user.currentMovieRoll = randomEntry[0].movieId;
+      await user.save();
 
-          if (!watchedMovies.includes(openMatch.movieId)) {
-              // Update the lastMovieRoll to the current date/time
-              user.lastMovieRoll = new Date();
-              user.currentMovieRoll = openMatch.movieId;
-              await user.save();
+      return res.status(200).json({ movieId: randomEntry[0].movieId });
+    }
 
-              // Return the movie ID and match ID
-              return res.status(200).json({
-                  movieId: openMatch.movieId,
-                  matchId: openMatch._id
-              });
-          }
-      }
-
-      // Fallback: No open matches or all matches are watched by the user
-      const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]);
-
-      if (randomEntry.length > 0) {
-          // Update the lastMovieRoll to the current date/time
-          user.lastMovieRoll = new Date();
-          user.currentMovieRoll = randomEntry[0].movieId;
-          await user.save();
-
-          return res.status(200).json({ movieId: randomEntry[0].movieId });
-      }
-
-      return res.status(404).json({ message: 'No movies available' });
+    return res.status(404).json({ message: 'No movies available' });
   } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Server error' });
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
   }
 },
 
@@ -116,18 +128,26 @@ createNewMatch: async (req, res) => {
 
 // Matches a second user to an open match, and sets its status to closed.
 addUserToMatch: async (req, res) => {
-  const { userId } = req.body; // Only userId is passed in the body
-  const { matchId } = req.params; // matchId is retrieved from the route parameters
+  const { userId } = req.body; 
+  const { matchId } = req.params; 
 
   try {
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
-    }
+      }
       
       const match = await MovieMatch.findById(matchId);
       if (!match) {
           return res.status(404).json({ error: 'Match not found' });
+      }
+
+      // Check if the match has expired
+      const now = new Date();
+      const reservationExpiresAt = match.reservationExpiresAt;
+
+      if (reservationExpiresAt && now > reservationExpiresAt) {
+          return res.status(400).json({ message: 'Match has expired' });
       }
 
       // Check if the match already has two users
@@ -135,10 +155,10 @@ addUserToMatch: async (req, res) => {
           return res.status(400).json({ error: 'Match already has two users' });
       }
 
-      // Set the second user and close the match
+      // Set the second user and calculate expiration
       match.secondUserId = userId;
       match.status = 'Closed';
-      match.matchClosedAt = new Date(); // Set the closing time to now, beginning movie watch window
+      match.watchWindowExpiresAt = new Date(Date.now() + MOVIE_WATCH_WINDOW); // Set the watch window end time
 
       await match.save();
       
@@ -149,6 +169,30 @@ addUserToMatch: async (req, res) => {
   } catch (error) {
       console.error(error); // Log the error for debugging
       res.status(500).json({ error: 'Error adding user to match' });
+  }
+},
+
+declineMatch: async (req, res) => {
+  const { matchId, userId } = req.body; 
+
+  try {
+    const match = await MovieMatch.findById(matchId);
+
+    // Check if the match exists and if the user is the one who reserved it
+    if (match && match.reservedBy.toString() === userId) {
+      // Clear the reservation
+      match.reservedBy = null;
+      match.reservationExpiresAt = null;
+      await match.save();
+
+      return res.status(200).json({ message: 'Match declined and reservation cleared.' });
+    }
+
+    // If match doesn't exist or the user is not the one who reserved it
+    return res.status(403).json({ message: 'Unable to decline match or invalid match.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
   }
 },
 
@@ -396,9 +440,9 @@ checkWatchWindow: async (req, res) => {
           return res.status(404).json({ error: 'Match not found' });
       }
 
-      // Check if the match has been closed
-      if (match.matchClosedAt) {
-          const expired = Date.now() > new Date(match.matchClosedAt).getTime() + MOVIE_WATCH_WINDOW;
+      // Check if the watch window has expired
+      if (match.watchWindowExpiresAt) {
+          const expired = Date.now() > new Date(match.watchWindowExpiresAt).getTime();
           if (expired) {
               return res.status(400).json({ message: 'Watch window has expired' });
           }
