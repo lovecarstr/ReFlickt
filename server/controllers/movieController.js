@@ -11,7 +11,7 @@ const MOVIE_WATCH_WINDOW = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 const MAX_AMOUNT_MATCHES = 5; // The maximum number of matches that are allowed to be created before movie entries are deleted
 const HOURS_BETWEEN_TOKEN_REFILLS = 24;
 const DAILY_TOKEN_AMOUNT = 5;
-const TIME_BETWEEN_ROLLS = 24;
+const TIME_BETWEEN_ROLLS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const TIME_LIMIT_FOR_RESERVATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 
@@ -29,17 +29,18 @@ getRandomMovie: async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if 24 hours have passed since the last roll
-    const lastRoll = user.lastMovieRoll;
     const now = new Date();
 
-    if (lastRoll) {
-      const timeSinceLastRoll = (now - new Date(lastRoll)) / (1000 * 60 * 60); // Convert ms to hours
+    // Safely check if currentMovieRoll exists before accessing nested fields
+    if (user.currentMovieRoll && user.currentMovieRoll.canRollAgainAt) {
+      const canRollAgainAt = new Date(user.currentMovieRoll.canRollAgainAt);
 
-      if (timeSinceLastRoll < TIME_BETWEEN_ROLLS) {
-        const timeRemaining = TIME_BETWEEN_ROLLS - timeSinceLastRoll;
+      // If current time is less than canRollAgainAt, they cannot roll
+      if (now < canRollAgainAt) {
+        const timeRemaining = canRollAgainAt - now; // Time remaining in milliseconds
+        const remainingHours = timeRemaining / (1000 * 60 * 60); // Convert to hours
         return res.status(403).json({
-          message: `You need to wait ${timeRemaining.toFixed(2)} more hours before rolling again.`
+          message: `You need to wait ${remainingHours.toFixed(2)} more hours before rolling again.`
         });
       }
     }
@@ -63,9 +64,12 @@ getRandomMovie: async (req, res) => {
         openMatch.reservationExpiresAt = new Date(now.getTime() + TIME_LIMIT_FOR_RESERVATION);
         await openMatch.save();
 
-        // Update the lastMovieRoll to the current date/time
-        user.lastMovieRoll = new Date();
-        user.currentMovieRoll = openMatch.movieId;
+        // Update the currentMovieRoll with the matchId and canRollAgainAt
+        user.currentMovieRoll = {
+          movieId: openMatch.movieId,
+          matchId: openMatch._id,
+          canRollAgainAt: new Date(Date.now() + TIME_BETWEEN_ROLLS) // Update with the cooldown period
+        };
         await user.save();
 
         // Return the movie ID and match ID
@@ -80,9 +84,12 @@ getRandomMovie: async (req, res) => {
     const randomEntry = await MovieEntry.aggregate([{ $sample: { size: 1 } }]);
 
     if (randomEntry.length > 0) {
-      // Update the lastMovieRoll to the current date/time
-      user.lastMovieRoll = new Date();
-      user.currentMovieRoll = randomEntry[0].movieId;
+      // Update the currentMovieRoll for a random movie
+      user.currentMovieRoll = {
+        movieId: randomEntry[0].movieId,
+        matchId: null, // No match for random movie
+        canRollAgainAt: new Date(Date.now() + TIME_BETWEEN_ROLLS) // Update with the cooldown period
+      };
       await user.save();
 
       return res.status(200).json({ movieId: randomEntry[0].movieId });
@@ -103,9 +110,12 @@ createNewMatch: async (req, res) => {
     try {
 
       const user = await User.findById(userId);
+      if (!user){
+        res.status(404).json({message: 'User not found'});
+      }
 
       const newMatch = new MovieMatch({
-        movieId: user.currentMovieRoll,  
+        movieId: user.currentMovieRoll.movieId,  
         firstUserId: userId, 
         secondUserId: null,
         status: 'Open'
@@ -113,7 +123,7 @@ createNewMatch: async (req, res) => {
 
         // Increment the matchCount for the movie entry, so that its votes can be reset after the threshold.
         await MovieEntry.findOneAndUpdate(
-            { movieId: user.currentMovieRoll },
+            { movieId: user.currentMovieRoll.movieId },
             { $inc: { matchCount: 1 } }
         );
 
@@ -176,20 +186,33 @@ declineMatch: async (req, res) => {
   const { matchId, userId } = req.body; 
 
   try {
-    const match = await MovieMatch.findById(matchId);
-
-    // Check if the match exists and if the user is the one who reserved it
-    if (match && match.reservedBy.toString() === userId) {
-      // Clear the reservation
-      match.reservedBy = null;
-      match.reservationExpiresAt = null;
-      await match.save();
-
-      return res.status(200).json({ message: 'Match declined and reservation cleared.' });
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    // If match doesn't exist or the user is not the one who reserved it
-    return res.status(403).json({ message: 'Unable to decline match or invalid match.' });
+    // If there is a matchId, clear the reservation
+    if (matchId) {
+      const match = await MovieMatch.findById(matchId);
+
+      // Check if the match exists and if the user is the one who reserved it
+      if (match && match.reservedBy.toString() === userId) {
+        // Clear the reservation
+        match.reservedBy = null;
+        match.reservationExpiresAt = null;
+        await match.save();
+      } else {
+        return res.status(403).json({ message: 'Unable to decline match or invalid match.' });
+      }
+    }
+
+    // Reset current movie roll data if match is declined
+    user.currentMovieRoll.movieId = null;
+    user.currentMovieRoll.matchId = null;
+
+    await user.save();
+
+    return res.status(200).json({ message: 'Match declined and movie roll cleared.' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error' });
