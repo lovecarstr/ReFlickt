@@ -47,14 +47,32 @@ export default {
 .movie-list {
   display: flex;
   gap: 1rem;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem; /* Adjust padding to increase hover area */
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
 }
 
 .movie-list::-webkit-scrollbar {
-  height: 6px;
+  width: 10px;
+  height: 10px;
+}
+
+.movie-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.movie-list:hover::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.movie-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.movie-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .movie-item {
