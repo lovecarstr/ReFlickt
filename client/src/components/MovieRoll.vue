@@ -1,26 +1,31 @@
 <template>
-    <div>
-        <h2>{{ matchText }}</h2>
-        <div v-if="movie">
-            <div class="movie-poster-container" @click="goToMovie(movie.movieId)">
-                <img :src="movie.poster" alt="Movie Poster" class="movie-poster" />
-            </div>
-            <h3>{{ movie.title }} ({{ movie.year }})</h3>
-        </div>
-        <button v-if="!hasRolled" @click="rollForMovie">Roll</button>
-        <p v-if="infoMessage">{{ infoMessage }}</p>
+    <div class="container my-4">
+      <h2 class="text-center">{{ matchText }}</h2>
 
-        <div v-if="movie">
-            <button v-if="!hasResponded" @click="acceptMatch">Accept Match</button>
-            <button v-if="!hasResponded" @click="declineMatch">Decline</button>
+      <div v-if="movie">
+        <div class="row justify-content-center mb-3">
+          <div class="col-12 col-md-6 col-lg-4 text-center movie-poster-container" @click="goToMovie(movie.movieId)">
+            <img :src="movie.poster" alt="Movie Poster" class="img-fluid movie-poster" />
+          </div>
         </div>
+        <h3 class="text-center">{{ movie.title }} ({{ movie.year }})</h3>
+      </div>
+
+      <div class="text-center">
+        <button v-if="!hasRolled" class="btn btn-primary my-3" @click="rollForMovie">Roll</button>
+        <p v-if="infoMessage" class="alert alert-info">{{ infoMessage }}</p>
+      </div>
+
+      <div v-if="movie" class="text-center">
+        <button v-if="!hasResponded" class="btn btn-success mx-2" @click="acceptMatch">Accept Match</button>
+        <button v-if="!hasResponded" class="btn btn-danger mx-2" @click="declineMatch">Decline Match</button>
+      </div>
     </div>
-</template>
-
+  </template>
 <script>
 import { Api } from '@/Api'
 
-const hardcodedUserId = '670443cb1386a85660bdd19d' // REMOVE ME LATER
+const hardcodedUserId = '670443cd1386a85660bdd19f' // REMOVE ME LATER
 
 export default {
   data() {
