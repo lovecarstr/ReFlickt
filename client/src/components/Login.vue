@@ -30,6 +30,11 @@
               <p v-if="errorMessage" class="text-danger mt-3">
                 {{ errorMessage }}
               </p>
+              <div class="text-center mt-3">
+                <router-link to="/request-password-reset"
+                  >Forgot Password?</router-link
+                >
+              </div>
             </form>
           </div>
         </div>

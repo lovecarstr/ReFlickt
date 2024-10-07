@@ -21,7 +21,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes, // Corrected typo from routesl to routes
+  routes, 
 })
 
 // Navigation guard to protect routes that require authentication
