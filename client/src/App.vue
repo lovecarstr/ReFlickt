@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <h1>ReFlick</h1>
     <div id="nav">
       <router-link to="/">Home</router-link>
     </div>
