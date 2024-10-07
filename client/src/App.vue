@@ -46,7 +46,7 @@
 <script>
 import { mapState } from 'vuex'
 import LogoutButton from '@/components/LogoutButton.vue'
-import { Api } from '@Api' // /@Api?
+import { Api } from '@/Api'
 
 export default {
   components: {

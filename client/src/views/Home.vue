@@ -1,47 +1,34 @@
 <template>
-  <div>
-    <b-container fluid>
-      <h1 class="display-5 fw-bold">DIT342 Frontend</h1>
-      <p class="fs-4">Welcome to your DIT342 Frontend Vue.js App</p>
-      <Login />
-      <b-button class="btn_message" variant="primary" v-on:click="getMessage()" >Get Message from Server</b-button>
-      <p class="col-xl-9">Message from the server:<br/>
-      {{ message }}</p>
-    </b-container>
+  <div class="container my-5 text-center">
+    <div v-if="loggedIn">
+      <h1 class="display-5 fw-bold text-white">
+        Welcome, {{ user.username }}!
+      </h1>
+      <router-link to="/dashboard" class="btn btn-primary mt-3">
+        Go to Dashboard
+      </router-link>
+    </div>
+    <div v-else>
+      <h1 class="display-5 fw-bold text-white">Welcome to ReFlick</h1>
+      <p class="fs-4 text-white">Find your new favourite movie today!</p>
+      <router-link to="/login" class="btn btn-primary m-2">Login</router-link>
+      <router-link to="/register" class="btn btn-secondary m-2"
+        >Register</router-link
+      >
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import { Api } from '@/Api'
-import Login from '@/components/Login.vue'
+import { mapState } from 'vuex'
 
 export default {
-  name: 'home',
-  components: {
-    Login // Register the Login component
-  },
-  data() {
-    return {
-      message: 'none'
-    }
-  },
-  methods: {
-    getMessage() {
-      Api.get('/')
-        .then(response => {
-          this.message = response.data.message
-        })
-        .catch(error => {
-          this.message = error
-        })
+  name: 'Home',
+  computed: {
+    ...mapState(['token', 'user']),
+    loggedIn() {
+      return !!this.token
     }
   }
 }
 </script>
-
-<style>
-.btn_message {
-  margin-bottom: 1em;
-}
-</style>
