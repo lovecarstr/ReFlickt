@@ -1,28 +1,26 @@
 <template>
     <div>
-      <h2>{{ matchText }}</h2>
-      <div v-if="movie">
-        <img
-          :src="movie.poster"
-          class="img-fluid movie-poster me-2"
-          alt="Movie Poster"
-        />
-        <h3>{{ movie.title }} ({{ movie.year }})</h3>
-      </div>
-      <button v-if="!hasRolled" @click="rollForMovie">Roll</button>
-      <p v-if="infoMessage">{{ infoMessage }}</p>
+        <h2>{{ matchText }}</h2>
+        <div v-if="movie">
+            <div class="movie-poster-container" @click="goToMovie(movie.movieId)">
+                <img :src="movie.poster" alt="Movie Poster" class="movie-poster" />
+            </div>
+            <h3>{{ movie.title }} ({{ movie.year }})</h3>
+        </div>
+        <button v-if="!hasRolled" @click="rollForMovie">Roll</button>
+        <p v-if="infoMessage">{{ infoMessage }}</p>
 
-      <div v-if="movie">
-        <button v-if="!hasResponded" @click="acceptMatch">Accept Match</button>
-        <button v-if="!hasResponded" @click="declineMatch">Decline</button>
-      </div>
+        <div v-if="movie">
+            <button v-if="!hasResponded" @click="acceptMatch">Accept Match</button>
+            <button v-if="!hasResponded" @click="declineMatch">Decline</button>
+        </div>
     </div>
-  </template>
+</template>
 
 <script>
 import { Api } from '@/Api'
 
-const hardcodedUserId = '66ffeec1b55dfd5db0ac178e' // REMOVE ME LATER
+const hardcodedUserId = '670443cb1386a85660bdd19d' // REMOVE ME LATER
 
 export default {
   data() {
@@ -35,7 +33,29 @@ export default {
       hasResponded: false
     }
   },
+  mounted() {
+    this.loadLastRoll()
+  },
   methods: {
+    async loadLastRoll() {
+      try {
+        const response = await Api.get(`/users/${hardcodedUserId}`)
+        const user = response.data.user
+
+        // Check if the user has a current movie roll
+        if (user.currentMovieRoll.movieId && !user.currentMatch) {
+          const movieId = user.currentMovieRoll.movieId
+          const detailsResponse = await Api.get(`/movies/${movieId}/details`)
+
+          this.movie = detailsResponse.data
+          this.matchId = user.currentMovieRoll.matchId || null
+          this.hasRolled = true
+          this.matchText = 'Your Match:'
+        }
+      } catch (error) {
+        console.error('Failed to load last roll:', error)
+      }
+    },
     async rollForMovie() {
       try {
         const response = await Api.get(`/movies/random?userId=${hardcodedUserId}`)
@@ -48,6 +68,7 @@ export default {
         this.movie = detailsResponse.data
         this.matchText = 'Your Match:'
         this.hasRolled = true
+
         if (this.matchId) {
           this.infoMessage = 'You have 5 minutes to accept or decline your match'
         }
@@ -58,15 +79,23 @@ export default {
 
     async acceptMatch() {
       try {
+        console.log('Match ID:', this.matchId)
+
         if (this.matchId) {
-          await Api.patch(`/movies/matches/${this.matchId}`, { userId: hardcodedUserId })
+          // Patch existing match
+          const patchResponse = await Api.patch(`/movies/matches/${this.matchId}`, { userId: hardcodedUserId })
+          console.log('Patch response:', patchResponse)
         } else {
-          await Api.post('/movies/matches', { userId: hardcodedUserId, movieId: this.movie.movieId })
+          // Create new match
+          const postResponse = await Api.post('/movies/matches', { userId: hardcodedUserId, movieId: this.movie.movieId })
+          console.log('Post response:', postResponse)
         }
+
         this.infoMessage = 'Match accepted successfully!'
         this.hasResponded = true
         // Logic for switching to MovieMatch module instead of MovieRoll here
       } catch (error) {
+        console.error('Error accepting match:', error) // Print the error object to inspect the issue
         this.infoMessage = error.response?.data?.message || 'Failed to accept match.'
         this.movie = null
       }
@@ -74,23 +103,21 @@ export default {
 
     async declineMatch() {
       try {
-        if (this.matchId) {
-          await Api.patch('/movies/matches/decline', {
-            matchId: this.matchId,
-            userId: hardcodedUserId
-          })
-        }
-        this.infoMessage = 'You declined the match'
+        await Api.patch('/movies/matches/decline', {
+          userId: hardcodedUserId,
+          matchId: this.matchId || null // Send null if there is no matchId
+        })
+        this.infoMessage = 'Match declined successfully.'
         this.hasResponded = true
-        this.movie = null
-        this.matchText = 'Match with a Movie!'
       } catch (error) {
-        this.infoMessage = error.response?.data?.message || 'An error occurred while declining the match.'
+        this.infoMessage = error.response?.data?.message || 'Failed to decline match.'
       }
+    },
+    goToMovie(movieId) {
+      this.$router.push({ name: 'MoviePage', params: { movieId } })
     }
   }
 }
 </script>
 
-  <style scoped>
-  </style>
+<style scoped></style>
