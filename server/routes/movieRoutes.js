@@ -10,6 +10,7 @@ router.get("/movies/:movieId/details", movieController.getMovieDetails);
 router.get('/users/:userId/matches/window', movieController.checkWatchWindow);// Checks the remaining time of the 48h watch window for a user
 router.patch('/users/:userId/matches/:matchId', movieController.updateCurrentUserMatch); // Updates the currentMatch for a user
 router.patch('/users/:userId/tokens', movieController.refillUserTokens); // Refills user tokens if enough time has passed since last refill
+router.patch('/movies/matches/decline', movieController.declineMatch); // User declines a match with a random movie
 
 // POST (collection)
 router.post('/movies', movieController.addMovieEntry); // Spends 1-5 tokens to vote for a movie and add it as an entry to the pool
