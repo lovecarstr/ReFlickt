@@ -109,6 +109,7 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+server/.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -173,9 +174,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-
-.env
-server/.env
 
 # End of https://www.gitignore.io/api/node,vuejs,visualstudiocode,linux,macos,windows
