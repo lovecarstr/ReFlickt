@@ -62,7 +62,9 @@ export default {
 </script>
 
 <style>
-@import '@/assets/styles/variables.css';
+@import '@/assets/variables.css';
+@import '@/assets/styles/global.css';
+
 
 #app {
   font-family: 'Arial', Helvetica, sans-serif;
@@ -88,7 +90,7 @@ nav {
 }
 
 nav a {
-  color: white;
+  color: lightest;
   margin: 0 15px;
   font-weight: bold;
 }

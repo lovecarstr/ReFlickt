@@ -70,34 +70,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.card {
-  border: none;
-  border-radius: 10px;
-  background-color: var(--color-lightest-blue);
-}
-
-.btn-primary {
-  background-color: var(--color-medium-blue);
-  border-color: var(--color-medium-blue);
-}
-
-.btn-primary:hover {
-  background-color: var(--color-medium-dark-blue);
-  border-color: var(--color-medium-dark-blue);
-}
-
-.form-control {
-  border-radius: 5px;
-}
-
-h2 {
-  color: var(--color-dark-blue);
-}
-
-.text-danger {
-  font-weight: bold;
-}
-
-</style>

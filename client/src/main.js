@@ -3,16 +3,17 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store' // Import Vuex store
-import '@/assets/styles/variables.css'
-//import '@/assets/styles/global.css';
+import '@/assets/variables.css'
 
 // Import Bootstrap CSS files
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
-import 'bootstrap';
+import 'bootstrap'
 
 // Import BootstrapVueNext plugin
 import { createBootstrap } from 'bootstrap-vue-next'
+
+import '@/assets/styles/global.css'
 
 // Create the app instance
 const app = createApp(App)
