@@ -228,7 +228,12 @@ addMovieEntry: async (req, res) => {
 
         // Check if the user has enough tokens
         if (tokens > user.tokens) {
-            return res.status(400).json({ error: 'Not enough tokens' });
+            return res.status(400).json({ message: 'Not enough tokens' });
+        }
+
+        // User must spend at least 1 token
+        if (tokens < 1){
+          return res.status(400).json({ message: 'At least 1 token is required to vote' });
         }
 
         for (let i = 0; i < tokens; i++) {
@@ -245,7 +250,7 @@ addMovieEntry: async (req, res) => {
 
         res.status(201).json({ message: 'Movie entries added successfully' });
     } catch (error) {
-        res.status(500).json({ error: 'Error adding movie entries' });
+        res.status(500).json({ message: 'Error adding movie entries' });
     }
 },
 
