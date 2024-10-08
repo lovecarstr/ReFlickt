@@ -1,11 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const User = require('../models/user');  // Adjust the path to wherever your User model is defined
+const User = require('../models/user');
 const { getLatestMessage } = require('./discussionController');
 const Discussion = require('../models/discussion');
-
-const User = require("../models/user"); // Adjust the path to wherever your User model is defined
 
 // GET all users
 const getAllUsers = async (req, res) => {
