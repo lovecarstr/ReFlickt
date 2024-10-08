@@ -28,10 +28,11 @@ const routes = [
   },
   {
     path: '/change-password',
-    name: 'changePassword',
+    name: 'ChangePassword',
     component: ChangePassword,
     meta: { requiresAuth: true },
   },
+  
 ];
 
 const router = createRouter({

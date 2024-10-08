@@ -2,7 +2,9 @@
   <div>
     <div v-if="user">
       <h1>Welcome, {{ user.username }}!</h1>
-      <!-- Rest of your component -->
+      <router-link to="/change-password" class="btn btn-secondary">
+        Change Password
+      </router-link>
     </div>
     <div v-else>
       <p>Loading...</p>
@@ -13,6 +15,7 @@
 <script>
 import { Api } from '@Api'
 import { mapState } from 'vuex'
+import ChangePassword from './ChangePassword.vue'
 
 export default {
   name: 'Dashboard',
