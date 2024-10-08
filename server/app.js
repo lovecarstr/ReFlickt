@@ -42,7 +42,7 @@ app.options("*", cors());
 app.use('/api', userRoutes);
 app.use('/api', movieRoutes);
 app.use('/api', discussionRoutes);
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/api", function (req, res) {
   res.json({ message: "Welcome to your DIT342 backend ExpressJS project!" });

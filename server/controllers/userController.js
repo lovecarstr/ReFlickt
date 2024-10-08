@@ -1,19 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const User = require('../models/user');  // Adjust the path to wherever your User model is defined
+const User = require('../models/user');
 const { getLatestMessage } = require('./discussionController');
 const Discussion = require('../models/discussion');
 
-
 // GET all users
 const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find({});
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching users', error });
-    }
+  try {
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users", error });
+  }
 };
 
 const createNewUser = async (req, res) => {
@@ -21,7 +20,9 @@ const createNewUser = async (req, res) => {
 
   // Ensure required fields are provided
   if (!username || !password || !email) {
-    return res.status(400).json({ message: "Username, password, and email are required" });
+    return res
+      .status(400)
+      .json({ message: "Username, password, and email are required" });
   }
 
   // Create a new user
@@ -40,6 +41,27 @@ const createNewUser = async (req, res) => {
       message: "Failed to create user",
       error: error.message || error,
     });
+  }
+};
+
+// GET a users profile
+const getUserProfile = async (req, res) => {
+  try {
+    // Get the user ID from the authenticated user
+    const userId = req.user.userId; // This assumes your token contains 'userId'
+
+    // Fetch the user from the database, excluding the password field
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Send the user data in the response
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Server error." });
   }
 };
 
@@ -71,4 +93,4 @@ const getUserRatings = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, createNewUser, getUserRatings };
+module.exports = { getAllUsers, createNewUser, getUserRatings, getUserProfile };

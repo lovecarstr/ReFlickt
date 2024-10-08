@@ -1,0 +1,92 @@
+/* Import variables */
+@import '@/assets/variables.css';
+
+/* Typography */
+body {
+  font-family: 'Arial', Helvetica, sans-serif;
+  background-color: var(--color-lightest-blue);
+  color: var(--color-dark-blue);
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-dark-blue);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--color-medium-blue);
+  border-color: var(--color-medium-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-medium-dark-blue);
+  border-color: var(--color-medium-dark-blue);
+}
+
+.btn-secondary {
+  background-color: var(--color-medium-dark-blue);
+  border-color: var(--color-medium-dark-blue);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-dark-blue);
+  border-color: var(--color-dark-blue);
+}
+
+/* Forms */
+.form-control {
+  border-radius: 5px;
+}
+
+.form-control:focus {
+  border-color: var(--color-light-blue);
+  box-shadow: 0 0 5px rgba(0, 150, 199, 0.5);
+}
+
+/* Links */
+a,
+.router-link {
+  color: var(--color-medium-blue);
+}
+
+a:hover,
+.router-link:hover {
+  color: var(--color-medium-dark-blue);
+  text-decoration: underline;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: 10px;
+  background-color: var(--color-lightest-blue);
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+/* Error Messages */
+.text-danger {
+  font-weight: bold;
+}
+
+/* Navbar */
+.navbar {
+  background-color: transparent !important;
+}
+
+.nav-link {
+  color: white !important;
+}
+
+.nav-link:hover {
+  color: var(--color-lightest-blue) !important;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  font-size: 0.9rem;
+}

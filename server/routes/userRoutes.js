@@ -3,7 +3,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 const {
   getAllUsers,
   createNewUser,
-  getUserRatings
+  getUserRatings,
+  getUserProfile,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -13,6 +14,6 @@ router.get('/users', getAllUsers);
 router.post('/users', createNewUser);
 
 // Add more protected routes here
-// router.get("/users/profile", getUserProfile); should we include a method like this?
+router.get("/users/profile", authMiddleware, getUserProfile); // should we include a method like this?
 
 module.exports = router;
