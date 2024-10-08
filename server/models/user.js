@@ -31,23 +31,20 @@ const userSchema = new Schema(
     watchedMovies: [{
         type: Number
     }],
-    currentMatch: { // The current movie a user is matched with.
-        type: Schema.Types.ObjectId,
-        ref: 'MovieMatch',
-        default: null 
-    },
     notifications: [{
       type: Schema.Types.ObjectId,
       ref: 'Notification',
       default: null
     }],
-    lastMovieRoll: {
-      type: Date,
-      default: null
+    currentMatch: { // The current movie a user is matched with.
+        type: Schema.Types.ObjectId,
+        ref: 'MovieMatch',
+        default: null 
     },
-    currentMovieRoll: {
-      type: Number,
-      default: null
+    currentMovieRoll: {       
+      movieId: { type: Number, default: null }, 
+      matchId: { type: Schema.Types.ObjectId, ref: 'MovieMatch', default: null },
+      canRollAgainAt: { type: Date, default: null },
     },
       passwordResetToken: {
       type: String,

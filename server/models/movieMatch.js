@@ -20,16 +20,21 @@ const movieMatchSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['Open', 'Closed'], // Only allows 'Open' or 'Closed'
+      enum: ['Open', 'Closed'], // State of match
       required: true 
     },
-    matchClosedAt: { // Tracks when second user joins, which is the start of the watch window
+    watchWindowExpiresAt: { // Tracks when second user joins, which is the start of the watch window
       type: Date,
       default: null, 
-  }
-  },
-  {
-    timestamps: true, // Automatically add `createdAt` and `updatedAt` fields
+    },
+    reservedBy: { 
+      type: mongoose.Schema.Types.ObjectId, ref: 'User', 
+      default: null 
+    },
+    reservationExpiresAt: {
+      type: Date, 
+      default: null 
+    },
   }
 );
 
