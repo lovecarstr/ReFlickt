@@ -1,5 +1,3 @@
-// generateToken.js
-
 require("dotenv").config();
 const { google } = require("googleapis");
 const http = require("http");

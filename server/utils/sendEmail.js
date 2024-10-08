@@ -1,56 +1,66 @@
 require("dotenv").config();
+const { google } = require("googleapis");
 const fs = require("fs");
 const path = require("path");
-const { google } = require("googleapis");
-  
-// Construct the absolute path to tokens.json
-const tokensPath = path.resolve(__dirname, "tokens.json");
 
-// Read the tokens
-const tokens = JSON.parse(fs.readFileSync(tokensPath));
-
+// Load client credentials from environment variables
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
+const REDIRECT_URI = "http://localhost:3000/oauth2callback";
 const USER_EMAIL = process.env.USER_EMAIL;
 
+// Initialize OAuth2 client
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
   REDIRECT_URI
 );
 
-// Load the tokens from tokens.json
-//const tokens = JSON.parse(fs.readFileSync('tokens.json'));
-//oAuth2Client.setCredentials(tokens);
+// Load tokens from tokens.json
+const tokensPath = path.resolve(__dirname, "tokens.json");
+
+let tokens;
+try {
+  const tokensData = fs.readFileSync(tokensPath, "utf8");
+  tokens = JSON.parse(tokensData);
+  oAuth2Client.setCredentials(tokens);
+} catch (error) {
+  console.error("Error reading or parsing tokens.json:", error.message);
+  console.error("Please re-run generateToken.js to obtain new tokens.");
+  process.exit(1);
+}
 
 async function sendEmail({ to, subject, text }) {
   try {
-    // Get a new access token if needed
-    const accessToken = await oAuth2Client.getAccessToken();
+    const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: USER_EMAIL,
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: tokens.refresh_token,
-        accessToken: accessToken.token, // This will ensure the token is fresh
+    // Create the email content
+    const messageParts = [
+      `From: "Your App" <${USER_EMAIL}>`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      "",
+      `${text}`,
+    ];
+    const message = messageParts.join("\n");
+
+    // Encode the message to base64
+    const encodedMessage = Buffer.from(message)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    // Send the email
+    const res = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: encodedMessage,
       },
     });
 
-    const mailOptions = {
-      from: "ReFlick <love.strandang@gmail.com>",
-      to,
-      subject,
-      text,
-    };
-
-    const result = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", result);
-    return result;
+    console.log("Email sent:", res.data);
+    return res.data;
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;
