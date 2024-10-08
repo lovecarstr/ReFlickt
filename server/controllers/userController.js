@@ -1,5 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
+const express = require('express');
+const mongoose = require('mongoose');
+
+const User = require('../models/user');  // Adjust the path to wherever your User model is defined
+const { getLatestMessage } = require('./discussionController');
+const Discussion = require('../models/discussion');
 
 const User = require("../models/user"); // Adjust the path to wherever your User model is defined
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const {createNewDiscussion, getDiscussion, createNewMessage, getAllMovieDiscussions, getAllUserDiscussions, getLatestMessage, 
-   renameDiscussion, deleteDiscussion } = require('../controllers/discussionController');
+   renameDiscussion, deleteDiscussion, updateMessage } = require('../controllers/discussionController');
 const router = express.Router();
 
 // Tested
@@ -13,8 +13,10 @@ router.get('/discussions/:discussionId/messages/latest', getLatestMessage) //get
 router.patch('/discussions/:discussionId/rename', renameDiscussion) //renames a specific discussion
 router.delete('/discussions/:discussionId', deleteDiscussion) //deletes a specific discussion
 
+router.put('/discussions/:discussionId/messages', updateMessage)//updateMessage
 
-//NOT IMPLEMENTED YET
+
+//NOT IMPLEMENTED YE
 
 
 /*
