@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/sendEmail")
 
 const changePassword = async (req, res) => {
   try {

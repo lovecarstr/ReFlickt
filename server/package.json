@@ -2,7 +2,8 @@
   "name": "server",
   "version": "0.1.0",
   "engines": {
-    "node": "18.x"
+    "node": ">=18.x",
+    "npm": ">=9.x"
   },
   "private": true,
   "description": "Template for ExpressJS API with Mongoose for Web and Mobile Engineering (DIT342)",

@@ -1,55 +1,60 @@
-const nodemailer = require("nodemailer");
+require("dotenv").config();
+const fs = require("fs");
+const path = require("path");
 const { google } = require("googleapis");
+  
+// Construct the absolute path to tokens.json
+const tokensPath = path.resolve(__dirname, "tokens.json");
 
-// OAuth2 setup
-const OAuth2 = google.auth.OAuth2;
+// Read the tokens
+const tokens = JSON.parse(fs.readFileSync(tokensPath));
 
-const sendEmail = async (options) => {
-  const oauth2Client = new OAuth2(
-    process.env.CLIENT_ID, // Client ID from your .env file
-    process.env.CLIENT_SECRET, // Client Secret from your .env file
-    "https://developers.google.com/oauthplayground" // Redirect URL
-  );
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const USER_EMAIL = process.env.USER_EMAIL;
 
-  // Set the refresh token from .env
-  oauth2Client.setCredentials({
-    refresh_token: process.env.REFRESH_TOKEN, // Long-lived refresh token
-  });
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI
+);
 
+// Load the tokens from tokens.json
+//const tokens = JSON.parse(fs.readFileSync('tokens.json'));
+//oAuth2Client.setCredentials(tokens);
+
+async function sendEmail({ to, subject, text }) {
   try {
-    // Get a new access token using the refresh token
-    const accessTokenObject = await oauth2Client.getAccessToken();
-    const accessToken =
-      accessTokenObject.token || accessTokenObject.access_token;
+    // Get a new access token if needed
+    const accessToken = await oAuth2Client.getAccessToken();
 
-    // Create Nodemailer transporter using OAuth2
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
         type: "OAuth2",
-        user: process.env.EMAIL_USER, // Your email address
-        clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        refreshToken: process.env.REFRESH_TOKEN,
-        accessToken: accessToken, // Use the freshly obtained access token
+        user: USER_EMAIL,
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: tokens.refresh_token,
+        accessToken: accessToken.token, // This will ensure the token is fresh
       },
     });
 
-    // Email options
     const mailOptions = {
-      from: `"ReFlick" <${process.env.EMAIL_USER}>`,
-      to: options.to, // recipient email
-      subject: options.subject, // email subject
-      text: options.text, // email body
+      from: "ReFlick <love.strandang@gmail.com>",
+      to,
+      subject,
+      text,
     };
 
-    // Send the email
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully!");
+    const result = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", result);
+    return result;
   } catch (error) {
     console.error("Error sending email:", error);
-    throw error; // Throw error to handle it in the calling function
+    throw error;
   }
-};
+}
 
 module.exports = sendEmail;
