@@ -39,7 +39,10 @@
     "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
     "cross-env": "^7.0.3",
+    "eslint": "^9.12.0",
     "newman": "^6.2.1",
     "nodemon": "^3.1.4",
     "npm-run-all": "^4.1.5",

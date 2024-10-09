@@ -1,3 +1,4 @@
+require("dotenv").config();
 var express = require("express");
 var mongoose = require("mongoose");
 var morgan = require("morgan");
@@ -6,9 +7,9 @@ var cors = require("cors");
 var history = require("connect-history-api-fallback");
 var userRoutes = require("./routes/userRoutes");
 var authRoutes = require("./routes/authRoutes");
-var movieRoutes = require('./routes/movieRoutes');
-var discussionRoutes = require('./routes/discussionRoutes');
-require("dotenv").config();
+var movieRoutes = require("./routes/movieRoutes");
+var discussionRoutes = require("./routes/discussionRoutes");
+var errorHandler = require("./middleware/errorHandler"); // Adjust the path as needed
 
 var mongoURI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/animalDevelopmentDB";
@@ -29,6 +30,7 @@ mongoose
   });
 
 var app = express();
+app.use(errorHandler);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // HTTP request logger
@@ -39,9 +41,9 @@ app.use(cors());
 app.options("*", cors());
 
 // Controllers
-app.use('/api', userRoutes);
-app.use('/api', movieRoutes);
-app.use('/api', discussionRoutes);
+app.use("/api", userRoutes);
+app.use("/api", movieRoutes);
+app.use("/api", discussionRoutes);
 app.use("/api/auth", authRoutes);
 
 app.get("/api", function (req, res) {
@@ -83,6 +85,16 @@ app.listen(port, function (err) {
   console.log(`Express server listening on port ${port}, in ${env} mode`);
   console.log(`Backend: http://localhost:${port}/api/`);
   console.log(`Frontend (production): http://localhost:${port}/`);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  // You can choose to shut down the process or attempt recovery
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  // You can choose to shut down the process or attempt recovery
 });
 
 module.exports = app;
