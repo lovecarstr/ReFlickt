@@ -46,7 +46,6 @@
 <script>
 import { mapState } from 'vuex'
 import LogoutButton from '@/components/LogoutButton.vue'
-import { Api } from '@/Api'
 
 export default {
   components: {
@@ -64,7 +63,6 @@ export default {
 <style>
 @import '@/assets/variables.css';
 @import '@/assets/styles/global.css';
-
 
 #app {
   font-family: 'Arial', Helvetica, sans-serif;
