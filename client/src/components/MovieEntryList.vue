@@ -31,7 +31,31 @@ export default {
     async getMovieEntries() {
       try {
         const response = await Api.get('/movies')
-        this.movieEntries = response.data
+        const movies = response.data
+
+        // Fetch basic movie details for each movie
+        const movieDetailsPromises = movies.map(async (movie) => {
+          try {
+            const basicInfoResponse = await Api.get(`/movies/${movie.movieId}/basic`)
+            return {
+              movieId: movie.movieId,
+              voteCount: movie.voteCount,
+              moviePoster: basicInfoResponse.data.poster,
+              title: basicInfoResponse.data.title,
+              year: basicInfoResponse.data.year
+            }
+          } catch (error) {
+            console.error(`Error fetching details for movieId ${movie.movieId}`, error)
+            return {
+              movieId: movie.movieId,
+              voteCount: movie.voteCount,
+              moviePoster: null // handle missing data
+            }
+          }
+        })
+
+        // Resolve all the promises and set movie entries
+        this.movieEntries = await Promise.all(movieDetailsPromises)
       } catch (error) {
         console.error(error)
       }
