@@ -5,7 +5,6 @@ const User = require("../models/user");
 const logInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     // Input validation
     if (!email || !password) {
       return res
@@ -25,11 +24,17 @@ const logInUser = async (req, res) => {
     }
 
     // Generate a JWT (JSON Web Token) for session management
-    const token = jwt.sign(
-      { userId: user._id, username: user.username }, // Payload
-      process.env.JWT_SECRET, // Secret key
-      { expiresIn: "1h" } // Expiration time
-    );
+    let token;
+    try {
+      token = jwt.sign(
+        { userId: user._id, username: user.username }, // Payload
+        process.env.JWT_SECRET, // Secret key
+        { expiresIn: "1h" } // Expiration time
+      );
+    } catch (error) {
+      console.error("Unexpected error occured while signing token", error);
+      return res.status(403).json({ message: "Failed to make webtoken." });
+    }
 
     // Send the token in response
     res.status(200).json({ message: "Login successful.", token });
