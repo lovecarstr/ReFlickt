@@ -135,7 +135,7 @@ const getDiscussion = async (req, res) => {
 };
 
 const getLatestMessage = async (req, res) => {
-    const { discussionId } = req.params; 
+    const { discussionId } = req.params.discussionId; 
 
     try {
         // Fetch the discussion by ID and populate the 'messages' field

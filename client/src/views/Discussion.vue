@@ -1,7 +1,6 @@
 <template>
     <div class="discussion-page">
       <DiscussionList :discussions="discussions" />
-      <h1></h1>
       <router-view></router-view>
     </div>
   </template>
@@ -35,8 +34,12 @@
 
               const response = await Api.get(`/users/${user._id}/discussions`);
               
-              //const data = await response.json();
+              alert(JSON.stringify(response.data))
+              alert("Before response.data")
               this.discussions = response.data;
+              alert(JSON.stringify(this.discussions))
+              alert("After response.data")
+             
           } catch (error) {
               console.error('Error loading discussions:', error);
           }

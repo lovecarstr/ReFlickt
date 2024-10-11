@@ -2,7 +2,7 @@
     <div class="discussion-preview card mb-3"> 
       <div class="card-body">
         <h5 class="card-title">{{ discussion.discussionName }}</h5>
-        <p class="card-text">{{ discussion.latestMessage }}</p>
+        <p class="card-text">{{ latestMessage }}</p>
       </div>
     </div>
   </template>
@@ -27,13 +27,28 @@
     },
 
   methods: {
-        async getLatestMessage(discussion){
-            const response = await Api.get(`/discussions/${discussion._id}/messages/latest`);
+      
+      async getLatestMessage(discussion){
+        try{
+            alert(JSON.stringify(discussion));
+            alert("Preview before call")
+            discussionId = discussion._id; 
+            alert(JSON.stringify(discussionId));
+            discussionId = discussion._id; 
+            const response = await Api.get(`/discussions/${discussionId}/messages/latest`);
             this.latestMessage = response.data;
-        }
-    },
 
-  };
+
+            alert(JSON.stringify(discussion));
+            alert("Preview")
+        }
+       catch (error) {
+        console.error('Error fetching latest message:', error);
+      }
+      },
+
+  }
+};
   </script>
   
   <style scoped>
