@@ -1,29 +1,39 @@
 <template>
-    <div v-if="user && match">
-      <h2>Current Match</h2>
-      <div v-if="otherUser">
-        <h3>Other User: {{ otherUser.username }}</h3>
-      </div>
-      <div v-else>
-        <h3>Waiting for other user...</h3>
-      </div>
-      <div class="row justify-content-center mb-3">
-        <div class="col-12 col-md-6 col-lg-4 text-center movie-poster-container" @click="goToMovie(movie.movieId)">
-          <img v-if="movie" :src="movie.poster" alt="Movie Poster" class="img-fluid rounded movie-poster" />
-        </div>
-      </div>
-      <h4 v-if="movie">{{ movie.title }} ({{ movie.year }})</h4>
-      <div v-if="watchWindowExpiresAt">
-        <p>Time left: {{ formattedTimeLeft }}</p>
+  <div v-if="user && match">
+    <h2>Current Match</h2>
+    <div v-if="otherUser">
+      <h3>Other User: {{ otherUser.username }}</h3>
+    </div>
+    <div v-else>
+      <h3>Waiting for other user...</h3>
+    </div>
+    <div class="row justify-content-center mb-3">
+      <div class="col-12 col-md-6 col-lg-4 text-center movie-poster-container" @click="goToMovie(movie.movieId)">
+        <img v-if="movie" :src="movie.poster" alt="Movie Poster" class="img-fluid rounded movie-poster" />
       </div>
     </div>
-    <div v-else>Error fetching match details.</div>
-  </template>
+    <h4 v-if="movie">{{ movie.title }} ({{ movie.year }})</h4>
+    <div v-if="watchWindowExpiresAt">
+      <p>Time left: {{ formattedTimeLeft }}</p>
+    </div>
+    <CreateRating
+      v-if="movie && user"
+      :movieId="movie.movieId"
+      :userId="user._id"
+      @rating-submitted="handleRatingSubmitted"
+    />
+  </div>
+  <div v-else>Error fetching match details.</div>
+</template>
 
 <script>
 import { Api } from '@/Api'
+import CreateRating from '@/components/CreateRating.vue'
 
 export default {
+  components: {
+    CreateRating
+  },
   data() {
     return {
       user: null,
@@ -58,7 +68,7 @@ export default {
       console.error('Error fetching user profile or match:', error)
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopCountdown()
   },
   computed: {
@@ -103,15 +113,22 @@ export default {
         clearInterval(this.countdownInterval)
         this.countdownInterval = null
       }
+    },
+    handleRatingSubmitted(rating) {
+      console.log('Rating submitted:', rating)
+      // You can add logic here to update the match or notify the other user
+      // For example:
+      // this.updateMatchWithRating(rating)
+      // this.notifyOtherUser(rating)
     }
   }
 }
 </script>
 
-  <style scoped>
-  .movie-poster {
-    max-height: 450px;
-    object-fit: cover;
-    margin: 10px auto;
-  }
-  </style>
+<style scoped>
+.movie-poster {
+  max-height: 450px;
+  object-fit: cover;
+  margin: 10px auto;
+}
+</style>
