@@ -83,6 +83,10 @@ export default {
   max-width: 600px;
 }
 
+.form-control {
+  color: black !important; /* Set the text color to black or your preferred color */
+}
+
 .dropdown-list {
   background-color: white;
   border: 1px solid #ccc;
