@@ -1,8 +1,8 @@
 <template>
   <div v-if="user && match">
-    <h2>Current Match</h2>
+    <h2>Your Movie Match</h2>
     <div v-if="otherUser">
-      <h3>Other User: {{ otherUser.username }}</h3>
+      <h6>You and {{ otherUser }} have been matched with:</h6>
     </div>
     <div v-else>
       <h3>Waiting for other user...</h3>
@@ -12,9 +12,9 @@
         <img v-if="movie" :src="movie.poster" alt="Movie Poster" class="img-fluid rounded movie-poster" />
       </div>
     </div>
-    <h4 v-if="movie">{{ movie.title }} ({{ movie.year }})</h4>
+    <h3 v-if="movie">{{ movie.title }} ({{ movie.year }})</h3>
     <div v-if="watchWindowExpiresAt">
-      <p>Time left: {{ formattedTimeLeft }}</p>
+      <p>Time Left: {{ formattedTimeLeft }}</p>
     </div>
     <CreateRating
       v-if="movie && user"
@@ -55,9 +55,13 @@ export default {
           if (this.match.movieId) {
             this.movie = await this.fetchMovie(this.match.movieId)
             this.watchWindowExpiresAt = new Date(this.match.watchWindowExpiresAt)
-            this.otherUser = this.match.firstUserId === this.user._id
-              ? this.match.secondUserId
-              : this.match.firstUserId
+
+            if (this.user._id === this.match.firstUserId._id) {
+              this.otherUser = this.match.secondUserId.username
+            } else {
+              this.otherUser = this.match.firstUserId.username
+            }
+
             if (this.watchWindowExpiresAt) {
               this.startCountdown()
             }
@@ -116,10 +120,7 @@ export default {
     },
     handleRatingSubmitted(rating) {
       console.log('Rating submitted:', rating)
-      // You can add logic here to update the match or notify the other user
-      // For example:
-      // this.updateMatchWithRating(rating)
-      // this.notifyOtherUser(rating)
+      // Add logic here to update the match
     }
   }
 }
