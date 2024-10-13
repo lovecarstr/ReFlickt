@@ -75,28 +75,12 @@ export default {
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
+  scrollbar-width: none; /* For Firefox */
 }
 
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
 .movie-list::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.movie-list::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 10px;
-}
-
-.movie-list:hover::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-.movie-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-.movie-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  display: none; /* Hides the scrollbar */
 }
 
 .movie-item {
