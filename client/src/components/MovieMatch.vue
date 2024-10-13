@@ -22,8 +22,11 @@
       </div>
     </div>
     <h3 v-if="movie">{{ movie.title }} ({{ movie.year }})</h3>
-    <div v-if="watchWindowExpiresAt">
+    <div v-if="watchWindowExpiresAt && otherUser">
       <p>Time Left: {{ formattedTimeLeft }}</p>
+    </div>
+    <div v-else>
+      <p>Waiting for the other user to begin the watch timer...</p>
     </div>
     <CreateRating
       v-if="movie && user"
