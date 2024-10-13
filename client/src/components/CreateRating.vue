@@ -1,6 +1,5 @@
 <template>
     <div class="movie-rating">
-      <h5>Submit Your Ratings Before The Watch Window Expires</h5>
       <div v-for="(value, key) in ratings" :key="key" class="rating-item">
         <label :for="key">{{ capitalize(key) }}</label>
         <input
@@ -83,40 +82,53 @@ export default {
 }
 </script>
 
-  <style scoped>
+<style scoped>
   .movie-rating {
     max-width: 300px;
     margin: 0 auto;
   }
+
   .rating-item {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
   }
+
   .rating-item label {
     flex: 1;
     margin-right: 10px;
+    min-width: 100px;
+    color: white;
   }
+
   .rating-item input[type="range"] {
     flex: 2;
+    width: 100%;
   }
+
   .rating-item span {
-    width: 20px;
+    width: 30px;
     text-align: right;
+    color: white;
   }
-  .recommendation {
-    margin: 15px 0;
+
+  .recommendation label {
+    color: white;
   }
+
   button {
     width: 100%;
     padding: 10px;
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--color-medium-blue);
+    color: var(--color-white-);
     border: none;
+    border-radius: 25px;
     cursor: pointer;
+    margin-top: 20px;
   }
+
   button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
   }
-  </style>
+</style>
