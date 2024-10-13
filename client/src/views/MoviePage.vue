@@ -16,18 +16,14 @@
     </div>
 
     <!-- Movie Voting -->
-    <div
-      class="d-flex align-items-center justify-content-center my-3 token-container"
-    >
+    <div class="d-flex align-items-center justify-content-center my-3 token-container">
       <b-button variant="danger" @click="decrementTokens">-</b-button>
       <span class="token-count mx-3">{{ tokens }}</span>
       <b-button variant="success" @click="incrementTokens">+</b-button>
     </div>
 
     <div class="d-flex justify-content-center mt-2">
-      <b-button class="mb-2" variant="dark" @click="spendTokens"
-        >Vote for this movie</b-button
-      >
+      <b-button class="mb-2" variant="dark" @click="spendTokens">Vote for this movie</b-button>
     </div>
 
     <p class="text-center">{{ message }}</p>
@@ -35,14 +31,13 @@
     <!-- Movie Details -->
     <div class="movie-details text-center">
       <div class="description-container mx-auto">
-        <p><strong>Description:</strong> {{ movie.description }}</p>
+        <p><strong>Description:</strong><br> {{ movie.description }}</p>
       </div>
-      <p><strong>Genres:</strong> {{ movie.genres.join(', ') }}</p>
-      <p><strong>Runtime:</strong> {{ movie.runtime }} minutes</p>
-      <p><strong>TMDb Rating:</strong> {{ movie.TMDbRating }}/10</p>
-      <p><strong>Language:</strong> {{ movie.language }}</p>
-      <p><strong>Writers:</strong> {{ movie.writers }}</p>
-      <p><strong>Directed by:</strong> {{ movie.director }}</p>
+      <p><strong>Genres:</strong><br> {{ movie.genres.join(', ') }}</p>
+      <p><strong>Runtime:</strong><br> {{ movie.runtime }} minutes</p>
+      <p><strong>TMDb Rating:</strong> {{ movie.TMDbRating.toFixed(1) }}/10</p>
+      <p><strong>Writers:</strong><br> {{ movie.writers }}</p>
+      <p><strong>Directed by:</strong><br>{{ movie.director }}</p>
       <div v-if="movie.directorPicture" class="director-picture">
         <img
           :src="movie.directorPicture"
@@ -68,6 +63,7 @@
           style="height: 100px; width: 100px; object-fit: cover; margin: 0 auto"
         />
         <h5 class="actor-name" style="font-size: 0.9em">{{ actor.name }}</h5>
+        <p class="actor-role" style="font-size: 0.8em">{{ actor.character }}</p> <!-- Display role here -->
       </div>
     </div>
   </div>
