@@ -1,6 +1,6 @@
 <template>
     <div class="movie-rating">
-      <h3>Rate this movie</h3>
+      <h5>Submit Your Ratings Before The Watch Window Expires</h5>
       <div v-for="(value, key) in ratings" :key="key" class="rating-item">
         <label :for="key">{{ capitalize(key) }}</label>
         <input
@@ -16,7 +16,7 @@
       <div class="recommendation">
         <label>
           <input type="checkbox" v-model="recommendation">
-          Recommend this movie
+          Recommend this movie?
         </label>
       </div>
       <button @click="submitRating" :disabled="!isFormValid">Submit Rating</button>
