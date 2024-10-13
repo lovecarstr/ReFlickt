@@ -11,7 +11,7 @@
     </div>
     <h2>Your Movie Match</h2>
     <div v-if="otherUser">
-      <h6>You and {{ otherUser }} have been matched with:</h6>
+      <h6>You and <strong>{{ otherUser }}</strong> have been matched with:</h6>
     </div>
     <div v-else>
       <h3>Waiting for other user...</h3>
