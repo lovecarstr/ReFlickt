@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const sendEmail = require("../utils/sendEmail")
+const sendEmail = require("../utils/sendEmail");
 
 const changePassword = async (req, res) => {
   try {
@@ -73,7 +73,7 @@ const requestPasswordReset = async (req, res) => {
     user.passwordResetExpires = tokenExpiration;
     await user.save();
 
-    const resetUrl = `http://localhost:3000/auth/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:5173/auth/reset-password/${resetToken}`;
 
     const message = `
       You are receiving this email because you (or someone else) have requested a password reset.
