@@ -29,6 +29,12 @@ const routes = [
     meta: { requiresGuest: true }
   },
   {
+    path: '/auth/reset-password/:token',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    props: true // Allows you to access the token as a prop
+  },
+  {
     path: '/change-password',
     name: 'ChangePassword',
     component: ChangePassword,
