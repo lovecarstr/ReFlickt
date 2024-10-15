@@ -1,10 +1,11 @@
 <template>
   <div class="discussion-full">
-    <h2>{{ discussion.discussionName }}</h2>
+    <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
     <div class="message-list" ref="messageList" @scroll="onScroll">
       <div v-for="message in messages" :key="message.id" class="message-card">
         <div class="message-header">
           <strong>{{ message.sender.username }}</strong>
+          <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
         </div>
         <div class="message-body">
           <p>{{ message.content }}</p>
@@ -46,6 +47,7 @@
     },
     created() {
       this.sendMessage();
+      this.formatDate();
     },
     beforeUnmount(){
       this.stopPolling();
@@ -54,6 +56,7 @@
       const passedDiscussion = this.$route.params;
       this.loadDiscussion(passedDiscussion);
       this.initLatestMessage(passedDiscussion);
+      this.scrollToBottom();
       this.startPolling(passedDiscussion);
     },
     methods: {
@@ -66,29 +69,7 @@
         const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`);
         this.discussion = response.data;
         this.messages = this.discussion.messages.reverse(); // Reverse to show latest messages at the bottom
-        this.scrollToBottom();
       },
-      /*async loadNewMessages() {
-        const passedDiscussion = this.$route.params;
-      
-        // Fetch only the new messages after the latest message
-        const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`, {
-          params: {
-            afterMessageId: this.latestMessage._id, // Fetch messages after the latest loaded message
-         }});
-         console.log(response)
-       const newMessages = response.data.messages;
-       console.log("new:", newMessages);
-      
-        if (newMessages.length > 0) {
-          // Append new messages to the start (since we use reverse order)
-          this.messages = [...newMessages.reverse(), ...this.messages];     
-          // Update the latest message ID
-          this.latestMessage = newMessages[0];
-          // Scroll to bottom if there are new messages
-          this.scrollToBottom();
-        }
-      },*/
       startPolling(passedDiscussion) {
         // Poll every 10 seconds to check for new messages
         this.pollInterval = setInterval(() => {
@@ -102,6 +83,17 @@
           clearInterval(this.pollInterval);
           this.pollInterval = null;
         }
+      },
+      formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        },)
       },
       
       async sendMessage(){
@@ -123,6 +115,7 @@
         const newMsg = response.data.message; // Add the new message to the list (unshift because we're displaying in reverse)
         this.newMessage = ""; // Clear the input field
         this.loadDiscussion(passedDiscussion);
+        this.scrollToBottom();
         } catch (error) {
           console.error("Error sending message:", error);
         }
@@ -138,6 +131,10 @@
   </script>
   
   <style scoped>
+.discussion-name {
+  color: White;
+  margin-bottom: 10px;
+}
 .discussion-full {
   max-width: 80vw;
   margin: 0 auto;
@@ -148,26 +145,29 @@
   flex-direction: column-reverse; /* Display messages from bottom up */
   overflow-y: scroll;
   height: 70vh; /* Set a height to enable scrolling */
-  padding: 10px;
   border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .message-card {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  margin-bottom: 10px;
 }
 
 .message-header {
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   text-align: left;
 }
 
 .message-body {
   text-align: left;
+  margin-bottom: 5px;
 }
 .message-input {
   display: flex;
@@ -189,6 +189,13 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.message-timestamp{
+  font-size: 0.8em;
+  color: #888;
+  padding-left: 10px;
+  font-weight: normal;
 }
 
 .message-input button:hover {
