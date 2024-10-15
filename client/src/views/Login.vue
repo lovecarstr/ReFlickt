@@ -4,7 +4,7 @@
       <div class="col-md-6 col-lg-4">
         <div class="card shadow-lg">
           <div class="card-body">
-            <h2 class="text-center mb-4">Login</h2>
+            <h2 class="text-center mb-4 login-title">Login</h2>
             <form @submit.prevent="loginUser">
               <div class="mb-3">
                 <label class="form-label">Email address</label>
@@ -75,3 +75,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.login-title {
+  color: black;
+}
+</style>
