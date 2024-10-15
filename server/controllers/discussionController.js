@@ -113,6 +113,51 @@ const getAllMovieDiscussions = async (req, res) => {
     }
 };
 
+const getNewMessages = async (req, res) => {
+    try {
+      const { discussionId } = req.params;
+      const { afterMessageId } = req.query;
+  
+      if (!discussionId) {
+        return res.status(400).json({ error: 'Discussion ID is required' });
+      }
+  
+      console.log("Discussion ID:", discussionId);
+      console.log("After Message ID:", afterMessageId);
+  
+      let query = { discussionId };
+  
+      if (afterMessageId) {
+        const lastMessage = await Message.findById(afterMessageId);
+  
+        if (!lastMessage) {
+          return res.status(400).json({ error: 'Invalid afterMessageId' });
+        }
+  
+        console.log("Last Message Created At:", lastMessage.createdAt);
+  
+        // Create a query for messages after the latest message createdAt time
+        query = {
+          ...query,
+          createdAt: { $gt: lastMessage.createdAt },
+        };
+      }
+  
+      console.log("Query:", query);
+  
+      // Fetch new messages
+      const newMessages = await Message.find(query).sort({ createdAt: 1 });
+  
+      console.log("New Messages:", newMessages);
+  
+      // Send the new messages to the client
+      return res.status(200).json({ messages: newMessages });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+  };
+
 //get a specific discussion
 const getDiscussion = async (req, res) => {
     const { discussionId, userId} = req.params;
@@ -121,8 +166,16 @@ const getDiscussion = async (req, res) => {
         // Fetch the discussion and populate the 'messages' and 'participants' fields
         const discussion = await Discussion.findById({ _id: discussionId })
             .populate('messages')  
-            .populate('messages', 'sender')  
-            .populate('participants', 'username'); 
+            .populate({
+                path: 'messages',
+                select: 'sender content createdAt',
+                populate: ({
+                    path: 'sender',
+                    select: 'username'
+                })
+              })
+            .populate('participants', 'username');
+            
 
         if (!discussion) {
             return res.status(404).json({ error: 'Discussion not found' });
@@ -231,4 +284,4 @@ const updateMessage = async (req, res) => {
     }
 }
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};

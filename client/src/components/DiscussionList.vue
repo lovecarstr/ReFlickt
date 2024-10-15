@@ -39,7 +39,8 @@
     },*/
     methods: {
       goToDiscussion(discussionId) {
-        this.$router.push({ name: 'DiscussionFull', params: { id: discussionId } });
+        console.log(discussionId)
+        this.$router.push({ name: 'discussionFull', params: { discussionId } });
       },
     },
   };
