@@ -102,10 +102,11 @@ export default {
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+  color: #000;
 }
 
 .dropdown-item:hover {
-  background-color: #f0f0f0;
+  background-color: #627ab3;
 }
 
 .movie-poster {
