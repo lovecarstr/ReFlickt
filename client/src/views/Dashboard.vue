@@ -15,8 +15,6 @@
 <script>
 import { Api } from '@Api'
 import { mapState } from 'vuex'
-import ChangePassword from './ChangePassword.vue'
-
 export default {
   name: 'Dashboard',
   data() {
@@ -37,7 +35,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/* Add styles */
-</style>
