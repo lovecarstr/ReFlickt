@@ -18,6 +18,7 @@
     data() {
       return {
         discussions: [],
+        //isLoading: true;
       };
     },
     mounted() {
@@ -32,16 +33,17 @@
               const userResponse = await Api.get(`/users/profile`)
               const user = userResponse.data.user
 
-              const response = await Api.get(`/users/${user._id}/discussions`);
+              const response = await Api.get(`/users/${user._id}/discussions`, { headers: { 'Cache-Control': 'no-cache' } });
+              const data = response.data
+              this.discussions = data.discussions;
               
-              alert(JSON.stringify(response.data))
-              alert("Before response.data")
-              this.discussions = response.data;
-              alert(JSON.stringify(this.discussions))
-              alert("After response.data")
+              //this.isloading = false;
+
+              console.log(this.discussions);
              
           } catch (error) {
               console.error('Error loading discussions:', error);
+              this.isloading = false;
           }
         },
     },

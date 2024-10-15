@@ -81,14 +81,14 @@ const getAllUserDiscussions = async (req, res) => {
         }
 
         // Find discussions where the user is a participant
-        const discussions = await Discussion.find({ participants: userId });
+        const discussions = await Discussion.find({participants: userId });
 
         if (discussions.length === 0) {
             return res.status(404).json({ message: "No discussions found for this user." });
         }
 
         // Sends all the discussions
-        res.status(200).json({ discussions });
+        res.status(200).json({ discussions: Array.isArray(discussions) ? discussions : [discussions] });
     } catch (error) {
         res.status(500).json({ error: 'Error when getting discussions' });
     }
@@ -135,7 +135,7 @@ const getDiscussion = async (req, res) => {
 };
 
 const getLatestMessage = async (req, res) => {
-    const { discussionId } = req.params.discussionId; 
+    const { discussionId } = req.params; 
 
     try {
         // Fetch the discussion by ID and populate the 'messages' field
@@ -143,15 +143,29 @@ const getLatestMessage = async (req, res) => {
             .select('messages') // Only select the 'messages' field
             .populate({
                 path: 'messages',
+                populate: {                    
+                    path: 'sender',                    
+                    select: 'username'               
+                },
                 options: { sort: { createdAt: -1 }, limit: 1 } 
-            });
+            })
 
-        if (!discussion || discussion.messages.length === 0) {
-            return res.status(404).json({ message: "Discussion not found or it is empty" });
+        if (!discussion) {
+            return res.status(404).json({ message: "Discussion not found" });
+        }
+
+        if (discussion.messages.length === 0){
+            const latestMessage = new Message({
+                content: "Be the first one to send a message :) !",
+                sender: null, 
+            }); 
+            return res.status(200).json({latestMessage});
         }
 
         // Return the first (most recent) message after sorting
         const latestMessage = discussion.messages[0];
+
+        
 
         res.status(200).json({ latestMessage });
     } catch (error) {

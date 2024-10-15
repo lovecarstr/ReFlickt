@@ -2,7 +2,12 @@
     <div class="discussion-preview card mb-3"> 
       <div class="card-body">
         <h5 class="card-title">{{ discussion.discussionName }}</h5>
-        <p class="card-text">{{ latestMessage }}</p>
+        <p v-if="latestMessage.sender" class="card-text"> <!-- If no message has been sent yet there will be no sender-->
+          {{ latestMessage.sender.username }}: {{ latestMessage.content }}
+        </p>
+        <p v-else class="card-text">
+          {{ latestMessage.content }}
+        </p>
       </div>
     </div>
   </template>
@@ -30,17 +35,9 @@
       
       async getLatestMessage(discussion){
         try{
-            alert(JSON.stringify(discussion));
-            alert("Preview before call")
-            discussionId = discussion._id; 
-            alert(JSON.stringify(discussionId));
-            discussionId = discussion._id; 
-            const response = await Api.get(`/discussions/${discussionId}/messages/latest`);
-            this.latestMessage = response.data;
-
-
-            alert(JSON.stringify(discussion));
-            alert("Preview")
+            const response = await Api.get(`/discussions/${discussion._id}/messages/latest`);
+            console.log(response)
+            this.latestMessage = response.data.latestMessage;
         }
        catch (error) {
         console.error('Error fetching latest message:', error);
@@ -54,5 +51,16 @@
   <style scoped>
   .discussion-preview {
     cursor: pointer;
+  }
+  .card-title {
+    text-align: left;
+  }
+  .card-text {
+    text-align: left;
+  }
+  .card-body {
+    background-color: blueviolet;
+    background-blend-mode: color-dodge;
+    border-radius: 10px;
   }
   </style>

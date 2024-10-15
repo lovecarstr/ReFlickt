@@ -1,8 +1,8 @@
 <template>
     <div v-if="user" class="discussion-full">
-      <h2>{{ discussion.title }}</h2>
+      <h2>{{ discussion.discussionName }}</h2>
       <div v-for="message in discussion.messages" :key="message.id" class="message">
-        <strong>{{ message.author }}:</strong>
+        <strong>{{ message.sender }}:</strong>
         <p>{{ message.content }}</p>
       </div>
     </div>
@@ -15,23 +15,30 @@
     data() {
       return {
         discussion: {
-          title: '',
-          messages: [],
+          type: Object,
+          required: true,
         },
+        messages: {
+          type: Array,
+          required: true,
+        }
       };
     },
     created() {
       this.loadDiscussion();
     },
     methods: {
-      loadDiscussion() {
+      async loadDiscussion() {
         const discussionId = this.$route.params.id;
         // Make an API call to fetch discussion details using discussionId
-        fetch(`/api/discussions/${discussionId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            this.discussion = data;
-          });
+        const response = await Api.get(`/discussions/${discussionId}`, { headers: { 'Cache-Control': 'no-cache' } });
+        const data = response.data
+        this.discussion = data.discussion;
+
+        console.log(discussion)
+
+        this.messages = this.discussion.messages;
+
       },
     },
   };

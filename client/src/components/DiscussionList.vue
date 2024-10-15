@@ -1,14 +1,17 @@
 <template>
     <div class="discussion-list">
       <h2>Discussions</h2>
-      <div v-if="discussions.length === 0">No discussions yet</div> 
+      <div v-if="isLoading">
+          Loading discussions...
+      </div>
+      <div v-else-if="discussions.length === 0">No discussions yet</div> 
       <div v-else>
         
         <DiscussionPreview
           v-for="discussion in discussions"
           :key="discussion._id"
           :discussion="discussion"
-          @click="goToDiscussion(discussion_id)"
+          @click="goToDiscussion(discussion._id)"
         />
       </div>
     </div>
@@ -26,26 +29,18 @@
         required: true,
       },
     },
-    watch: {
+    /*watch: {
       discussions(newDiscussions) {
       // This will trigger whenever discussions are updated
         if (newDiscussions.length > 0) {
           this.alertData(newDiscussions);
         }
       },
-    },
-
-    mounted (){
-      this.alertData(this.discussions)
-    },
+    },*/
     methods: {
       goToDiscussion(discussionId) {
         this.$router.push({ name: 'DiscussionFull', params: { id: discussionId } });
       },
-      alertData(discussions){
-        alert(JSON.stringify(discussions) )
-        alert("DiscussionList")
-      }
     },
   };
   </script>
