@@ -66,12 +66,6 @@ export default {
 @import '@/assets/variables.css';
 @import '@/assets/styles/global.css';
 
-#app {
-  font-family: 'Arial', Helvetica, sans-serif;
-  text-align: center;
-  color: var(--color-dark-blue);
-}
-
 body {
   margin: 0;
   background-color: #086eff;

@@ -15,7 +15,7 @@ const routes = [
   { path: '/login', name: 'login', component: Login, meta: { requiresGuest: true } },
   { path: '/register', name: 'register', component: Register, meta: { requiresGuest: true } },
   { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },
-  { path: '/movie/:movieId', name: 'MoviePage', component: MoviePage, meta: { requiresAuth: true } },
+  { path: '/movies/:movieId', name: 'MoviePage', component: MoviePage, meta: { requiresAuth: true } },
   {
     path: '/request-password-reset',
     name: 'requestPasswordReset',

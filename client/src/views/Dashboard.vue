@@ -10,8 +10,10 @@
       <div class="row mb-4">
         <div class="col-md-6 offset-md-3">
           <div class="card user-profile">
-            <div class="card-body">
-              <h2 class="card-title">Hello, <strong>{{ user.username }}</strong></h2>
+            <div class="card-body text-center">
+              <h2 class="card-title">
+                Hello, <strong>{{ user.username }}</strong>
+              </h2>
               <p class="card-text">Email: {{ user.email }}</p>
               <router-link to="/change-password" class="btn btn-primary">
                 Change Password
@@ -82,15 +84,16 @@ export default {
         }
 
         const movieDetailsPromises = ratings.map((rating) =>
-          Api.get(`/movies/${rating.movieId}/basic`)
+          Api.get(`/movies/${rating.movieId}/details`)
         )
 
         const moviesResponses = await Promise.all(movieDetailsPromises)
 
         this.ratedMovies = ratings.map((rating, index) => {
           const movieData = moviesResponses[index].data
+          console.log(movieData)
           return {
-            id: movieData.movieId,
+            movieId: movieData.movieId,
             title: movieData.title,
             year: movieData.year,
             poster: movieData.poster,
@@ -102,7 +105,7 @@ export default {
             sound: rating.sound
           }
         })
-
+        
         console.log('Rated Movies:', this.ratedMovies)
       } catch (error) {
         console.error('Error fetching user data:', error)

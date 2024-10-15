@@ -1,12 +1,13 @@
 <template>
   <div class="card h-100 movie-card">
-    <div class="poster-container">
+    <router-link :to="{ name: 'MoviePage', params: { movieId: movie.movieId } }" class="poster-container">
       <img
         :src="movie.poster || defaultPoster"
         :alt="`${movie.title} Poster`"
-        class="movie-poster"
+        class="card-img-top movie-poster"
+        loading="lazy"
       />
-    </div>
+    </router-link>
     <div class="card-body d-flex flex-column">
       <h5 class="card-title movie-title">{{ movie.title }} ({{ movie.year }})</h5>
       <p class="card-text">
