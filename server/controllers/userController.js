@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const { getLatestMessage } = require('./discussionController');
 const Discussion = require('../models/discussion');
+const MovieRating = require('../models/movieRating');
 
 // GET all users
 const getAllUsers = async (req, res) => {

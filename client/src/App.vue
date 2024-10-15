@@ -32,8 +32,10 @@
                 >Dashboard</router-link
               >
             </li>
-            <li class="nav-item" v-if="loggedIn">
-              <logout-button class="nav-link btn btn-link"></logout-button>
+            <li class="nav-item d-flex align-items-center" v-if="loggedIn">
+              <logout-button
+                class="nav-link btn btn-link m-auto"
+              ></logout-button>
             </li>
           </ul>
         </div>
