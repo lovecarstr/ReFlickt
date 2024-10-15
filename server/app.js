@@ -9,6 +9,9 @@ var userRoutes = require("./routes/userRoutes");
 var authRoutes = require("./routes/authRoutes");
 var movieRoutes = require("./routes/movieRoutes");
 var discussionRoutes = require("./routes/discussionRoutes");
+var entryRoutes = require("./routes/entryRoutes");
+var matchRoutes = require("./routes/matchRoutes");
+var ratingRoutes = require("./routes/ratingRoutes");
 var errorHandler = require("./middleware/errorHandler"); // Adjust the path as needed
 
 var mongoURI =
@@ -44,6 +47,9 @@ app.options("*", cors());
 app.use("/api", userRoutes);
 app.use("/api", movieRoutes);
 app.use("/api", discussionRoutes);
+app.use("/api", entryRoutes);
+app.use("/api", matchRoutes);
+app.use("/api", ratingRoutes);
 app.use("/api/auth", authRoutes);
 
 app.get("/api", function (req, res) {
