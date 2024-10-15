@@ -43,7 +43,7 @@
           :src="movie.directorPicture"
           alt="Director Picture"
           class="img-fluid rounded-circle"
-          style="width: 100px; height: 100px; object-fit: cover"
+          style="width: 120px; height: 120px; object-fit: cover"
         />
       </div>
     </div>
