@@ -41,6 +41,7 @@
         },
         pollinterval: null, // For polling messages every 10 seconds      
         latestMessage: null, // Keeps track of the latest message ID
+        newMessage: "",
       };
     },
     created() {
@@ -107,29 +108,30 @@
         if (!this.newMessage.trim()) {
           return; // Prevent sending empty messages
         }
+
         const passedDiscussion = this.$route.params;
       try {
+        const userResponse = await Api.get(`/users/profile`)
+        const user = userResponse.data.user
+
         const response = await Api.post(`/discussions/${passedDiscussion.discussionId}/messages`, {
+          userId: user._id,
           content: this.newMessage,
         });
 
         // Assuming response contains the newly added message
-        const newMsg = response.data.message;
-        this.messages.unshift(newMsg); // Add the new message to the list (unshift because we're displaying in reverse)
+        const newMsg = response.data.message; // Add the new message to the list (unshift because we're displaying in reverse)
         this.newMessage = ""; // Clear the input field
-        this.scrollToBottom();
+        this.loadDiscussion(passedDiscussion);
         } catch (error) {
           console.error("Error sending message:", error);
         }
       },
-
-
-      },
-      scrollToBottom() {
-      this.$nextTick(() => {
-        const messageList = this.$refs.messageList;
-        messageList.scrollTop = messageList.scrollHeight;
-      });
+        scrollToBottom() {
+        this.$nextTick(() => {
+          const messageList = this.$refs.messageList;
+          messageList.scrollTop = messageList.scrollHeight;
+        });
       },
     },
   };
@@ -170,9 +172,6 @@
 .message-input {
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-  background-color: #fff;
 }
 
 .message-input input {
