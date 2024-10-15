@@ -85,7 +85,8 @@ const movieService = {
           return {
               title: movie.title,
               poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
-              year: new Date(movie.release_date).getFullYear()
+              year: new Date(movie.release_date).getFullYear(),
+              movieId: movie.id
           };
       } catch (error) {
           throw new Error('Error fetching movie basic info');
