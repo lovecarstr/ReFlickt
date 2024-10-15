@@ -15,8 +15,8 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
+          <ul class="navbar-nav ms-auto text-center">
+            <li class="nav-item d-flex align-items-center">
               <router-link class="nav-link" to="/">Home</router-link>
             </li>
             <li class="nav-item" v-if="!loggedIn">
@@ -83,8 +83,24 @@ nav {
   align-items: center;
 }
 
+.navbar-nav {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.nav-item {
+  margin: 5px 0;
+  width: auto; /* Set the width to auto for better control */
+}
+
+.nav-link {
+  width: auto; /* Remove full width to avoid overflow */
+  text-align: center;
+  margin: 0 auto; /* Center the link inside its parent */
+}
+
 nav a {
-  color: lightest;
+  color: white;
   margin: 0 15px;
   font-weight: bold;
 }
@@ -97,7 +113,10 @@ nav a.router-link-exact-active {
   border-bottom: 2px solid var(--color-lightest-blue);
 }
 
-logout-button {
-  margin-left: 15px;
+/* Center navbar items in collapsed view */
+@media (max-width: 768px) {
+  .navbar-nav {
+    justify-content: center !important; /* Center items in mobile view */
+  }
 }
 </style>

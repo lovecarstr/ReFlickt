@@ -91,7 +91,6 @@ export default {
 
         this.ratedMovies = ratings.map((rating, index) => {
           const movieData = moviesResponses[index].data
-          console.log(movieData)
           return {
             movieId: movieData.movieId,
             title: movieData.title,

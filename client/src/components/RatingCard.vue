@@ -10,10 +10,15 @@
     </router-link>
     <div class="card-body d-flex flex-column">
       <h5 class="card-title movie-title">{{ movie.title }} ({{ movie.year }})</h5>
-      <p class="card-text">
+      <p class="card-text d-flex align-items-center">
+        <!-- Recommendation Badge -->
         <span :class="['badge', movie.recommendation ? 'bg-success' : 'bg-danger']">
           {{ movie.recommendation ? 'Recommended' : 'Not Recommended' }}
         </span>
+        <!-- Change Rating Button (right next to the badge) -->
+        <button class="btn btn-primary btn-sm ms-2">
+          Change Rating
+        </button>
       </p>
       <div class="mt-auto">
         <div v-for="(rating, aspect) in ratings" :key="aspect" class="mb-2">
