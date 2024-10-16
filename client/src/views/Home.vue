@@ -4,16 +4,14 @@
       <div class="home-container">
         <MovieSearch />
         <MovieEntries />
-        <MovieRoll />
+        <component :is="currentMatchComponent" />
       </div>
     </div>
     <div v-else>
       <h1 class="display-5 fw-bold text-white">Welcome to ReFlick</h1>
       <p class="fs-4 text-white">Find your new favourite movie today!</p>
       <router-link to="/login" class="btn btn-primary m-2">Login</router-link>
-      <router-link to="/register" class="btn btn-secondary m-2"
-        >Register</router-link
-      >
+      <router-link to="/register" class="btn btn-secondary m-2">Register</router-link>
     </div>
   </div>
 </template>
@@ -23,23 +21,24 @@ import { mapState } from 'vuex'
 import MovieEntries from '@/components/MovieEntryList.vue'
 import MovieSearch from '@/components/MovieSearch.vue'
 import MovieRoll from '@/components/MovieRoll.vue'
+import MovieMatch from '@/components/MovieMatch.vue'
 
 export default {
   name: 'Home',
   components: {
     MovieEntries,
     MovieSearch,
-    MovieRoll
+    MovieRoll,
+    MovieMatch
   },
   computed: {
     ...mapState(['token', 'user']),
     loggedIn() {
       return !!this.token
     },
-    data() {
-      return {
-        message: 'none'
-      }
+    currentMatchComponent() {
+      // Check if the user has a current match and return the appropriate component
+      return this.user && this.user.currentMatch ? 'MovieMatch' : 'MovieRoll'
     }
   }
 }
