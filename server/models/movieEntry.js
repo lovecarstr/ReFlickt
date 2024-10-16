@@ -7,14 +7,6 @@ const movieEntrySchema = new Schema({
         type: Number,
         required: true
     },
-    movieTitle: {
-        type: String,
-        required: true
-    },
-    moviePoster: {
-        type: String,
-        required: true
-    },
     matchCount: { // Count needed to track how many times a movie has been matched with users 
         type: Number,
         default: 0

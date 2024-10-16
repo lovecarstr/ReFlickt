@@ -1,13 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import store from '@/store';
+import { createRouter, createWebHistory } from 'vue-router'
+import store from '@/store'
 
-import Home from '@/views/Home.vue';
-import Login from '@/views/Login.vue';
-import Register from '@/views/Register.vue';
-import Dashboard from '@/views/Dashboard.vue';
-import RequestPasswordReset from '@/views/RequestPasswordReset.vue';
-import ResetPassword from '@/views/ResetPassword.vue';
-import ChangePassword from '@/views/ChangePassword.vue';
+import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
+import Register from '@/views/Register.vue'
+import Dashboard from '@/views/Dashboard.vue'
+import RequestPasswordReset from '@/views/RequestPasswordReset.vue'
+import ResetPassword from '@/views/ResetPassword.vue'
+import ChangePassword from '@/views/ChangePassword.vue'
 import MoviePage from './views/MoviePage.vue'
 import Discussion from '@/views/Discussion.vue';
 import DiscussionFull from '@/views/DiscussionFull.vue';
@@ -25,41 +25,46 @@ const routes = [
     path: '/request-password-reset',
     name: 'requestPasswordReset',
     component: RequestPasswordReset,
-    meta: { requiresGuest: true },
+    meta: { requiresGuest: true }
   },
   {
     path: '/reset-password/:token',
     name: 'resetPassword',
     component: ResetPassword,
-    meta: { requiresGuest: true },
+    meta: { requiresGuest: true }
+  },
+  {
+    path: '/auth/reset-password/:token',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    props: true // Allows you to access the token as a prop
   },
   {
     path: '/change-password',
     name: 'ChangePassword',
     component: ChangePassword,
-    meta: { requiresAuth: true },
-  },
-  
-];
+    meta: { requiresAuth: true }
+  }
+
+]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
-});
+  routes
+})
 
 // // Navigation guard to protect routes that require authentication
 router.beforeEach((to, from, next) => {
-  const loggedIn = store.state.token;
+  const loggedIn = store.state.token
 
-  
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {
     // Redirect to the login page if not logged in
-    next('/login');
+    next('/login')
   } else if (to.matched.some((record) => record.meta.requiresGuest) && loggedIn) {
-    next('/dashboard');
+    next('/dashboard')
   } else {
-    next();
+    next()
   }
-});
+})
 
-export default router;
+export default router

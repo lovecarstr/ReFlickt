@@ -3,20 +3,21 @@
 
 /* Typography */
 body {
-  font-family: 'Arial', Helvetica, sans-serif;
+  font-family: 'Tahoma', Helvetica, sans-serif;
   background-color: var(--color-lightest-blue);
-  color: var(--color-dark-blue);
+  color: var(--color-white-); /* Set text color to white */
   margin: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: var(--color-dark-blue);
+h1, h2, h3, h4, h5, h6, p {
+  color: var(--color-white-);
 }
 
 /* Buttons */
 .btn-primary {
   background-color: var(--color-medium-blue);
   border-color: var(--color-medium-blue);
+  color: var(--color-white-); /* Set button text to white */
 }
 
 .btn-primary:hover {
@@ -27,7 +28,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary {
   background-color: var(--color-medium-dark-blue);
   border-color: var(--color-medium-dark-blue);
-  color: #fff;
+  color: var(--color-white-);
 }
 
 .btn-secondary:hover {
@@ -38,22 +39,24 @@ h1, h2, h3, h4, h5, h6 {
 /* Forms */
 .form-control {
   border-radius: 5px;
+  color: var(--color-white-); /* Set form text to white */
 }
 
 .form-control:focus {
   border-color: var(--color-light-blue);
   box-shadow: 0 0 5px rgba(0, 150, 199, 0.5);
+  color: var(--color-white-); /* Maintain white text on focus */
 }
 
 /* Links */
 a,
 .router-link {
-  color: var(--color-medium-blue);
+  color: var(--color-white-); /* Set link text to white */
 }
 
 a:hover,
 .router-link:hover {
-  color: var(--color-medium-dark-blue);
+  color: var(--color-lightest-blue); /* Optionally, change hover color */
   text-decoration: underline;
 }
 
@@ -66,11 +69,13 @@ a:hover,
 
 .card-body {
   padding: 2rem;
+  color: var(--color-white-); /* Ensure card body text is white */
 }
 
 /* Error Messages */
 .text-danger {
   font-weight: bold;
+  color: var(--color-white-); /* Ensure error messages are white */
 }
 
 /* Navbar */
@@ -79,7 +84,7 @@ a:hover,
 }
 
 .nav-link {
-  color: white !important;
+  color: var(--color-white-) !important;
 }
 
 .nav-link:hover {
@@ -89,4 +94,5 @@ a:hover,
 /* Password Strength Indicator */
 .password-strength {
   font-size: 0.9rem;
+  color: var(--color-white-); /* Password strength text white */
 }

@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/movies/search", movieController.searchMovie); // Search the database for a movie based on title
 router.get('/movies/random', movieController.getRandomMovie); // Retrieves a random movie from open matches or movie entries
 router.get("/movies/:movieId/details", movieController.getMovieDetails);
+router.get("/movies/:movieId/basic", movieController.getMovieBasicInfo);
 router.get('/users/:userId/matches/window', movieController.checkWatchWindow);// Checks the remaining time of the 48h watch window for a user
 router.patch('/users/:userId/matches/:matchId', movieController.updateCurrentUserMatch); // Updates the currentMatch for a user
 router.patch('/users/:userId/tokens', movieController.refillUserTokens); // Refills user tokens if enough time has passed since last refill

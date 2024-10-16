@@ -551,6 +551,25 @@ getMovieDetails: async (req, res) => {
   }
 },
 
+getMovieBasicInfo: async (req, res) => {
+  const { movieId } = req.params;
+  try {
+      const movieBasicInfo = await movieService.getMovieBasicInfo(movieId);
+      res.json(movieBasicInfo);
+  } catch (error) {
+      if (error.response) {
+          // Error response from TMDb
+          res.status(error.response.status).json({ error: error.response.data.status_message });
+      } else if (error.request) {
+          // No response received
+          res.status(503).json({ error: 'Service unavailable. Please try again later.' });
+      } else {
+          // Other errors
+          res.status(400).json({ error: 'Invalid request. Please check your input.' });
+      }
+  }
+},
+
 refillUserTokens: async (req, res) => {
   const { userId } = req.params;
 

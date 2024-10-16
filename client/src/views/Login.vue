@@ -66,7 +66,7 @@ export default {
         localStorage.setItem('authToken', token)
         this.$store.commit('setToken', token)
         await this.$store.dispatch('fetchUser')
-        this.$router.push('/dashboard') // Redirect to dashboard after login
+        this.$router.push('/')
       } catch (error) {
         this.errorMessage = 'Invalid email or password.'
         console.error(error)

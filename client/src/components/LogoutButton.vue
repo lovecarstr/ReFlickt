@@ -7,10 +7,10 @@
 export default {
   methods: {
     logout() {
-      this.$store.commit('clearToken');
-      localStorage.removeItem('authToken');
-      this.$router.push('/');
-    },
-  },
-};
+      this.$store.commit('clearToken')
+      localStorage.removeItem('authToken')
+      this.$router.push('/')
+    }
+  }
+}
 </script>

@@ -44,46 +44,46 @@
       </div>
     </div>
   </template>
-  
-  <script>
-  import { Api } from '@/Api';
-  
-  export default {
-    name: 'ResetPassword',
-    data() {
-      return {
-        password: '',
-        confirmPassword: '',
-        message: '',
-        errorMessage: '',
-      };
-    },
-    methods: {
-      async resetPassword() {
-        if (this.password !== this.confirmPassword) {
-          this.errorMessage = 'Passwords do not match.';
-          return;
+
+<script>
+import { Api } from '@/Api'
+
+export default {
+  name: 'ResetPassword',
+  data() {
+    return {
+      password: '',
+      confirmPassword: '',
+      message: '',
+      errorMessage: ''
+    }
+  },
+  methods: {
+    async resetPassword() {
+      if (this.password !== this.confirmPassword) {
+        this.errorMessage = 'Passwords do not match.'
+        return
+      }
+      try {
+        const token = this.$route.params.token
+        const response = await Api.post(`/auth/reset-password/${token}`, {
+          password: this.password
+        })
+        this.message = response.data.message || 'Password has been reset successfully.'
+        this.errorMessage = ''
+        // Optionally redirect to login page after a delay
+        setTimeout(() => {
+          this.$router.push('/login')
+        }, 3000)
+      } catch (error) {
+        this.errorMessage = 'Failed to reset password. Please try again.'
+        if (error.response && error.response.data && error.response.data.message) {
+          this.errorMessage = error.response.data.message
         }
-        try {
-          const token = this.$route.params.token;
-          const response = await Api.post(`/auth/reset-password/${token}`, {
-            password: this.password,
-          });
-          this.message = response.data.message || 'Password has been reset successfully.';
-          this.errorMessage = '';
-          // Optionally redirect to login page after a delay
-          setTimeout(() => {
-            this.$router.push('/login');
-          }, 3000);
-        } catch (error) {
-          this.errorMessage = 'Failed to reset password. Please try again.';
-          if (error.response && error.response.data && error.response.data.message) {
-            this.errorMessage = error.response.data.message;
-          }
-          this.message = '';
-          console.error(error);
-        }
-      },
-    },
-  };
-  </script>
+        this.message = ''
+        console.error(error)
+      }
+    }
+  }
+}
+</script>

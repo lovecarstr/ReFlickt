@@ -42,7 +42,7 @@ export default {
   methods: {
     async loadLastRoll() {
       try {
-        const response = await Api.get(`/users/profile`)
+        const response = await Api.get('/users/profile')
         const user = response.data.user
 
         // Check if the user has a current movie roll
@@ -61,9 +61,9 @@ export default {
     },
     async rollForMovie() {
       try {
-        const userResponse = await Api.get(`/users/profile`)
+        const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
-        
+
         const response = await Api.get(`/movies/random?userId=${user._id}`)
 
         const movieId = response.data.movieId
@@ -87,7 +87,7 @@ export default {
       try {
         console.log('Match ID:', this.matchId)
 
-        const userResponse = await Api.get(`/users/profile`)
+        const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
         if (this.matchId) {
@@ -112,8 +112,7 @@ export default {
 
     async declineMatch() {
       try {
-
-        const userResponse = await Api.get(`/users/profile`)
+        const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
         await Api.patch('/movies/matches/decline', {

@@ -70,7 +70,28 @@ const movieService = {
         } catch (error) {
           throw new Error('Error fetching movie details');
         }
-    }  
+    },
+
+    getMovieBasicInfo: async (movieId) => {
+      try {
+          const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+              params: {
+                  api_key: apiKey
+              }
+          });
+          
+          const movie = response.data;
+          
+          return {
+              title: movie.title,
+              poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+              year: new Date(movie.release_date).getFullYear(),
+              movieId: movie.id
+          };
+      } catch (error) {
+          throw new Error('Error fetching movie basic info');
+      }
+  }
 };
 
 module.exports = movieService;

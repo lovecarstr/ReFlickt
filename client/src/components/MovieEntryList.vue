@@ -31,7 +31,31 @@ export default {
     async getMovieEntries() {
       try {
         const response = await Api.get('/movies')
-        this.movieEntries = response.data
+        const movies = response.data
+
+        // Fetch basic movie details for each movie
+        const movieDetailsPromises = movies.map(async (movie) => {
+          try {
+            const basicInfoResponse = await Api.get(`/movies/${movie.movieId}/basic`)
+            return {
+              movieId: movie.movieId,
+              voteCount: movie.voteCount,
+              moviePoster: basicInfoResponse.data.poster,
+              title: basicInfoResponse.data.title,
+              year: basicInfoResponse.data.year
+            }
+          } catch (error) {
+            console.error(`Error fetching details for movieId ${movie.movieId}`, error)
+            return {
+              movieId: movie.movieId,
+              voteCount: movie.voteCount,
+              moviePoster: null // handle missing data
+            }
+          }
+        })
+
+        // Resolve all the promises and set movie entries
+        this.movieEntries = await Promise.all(movieDetailsPromises)
       } catch (error) {
         console.error(error)
       }
@@ -51,28 +75,12 @@ export default {
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
+  scrollbar-width: none; /* For Firefox */
 }
 
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
 .movie-list::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.movie-list::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 10px;
-}
-
-.movie-list:hover::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-.movie-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-.movie-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  display: none; /* Hides the scrollbar */
 }
 
 .movie-item {
