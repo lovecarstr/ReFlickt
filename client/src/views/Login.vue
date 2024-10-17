@@ -66,6 +66,9 @@ export default {
         localStorage.setItem('authToken', token)
         this.$store.commit('setToken', token)
         await this.$store.dispatch('fetchUser')
+
+        // Reset user tokens
+
         this.$router.push('/')
       } catch (error) {
         this.errorMessage = 'Invalid email or password.'

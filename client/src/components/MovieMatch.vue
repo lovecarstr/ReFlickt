@@ -132,7 +132,9 @@ export default {
     },
     handleRatingSubmitted(rating) {
       console.log('Rating submitted:', rating)
-      // Add logic here to update the match
+      // Create discussion OR Add user to discussion
+      // Reset currentMovieMatch
+      // Reset currentMovieRoll
     }
   }
 }
