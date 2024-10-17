@@ -64,7 +64,7 @@ export default {
         const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
-        const response = await Api.get(`/movies/random?userId=${user._id}`)
+        const response = await Api.get(`/entries/random?userId=${user._id}`)
 
         const movieId = response.data.movieId
         this.matchId = response.data.matchId || null // If matchId exists, store it
@@ -92,11 +92,11 @@ export default {
 
         if (this.matchId) {
           // Patch existing match
-          const patchResponse = await Api.patch(`/movies/matches/${this.matchId}`, { userId: user._id })
+          const patchResponse = await Api.patch(`/matches/${this.matchId}`, { userId: user._id })
           console.log('Patch response:', patchResponse)
         } else {
           // Create new match
-          const postResponse = await Api.post('/movies/matches', { userId: user._id, movieId: this.movie.movieId })
+          const postResponse = await Api.post('/matches', { userId: user._id, movieId: this.movie.movieId })
           console.log('Post response:', postResponse)
         }
 
@@ -115,7 +115,7 @@ export default {
         const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
-        await Api.patch('/movies/matches/decline', {
+        await Api.patch('/matches/decline', {
           userId: user._id,
           matchId: this.matchId || null // Send null if there is no matchId
         })

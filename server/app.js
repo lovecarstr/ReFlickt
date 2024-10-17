@@ -33,7 +33,6 @@ mongoose
   });
 
 var app = express();
-app.use(errorHandler);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // HTTP request logger
@@ -85,6 +84,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json(err_res);
 });
+
+app.use(errorHandler);
 
 app.listen(port, function (err) {
   if (err) throw err;
