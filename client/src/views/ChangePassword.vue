@@ -51,47 +51,47 @@
       </div>
     </div>
   </template>
-  
-  <script>
-  import { Api } from '@/Api';
-  
-  export default {
-    name: 'ChangePassword',
-    data() {
-      return {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-        message: '',
-        errorMessage: '',
-      };
-    },
-    methods: {
-      async changePassword() {
-        if (this.newPassword !== this.confirmPassword) {
-          this.errorMessage = 'New passwords do not match.';
-          return;
+
+<script>
+import { Api } from '@/Api'
+
+export default {
+  name: 'ChangePassword',
+  data() {
+    return {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+      message: '',
+      errorMessage: ''
+    }
+  },
+  methods: {
+    async changePassword() {
+      if (this.newPassword !== this.confirmPassword) {
+        this.errorMessage = 'New passwords do not match.'
+        return
+      }
+      try {
+        const response = await Api.post('/auth/change-password', {
+          oldPassword: this.oldPassword,
+          newPassword: this.newPassword
+        })
+        this.message = response.data.message || 'Password changed successfully.'
+        this.errorMessage = ''
+        // Optionally, we can log the user out after password change
+        // this.$store.commit('clearToken');
+        // localStorage.removeItem('authToken');
+        // this.$router.push('/login');
+      } catch (error) {
+        this.errorMessage = 'Failed to change password. Please try again.'
+        if (error.response && error.response.data && error.response.data.message) {
+          this.errorMessage = error.response.data.message
         }
-        try {
-          const response = await Api.post('/auth/change-password', {
-            oldPassword: this.oldPassword,
-            newPassword: this.newPassword,
-          });
-          this.message = response.data.message || 'Password changed successfully.';
-          this.errorMessage = '';
-          // Optionally, we can log the user out after password change
-          // this.$store.commit('clearToken');
-          // localStorage.removeItem('authToken');
-          // this.$router.push('/login');
-        } catch (error) {
-          this.errorMessage = 'Failed to change password. Please try again.';
-          if (error.response && error.response.data && error.response.data.message) {
-            this.errorMessage = error.response.data.message;
-          }
-          this.message = '';
-          console.error(error);
-        }
-      },
-    },
-  };
-  </script>
+        this.message = ''
+        console.error(error)
+      }
+    }
+  }
+}
+</script>
