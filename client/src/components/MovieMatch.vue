@@ -1,24 +1,69 @@
 <template>
   <div v-if="user && match" class="movie-match-container">
     <div class="poster-rain">
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
-      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
+      <img
+        v-if="movie"
+        :src="movie.poster"
+        alt="Poster"
+        class="poster-rain-item"
+      />
     </div>
     <h2>Your Movie Match</h2>
     <div v-if="otherUser">
-      <h6>You and <strong>{{ otherUser }}</strong> have been matched with:</h6>
+      <h6>
+        You and <strong>{{ otherUser }}</strong> have been matched with:
+      </h6>
     </div>
     <div v-else>
       <h3>Waiting for other user...</h3>
     </div>
     <div class="row justify-content-center mb-3">
-      <div class="col-12 col-md-6 col-lg-4 text-center movie-poster-container" @click="goToMovie(movie.movieId)">
-        <img v-if="movie" :src="movie.poster" alt="Movie Poster" class="img-fluid rounded movie-poster" />
+      <div
+        class="col-12 col-md-6 col-lg-4 text-center movie-poster-container"
+        @click="goToMovie(movie.movieId)"
+      >
+        <img
+          v-if="movie"
+          :src="movie.poster"
+          alt="Movie Poster"
+          class="img-fluid rounded movie-poster"
+        />
       </div>
     </div>
     <h3 v-if="movie">{{ movie.title }} ({{ movie.year }})</h3>
@@ -66,12 +111,16 @@ export default {
         if (this.match) {
           if (this.match.movieId) {
             this.movie = await this.fetchMovie(this.match.movieId)
-            this.watchWindowExpiresAt = new Date(this.match.watchWindowExpiresAt)
+            this.watchWindowExpiresAt = new Date(
+              this.match.watchWindowExpiresAt
+            )
 
-            if (this.user._id === this.match.firstUserId._id) {
-              this.otherUser = this.match.secondUserId.username
+            if (this.user._id === this.match.firstUserId?._id) {
+              this.otherUser =
+                this.match.secondUserId?.username
             } else {
-              this.otherUser = this.match.firstUserId.username
+              this.otherUser =
+                this.match.firstUserId?.username
             }
 
             if (this.watchWindowExpiresAt) {
@@ -99,7 +148,10 @@ export default {
       const totalSeconds = this.timeLeft
       if (totalSeconds !== null) {
         const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
-        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0')
+        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
+          2,
+          '0'
+        )
         const seconds = String(totalSeconds % 60).padStart(2, '0')
         return `${hours}:${minutes}:${seconds}`
       }

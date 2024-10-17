@@ -76,9 +76,9 @@ export default {
       try {
         const profileResponse = await Api.get('/users/profile')
         const user = profileResponse.data.user
-        console.log('User Profile:', user)
 
         const ratedResponse = await Api.get(`/users/${user._id}/ratings`)
+
         const ratings = ratedResponse.data.ratings || []
 
         if (ratings.length === 0) {
