@@ -1,5 +1,5 @@
 <template>
-  <div class="card h-100 movie-card">
+  <div v-if="!isEditing" class="card h-100 movie-card">
     <router-link :to="{ name: 'MoviePage', params: { movieId: movie.movieId } }" class="poster-container">
       <img
         :src="movie.poster || defaultPoster"
@@ -15,8 +15,8 @@
         <span :class="['badge', movie.recommendation ? 'bg-success' : 'bg-danger']">
           {{ movie.recommendation ? 'Recommended' : 'Not Recommended' }}
         </span>
-        <!-- Change Rating Button (right next to the badge) -->
-        <button class="btn btn-primary btn-sm ms-2">
+        <!-- Change Rating Button -->
+        <button class="btn btn-primary btn-sm ms-2" @click="editRating">
           Change Rating
         </button>
       </p>
@@ -39,15 +39,28 @@
       </div>
     </div>
   </div>
+
+  <!-- When editing mode is active, show the CreateRating component -->
+  <div v-else>
+    <CreateRating
+      :movieId="movie.movieId"
+      :userId="userId"
+      @rating-submitted="finishEditing"
+    />
+  </div>
 </template>
 
 <script>
 import defaultPoster from '@/assets/default-poster.png'
 import starFilled from '@/assets/icons8-star-48.png'
 import starOutline from '@/assets/icons8-star-outline-48.png'
+import CreateRating from '@/components/CreateRating.vue'
 
 export default {
   name: 'RatingCard',
+  components: {
+    CreateRating
+  },
   props: {
     movie: {
       type: Object,
@@ -57,13 +70,27 @@ export default {
         return requiredProps.every(prop => prop in value) &&
                ['story', 'performances', 'directing', 'visuals', 'sound'].every(prop => value[prop] >= 1 && value[prop] <= 5);
       }
+    },
+    userId: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
       defaultPoster,
       starFilled,
-      starOutline
+      starOutline,
+      isEditing: false
+    }
+  },
+  methods: {
+    editRating() {
+      this.isEditing = true;
+    },
+    finishEditing(newRating) {
+      this.isEditing = false;
+      this.$emit('rating-updated', newRating);
     }
   },
   computed: {
@@ -83,6 +110,58 @@ export default {
 <style scoped>
 .movie-card {
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(2, 62, 138, 0.7); /* Semi-transparent background */
+  color: white;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.poster-container {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+}
+
+.movie-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.movie-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.star-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 2px;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.4em 0.6em;
+}
+
+.card-body {
+  background-color: transparent;
+}
+</style>
+
+
+<style scoped>
+.movie-card {
+  transition:
+    transform 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
   border: none;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: rgba(2, 62, 138, 0.7); /* Semi-transparent background */

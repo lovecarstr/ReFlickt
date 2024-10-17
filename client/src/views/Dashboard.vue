@@ -36,7 +36,11 @@
         class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
       >
         <div v-for="movie in ratedMovies" :key="movie.id" class="col">
-          <RatingCard :movie="movie" />
+          <RatingCard
+            :movie="movie"
+            :userId="user._id"
+            @rating-updated="onRatingUpdated"
+          />
         </div>
       </div>
       <div v-else class="alert alert-info" role="alert">
@@ -104,7 +108,7 @@ export default {
             sound: rating.sound
           }
         })
-        
+
         console.log('Rated Movies:', this.ratedMovies)
       } catch (error) {
         console.error('Error fetching user data:', error)
@@ -115,6 +119,17 @@ export default {
       }
     } else {
       this.errorMessage = 'You are not authenticated. Please log in.'
+    }
+  },
+  methods: {
+    onRatingUpdated(newRating) {
+      // Assuming ratedMovies is an array that stores movie ratings
+      const movieIndex = this.ratedMovies.findIndex(
+        (movie) => movie._id === newRating.movieId
+      )
+      if (movieIndex !== -1) {
+        this.ratedMovies[movieIndex] = newRating // Directly update the movie's rating
+      }
     }
   }
 }
