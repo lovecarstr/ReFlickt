@@ -1,16 +1,19 @@
 <template>
-    <div class="discussion-preview card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">{{ discussion.discussionName }}</h5>
-        <p v-if="latestMessage.sender" class="card-text"> <!-- If no message has been sent yet there will be no sender-->
-          {{ latestMessage.sender.username }}: {{ latestMessage.content }}
-        </p>
-        <p v-else class="card-text">
-          {{ latestMessage.content }}
-        </p>
-      </div>
+  <div class="discussion-preview card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ discussion.discussionName }}</h5>
+      <p v-if="latestMessage?.sender" class="card-text"> <!-- Safe check for sender -->
+        {{ latestMessage.sender.username }}: {{ latestMessage.content }}
+      </p>
+      <p v-else-if="latestMessage" class="card-text"> <!-- Check if there's a message but no sender -->
+        {{ latestMessage.content }}
+      </p>
+      <p v-else class="card-text"> <!-- Default text for no message -->
+        No messages yet.
+      </p>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import { Api } from '@/Api'
@@ -32,7 +35,6 @@ export default {
   },
 
   methods: {
-
     async getLatestMessage(discussion) {
       try {
         const response = await Api.get(`/discussions/${discussion._id}/messages/latest`)
@@ -42,24 +44,23 @@ export default {
         console.error('Error fetching latest message:', error)
       }
     }
-
   }
 }
 </script>
 
-  <style scoped>
-  .discussion-preview {
-    cursor: pointer;
-  }
-  .card-title {
-    text-align: left;
-  }
-  .card-text {
-    text-align: left;
-  }
-  .card-body {
-    background-color: White;
-    background-blend-mode: color-dodge;
-    border-radius: 10px;
-  }
-  </style>
+<style scoped>
+.discussion-preview {
+cursor: pointer;
+}
+.card-title {
+text-align: left;
+}
+.card-text {
+text-align: left;
+}
+.card-body {
+background-color: White;
+background-blend-mode: color-dodge;
+border-radius: 10px;
+}
+</style>
