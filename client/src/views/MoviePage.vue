@@ -112,7 +112,7 @@ export default {
         const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
-        const response = await Api.post('/movies', {
+        const response = await Api.post('/entries', {
           userId: user._id,
           movieId: this.movie.movieId,
           movieTitle: this.movie.title,

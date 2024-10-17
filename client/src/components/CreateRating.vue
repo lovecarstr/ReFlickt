@@ -62,7 +62,7 @@ export default {
       if (!this.isFormValid) return
 
       try {
-        const response = await Api.post('/movies/ratings', {
+        const response = await Api.post('/ratings', {
           movieId: this.movieId,
           userId: this.userId,
           recommendation: this.recommendation,

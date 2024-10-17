@@ -9,6 +9,9 @@ var userRoutes = require("./routes/userRoutes");
 var authRoutes = require("./routes/authRoutes");
 var movieRoutes = require("./routes/movieRoutes");
 var discussionRoutes = require("./routes/discussionRoutes");
+var entryRoutes = require("./routes/entryRoutes");
+var matchRoutes = require("./routes/matchRoutes");
+var ratingRoutes = require("./routes/ratingRoutes");
 var errorHandler = require("./middleware/errorHandler"); // Adjust the path as needed
 
 var mongoURI =
@@ -30,7 +33,6 @@ mongoose
   });
 
 var app = express();
-app.use(errorHandler);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // HTTP request logger
@@ -44,6 +46,9 @@ app.options("*", cors());
 app.use("/api", userRoutes);
 app.use("/api", movieRoutes);
 app.use("/api", discussionRoutes);
+app.use("/api", entryRoutes);
+app.use("/api", matchRoutes);
+app.use("/api", ratingRoutes);
 app.use("/api/auth", authRoutes);
 
 app.get("/api", function (req, res) {
@@ -79,6 +84,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json(err_res);
 });
+
+app.use(errorHandler);
 
 app.listen(port, function (err) {
   if (err) throw err;
