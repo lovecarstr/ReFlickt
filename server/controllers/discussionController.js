@@ -9,9 +9,15 @@ const Discussion = require('../models/discussion');
 
 
 const createNewDiscussion = async (req, res) => {
-    const { matchId } = req.body; 
+    const { matchId, userId } = req.body; 
 
     try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
         const movieMatch = await MovieMatch.findById(matchId);
 
         if (!movieMatch) {
@@ -19,12 +25,12 @@ const createNewDiscussion = async (req, res) => {
         }
 
         // Fetch movie details using the movieId from MovieMatch
-        const movieDetails = await movieService.getMovieDetails(movieMatch.movieId);
+        const movieDetails = await movieService.getMovieBasicInfo(movieMatch.movieId);
 
 
         // Create a new discussion with the fetched movie details
         const newDiscussion = new Discussion({
-            participants: [movieMatch.firstUserId, movieMatch.secondUserId],
+            firstUser: user._id,
             movieId: movieDetails.movieId, // Use the correct movieId
             messages: [], // No messages in a brand new conversation
             discussionName: `${movieDetails.title} Discussion`, // Names the conversation after the movie 
@@ -32,11 +38,37 @@ const createNewDiscussion = async (req, res) => {
         
         const savedDiscussion = await newDiscussion.save(); 
 
+        movieMatch.discussion = savedDiscussion;
+        await movieMatch.save()
+
         res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new discussion', details: error.message });
     }
 };
+const addUserToDiscussion = async (req, res) => {
+    const { discussionId } = req.params;
+    const { userId } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const discussion = await Discussion.findById(discussionId);
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion not found' });
+        } 
+        
+        discussion.secondUser = user._id;
+
+        await discussion.save();
+
+        res.status(200).json({message: "Added user to discussion", discussion});
+    } catch (error) {
+        res.status(500).json({message: "Failed to add user to discussion due to server error"})
+    }
+}
 
 const createNewMessage = async (req, res) => {
     const { discussionId } = req.params;
@@ -81,7 +113,8 @@ const getAllUserDiscussions = async (req, res) => {
         }
 
         // Find discussions where the user is a participant
-        const discussions = await Discussion.find({participants: userId });
+        const discussions = await Discussion.find({ $or: [{ firstUser: userId }, { secondUser: userId }]});
+        
 
         if (discussions.length === 0) {
             return res.status(404).json({ message: "No discussions found for this user." });
@@ -174,7 +207,8 @@ const getDiscussion = async (req, res) => {
                     select: 'username'
                 })
               })
-            .populate('participants', 'username');
+            .populate('firstUser', 'username')
+            .populate('secondUser', 'username');
             
 
         if (!discussion) {
@@ -284,4 +318,4 @@ const updateMessage = async (req, res) => {
     }
 }
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};

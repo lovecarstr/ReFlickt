@@ -4,13 +4,18 @@ const Schema = mongoose.Schema;
 const Message = require('../models/message'); 
 
 const discussionSchema = new Schema({
-    participants: [{        
-        type: Schema.Types.ObjectId, // Change to ObjectId for User references
-        ref: 'User', // Reference to the User model
-        required: true    
-    }],
+    firstUser: {
+        type: Schema.Types.ObjectId, // Use ObjectId to reference User
+        ref: "User",
+        required: true,
+    },
+    secondUser: {
+        type: Schema.Types.ObjectId, // Use ObjectId to reference User
+        ref: "User",
+        default: null,
+    },
     movieId: {
-        type: Number,
+        type: String,
         required: true,
     },
     messages: [{
