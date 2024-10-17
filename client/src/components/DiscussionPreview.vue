@@ -59,7 +59,7 @@ text-align: left;
 text-align: left;
 }
 .card-body {
-background-color: White;
+background-color: #357799;
 background-blend-mode: color-dodge;
 border-radius: 10px;
 }
