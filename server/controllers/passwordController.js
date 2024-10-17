@@ -73,7 +73,7 @@ const requestPasswordReset = async (req, res) => {
     user.passwordResetExpires = tokenExpiration;
     await user.save();
 
-    const resetUrl = `http://localhost:3000/auth/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:5173/auth/reset-password/${resetToken}`;
 
     const message = `
       You are receiving this email because you (or someone else) have requested a password reset.
