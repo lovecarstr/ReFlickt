@@ -66,48 +66,74 @@ export default {
       if (!this.isFormValid) return
 
       try {
-        const existingRatingResponse = await Api.get(
-          `/movies/${this.movieId}/ratings/${this.userId}`
-        )
-        const existingRatingId = existingRatingResponse.data?._id
+        const ratingUrl = `/movies/${this.movieId}/ratings/${this.userId}`
+        console.log('Attempting to fetch existing rating at:', ratingUrl)
 
-        if (existingRatingId) {
-          // Update the existing rating
-          const response = await Api.put(
-            `/ratings/${existingRatingId}`,
-            {
-              movieId: this.movieId,
-              recommendation: this.recommendation,
-              story: this.ratings.story,
-              performances: this.ratings.performances,
-              directing: this.ratings.directing,
-              visuals: this.ratings.visuals,
-              sound: this.ratings.sound
-            }
-          )
+        try {
+          const existingRatingResponse = await Api.get(ratingUrl)
+          console.log('Existing rating found:', existingRatingResponse.data)
+          const existingRatingId = existingRatingResponse.data?.rating?._id
 
-          if (response.status === 200) {
-            this.$emit('rating-submitted', response.data) // Emit event with updated rating
-          }
-        } else {
-          // Create a new rating
-          const response = await Api.post('/ratings', {
+          if (existingRatingId) {
+            console.log('Updating existing rating:', existingRatingId)
+            const response = await Api.put(
+          `/ratings/${existingRatingId}`,
+          {
             movieId: this.movieId,
-            userId: this.userId,
             recommendation: this.recommendation,
             story: this.ratings.story,
             performances: this.ratings.performances,
             directing: this.ratings.directing,
             visuals: this.ratings.visuals,
             sound: this.ratings.sound
-          })
+          }
+            )
 
-          if (response.status === 201) {
-            this.$emit('rating-submitted', response.data.rating) // Emit event with new rating
+            if (response.status === 200) {
+              console.log('Rating updated successfully:', response.data)
+              this.$emit('rating-submitted', response.data)
+            }
+          }
+        } catch (error) {
+          if (error.response?.status === 404) {
+            console.log('No existing rating found, creating new rating')
+            // Create new rating
+            const response = await Api.post('/ratings', {
+              movieId: this.movieId,
+              userId: this.userId,
+              recommendation: this.recommendation,
+              story: this.ratings.story,
+              performances: this.ratings.performances,
+              directing: this.ratings.directing,
+              visuals: this.ratings.visuals,
+              sound: this.ratings.sound
+            })
+
+            if (response.status === 201) {
+              console.log('New rating created successfully:', response.data)
+              this.$emit('rating-submitted', response.data.rating)
+            }
+          } else {
+            // If it's not a 404, rethrow the error
+            console.error('Unexpected error while checking existing rating:', {
+              status: error.response?.status,
+              statusText: error.response?.statusText,
+              data: error.response?.data,
+              url: error.config?.url
+            })
+            throw error
           }
         }
       } catch (error) {
-        console.error('Error submitting rating:', error)
+        console.error('Error in submitRating:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          url: error.config?.url,
+          method: error.config?.method
+        })
+        throw error
       }
     }
   }
