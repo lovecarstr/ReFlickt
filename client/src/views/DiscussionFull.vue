@@ -4,7 +4,7 @@
     <div class="message-list" ref="messageList" @scroll="onScroll">
       <div v-for="message in messages" :key="message.id" class="message-card">
         <div class="message-header">
-          <strong>{{ message.sender.username }}</strong>
+          <strong>{{ message.sender?.username || 'Unknown' }}</strong>
           <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
         </div>
         <div class="message-body">
@@ -148,7 +148,7 @@ export default {
 }
 
 .message-card {
-  background-color: #f9f9f9;
+  background-color: #357799;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding-left: 15px;
@@ -173,6 +173,7 @@ export default {
 }
 
 .message-input input {
+  background-color: #256789;
   flex-grow: 1;
   padding: 10px;
   border-radius: 8px;
@@ -182,7 +183,7 @@ export default {
 
 .message-input button {
   padding: 10px 20px;
-  background-color: #28a745;
+  background-color: #83d8ff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -191,12 +192,12 @@ export default {
 
 .message-timestamp{
   font-size: 0.8em;
-  color: #888;
+  color: #bbb;
   padding-left: 10px;
   font-weight: normal;
 }
 
 .message-input button:hover {
-  background-color: #218838;
+  background-color: #81a2f1;
 }
 </style>

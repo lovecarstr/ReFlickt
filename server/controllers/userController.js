@@ -168,6 +168,51 @@ const userController = {
     }
   },
 
+  // Sets a user's currentMatch to null
+  resetCurrentMatch: async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      user.currentMatch = null;
+  
+      await user.save();
+      return res.status(200).json({ message: 'Current match reset successfully' });
+    } catch (error) {
+      console.error('Error resetting current match:', error);
+      return res.status(500).json({ error: 'Server error, could not reset current match' });
+    }
+  },
+
+  // Resets the currentMovieRoll object values to null
+  resetCurrentMovieRoll: async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Reset the fields in currentMovieRoll
+      user.currentMovieRoll = {
+        movieId: null,
+        matchId: null,
+        canRollAgainAt: null
+      };
+  
+      await user.save();
+      return res.status(200).json({ message: 'Current movie roll reset successfully' });
+    } catch (error) {
+      console.error('Error resetting current movie roll:', error);
+      return res.status(500).json({ error: 'Server error, could not reset current movie roll' });
+    }
+  },
+
   /*
 const getUser = async (req, res) => {
   const userId = req.params.userId;

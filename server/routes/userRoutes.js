@@ -5,8 +5,10 @@ const router = express.Router();
 
 // UNCATEGORIZED
 router.get("/users/profile", authMiddleware, userController.getUserProfile); // Gets current authorized (logged in) user 
-router.patch('/users/:userId/tokens', userController.refillUserTokens); // Refills user tokens if enough time has passed since last refill
 router.get('/users/:userId/matches/window', userController.checkWatchWindow);// Checks the remaining time of the 48h watch window for a user's current match
+router.patch('/users/:userId/tokens', userController.refillUserTokens); // Refills user tokens if enough time has passed since last refill
+router.patch('/users/:userId/matches/current', userController.resetCurrentMatch);
+router.patch('/users/:userId/entries/current', userController.resetCurrentMovieRoll);
 
 // GET (collection)
 router.get('/users', userController.getAllUsers);

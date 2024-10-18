@@ -35,6 +35,11 @@ const movieMatchSchema = new Schema(
       type: Date, 
       default: null 
     },
+    discussion: {
+      type: Schema.Types.ObjectId, 
+      ref: "Discussion",
+      default: null,
+    }
   }
 );
 
