@@ -1,13 +1,8 @@
 <template>
   <div>
     <div class="d-flex overflow-auto movie-list">
-      <div
-        v-for="movie in movieEntries"
-        :key="movie.movieId"
-        class="movie-item text-center"
-        @click="goToMovie(movie.movieId)"
-        style="cursor: pointer;"
-      >
+      <div v-for="movie in movieEntries" :key="movie.movieId" class="movie-item text-center"
+        @click="goToMovie(movie.movieId)" style="cursor: pointer;">
         <img :src="movie.moviePoster" class="img-fluid movie-poster" />
         <p>Votes: {{ movie.voteCount }}</p>
       </div>
@@ -26,6 +21,18 @@ export default {
   },
   mounted() {
     this.getMovieEntries()
+
+    // Wheel event listener to scroll horizontally
+    const movieList = this.$el.querySelector('.movie-list')
+    movieList.addEventListener('wheel', this.handleWheelScroll)
+  },
+
+  beforeDestroy() {
+    // Remove wheel listener when the component is destroyed
+    const movieList = this.$el.querySelector('.movie-list')
+    if (movieList) {
+      movieList.removeEventListener('wheel', this.handleWheelScroll)
+    }
   },
   methods: {
     async getMovieEntries() {
@@ -62,6 +69,11 @@ export default {
     },
     goToMovie(movieId) {
       this.$router.push({ name: 'MoviePage', params: { movieId } })
+    },
+    handleWheelScroll(event) {
+      event.preventDefault() // Prevent default vertical scroll
+      const movieList = event.currentTarget
+      movieList.scrollLeft += event.deltaY // Scroll horizontally based on vertical scroll input
     }
   }
 }
@@ -71,16 +83,19 @@ export default {
 .movie-list {
   display: flex;
   gap: 1rem;
-  padding: 0.5rem 1rem; /* Adjust padding to increase hover area */
+  padding: 0.5rem 1rem;
+  /* Adjust padding to increase hover area */
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
-  scrollbar-width: none; /* For Firefox */
+  scrollbar-width: none;
+  /* For Firefox */
 }
 
 /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
 .movie-list::-webkit-scrollbar {
-  display: none; /* Hides the scrollbar */
+  display: none;
+  /* Hides the scrollbar */
 }
 
 .movie-item {
