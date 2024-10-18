@@ -145,6 +145,39 @@ const getAllMovieDiscussions = async (req, res) => {
         res.status(500).json({ error: 'Error when getting discussions' });
     }
 };
+const getDiscussionMessages = async (req, res) => {
+    try {
+        const { discussionId } = req.params;
+    
+        if (!discussionId) {
+          return res.status(400).json({ error: 'Discussion ID is required' });
+        }
+
+        const discussion = await Discussion.findById(discussionId).populate('messages')  
+        .populate({
+            path: 'messages',
+            select: 'sender content createdAt',
+            populate: ({
+                path: 'sender',
+                select: 'username'
+            })
+          })
+        .populate('firstUser', 'username')
+        .populate('secondUser', 'username');
+
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion ID is required' });
+        }
+  
+        let allMessages = discussion.messages
+    
+        // Send the new messages to the client
+        return res.status(200).json({ allMessages });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Server error' });
+      }
+    };
 
 const getNewMessages = async (req, res) => {
     try {
@@ -372,4 +405,4 @@ const deleteMessage = async (req, res) => {
     
 } 
 
-module.exports = {getAllMovieDiscussions, deleteMessage, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};
+module.exports = {getAllMovieDiscussions, getDiscussionMessages, deleteMessage, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};

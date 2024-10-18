@@ -1,6 +1,6 @@
 const express = require('express');
 const {createNewDiscussion, getDiscussion, createNewMessage, getAllMovieDiscussions, getAllUserDiscussions, getLatestMessage, 
-   renameDiscussion, deleteDiscussion, updateMessage, getNewMessages, addUserToDiscussion, deleteMessage} = require('../controllers/discussionController');
+   renameDiscussion, deleteDiscussion, updateMessage, getNewMessages, addUserToDiscussion, deleteMessage, getDiscussionMessages} = require('../controllers/discussionController');
 const router = express.Router();
 
 // UNCATEGORIZED
@@ -18,6 +18,9 @@ router.patch('/discussions/:discussionId', addUserToDiscussion); // adds user to
 
 // GET (individual)
 router.get('/discussions/:discussionId', getDiscussion); // gets a specific discussion
+
+// GET (collection)
+router.get('/discussions/:discussionId/messages', getDiscussionMessages); // gets a specific discussion
 
 // GET (relationship)
 router.get('/users/:userId/discussions', getAllUserDiscussions) //gets all the discussions for a specific user

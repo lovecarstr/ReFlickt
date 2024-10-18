@@ -7,7 +7,7 @@
           <strong>{{ message.sender?.username || 'Unknown' }}</strong>
           <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
           <button 
-              v-if="currentUser && message.sender._id === currentUser._id"
+              v-if="currentUser && message?.sender?._id ===currentUser._id"
               class="delete-button" 
               @click="deleteMessage(message._id)"
               >
@@ -52,8 +52,9 @@ export default {
     }
   },
   created() {
-    this.sendMessage()
-    this.formatDate()
+    this.sendMessage();
+    this.formatDate();
+    this.loadNewMessages();
   },
   beforeUnmount() {
     this.stopPolling()
@@ -61,7 +62,7 @@ export default {
   mounted() {
     const passedDiscussion = this.$route.params
     this.getCurrentUser();
-    this.loadDiscussion(passedDiscussion)
+    this.loadMessages(passedDiscussion);
     this.initLatestMessage(passedDiscussion)
     this.scrollToBottom()
     this.startPolling(passedDiscussion)
@@ -72,15 +73,31 @@ export default {
       this.latestMessage = response.data.latestMessage
       console.log('latest MEssage', this.latestMessage)
     },
-    async loadDiscussion(passedDiscussion) {
+   /* async loadDiscussion(passedDiscussion) {
       const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
       this.discussion = response.data
       this.messages = this.discussion.messages.reverse() // Reverse to show latest messages at the bottom
+    },*/
+    async loadMessages(passedDiscussion) {
+      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`)
+      console.log(response.data)
+      this.messages = response.data.allMessages
+      this.messages = this.messages.reverse() // Reverse to show latest messages at the bottom
     },
+    /*async loadNewMessages(passedDiscussion) {
+      console.log(this.latestMessage._id)
+      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`, { params: {aftermessageid: this.latestMessage._id}} )
+      console.log(response.data, "bla bla bla")
+
+      let preReverseMessages = response.data.newMessages
+      const reversedMessages = preReverseMessages.reverse()
+
+      this.messages.push(...reversedMessages);
+    },*/
     startPolling(passedDiscussion) {
       // Poll every 10 seconds to check for new messages
       this.pollInterval = setInterval(() => {
-        this.loadDiscussion(passedDiscussion)
+        this.loadMessages(passedDiscussion)
         console.log('polled')
       }, 5000) // 10 seconds
     },
@@ -128,9 +145,8 @@ export default {
         })
 
         // Assuming response contains the newly added message
-        const newMsg = response.data.message // Add the new message to the list (unshift because we're displaying in reverse)
         this.newMessage = '' // Clear the input field
-        this.loadDiscussion(passedDiscussion)
+        this.loadMessages(passedDiscussion)
         this.scrollToBottom()
       } catch (error) {
         console.error('Error sending message:', error)
@@ -149,17 +165,18 @@ export default {
       }
 
       try {
-      const userResponse = await Api.get('/users/profile')
-      const user = userResponse.data.user
 
-      const passedDiscussion = this.$route.params
+        const passedDiscussion = this.$route.params
+        
+        const respone = await Api.delete(`/discussions/${passedDiscussion.discussionId}/messages/${messageId}`, {
+          data: { userId: this.currentUser._id }
+        })
+        
+        if (respone.status === 200){
+          console.log("Message deleted with id ", messageId, " By user " ,this.currentUser.username)
+        }
+        this.loadMessages(passedDiscussion)
       
-      console.log(user._id)
-      
-      response = await Api.delete(`/discussions/${passedDiscussion.discussionId}/messages/${messageId}`, { userId: user._id})
-      
-      this.loadDiscussion(passedDiscussion)
-
       }
       catch (error){
         console.log("Failed to delete message", error)

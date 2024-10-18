@@ -26,14 +26,6 @@ export default {
       required: true
     }
   },
-  /* watch: {
-      discussions(newDiscussions) {
-      // This will trigger whenever discussions are updated
-        if (newDiscussions.length > 0) {
-          this.alertData(newDiscussions);
-        }
-      },
-    }, */
   methods: {
     goToDiscussion(discussionId) {
       console.log(discussionId)
