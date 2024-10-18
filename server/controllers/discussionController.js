@@ -81,14 +81,14 @@ const getAllUserDiscussions = async (req, res) => {
         }
 
         // Find discussions where the user is a participant
-        const discussions = await Discussion.find({ participants: userId });
+        const discussions = await Discussion.find({participants: userId });
 
         if (discussions.length === 0) {
             return res.status(404).json({ message: "No discussions found for this user." });
         }
 
         // Sends all the discussions
-        res.status(200).json({ discussions });
+        res.status(200).json({ discussions: Array.isArray(discussions) ? discussions : [discussions] });
     } catch (error) {
         res.status(500).json({ error: 'Error when getting discussions' });
     }
@@ -113,6 +113,51 @@ const getAllMovieDiscussions = async (req, res) => {
     }
 };
 
+const getNewMessages = async (req, res) => {
+    try {
+      const { discussionId } = req.params;
+      const { afterMessageId } = req.query;
+  
+      if (!discussionId) {
+        return res.status(400).json({ error: 'Discussion ID is required' });
+      }
+  
+      console.log("Discussion ID:", discussionId);
+      console.log("After Message ID:", afterMessageId);
+  
+      let query = { discussionId };
+  
+      if (afterMessageId) {
+        const lastMessage = await Message.findById(afterMessageId);
+  
+        if (!lastMessage) {
+          return res.status(400).json({ error: 'Invalid afterMessageId' });
+        }
+  
+        console.log("Last Message Created At:", lastMessage.createdAt);
+  
+        // Create a query for messages after the latest message createdAt time
+        query = {
+          ...query,
+          createdAt: { $gt: lastMessage.createdAt },
+        };
+      }
+  
+      console.log("Query:", query);
+  
+      // Fetch new messages
+      const newMessages = await Message.find(query).sort({ createdAt: 1 });
+  
+      console.log("New Messages:", newMessages);
+  
+      // Send the new messages to the client
+      return res.status(200).json({ messages: newMessages });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+  };
+
 //get a specific discussion
 const getDiscussion = async (req, res) => {
     const { discussionId, userId} = req.params;
@@ -121,8 +166,16 @@ const getDiscussion = async (req, res) => {
         // Fetch the discussion and populate the 'messages' and 'participants' fields
         const discussion = await Discussion.findById({ _id: discussionId })
             .populate('messages')  
-            .populate('messages', 'sender')  
-            .populate('participants', 'username'); 
+            .populate({
+                path: 'messages',
+                select: 'sender content createdAt',
+                populate: ({
+                    path: 'sender',
+                    select: 'username'
+                })
+              })
+            .populate('participants', 'username');
+            
 
         if (!discussion) {
             return res.status(404).json({ error: 'Discussion not found' });
@@ -143,15 +196,29 @@ const getLatestMessage = async (req, res) => {
             .select('messages') // Only select the 'messages' field
             .populate({
                 path: 'messages',
+                populate: {                    
+                    path: 'sender',                    
+                    select: 'username'               
+                },
                 options: { sort: { createdAt: -1 }, limit: 1 } 
-            });
+            })
 
-        if (!discussion || discussion.messages.length === 0) {
-            return res.status(404).json({ message: "Discussion not found or it is empty" });
+        if (!discussion) {
+            return res.status(404).json({ message: "Discussion not found" });
+        }
+
+        if (discussion.messages.length === 0){
+            const latestMessage = new Message({
+                content: "Be the first one to send a message :) !",
+                sender: null, 
+            }); 
+            return res.status(200).json({latestMessage});
         }
 
         // Return the first (most recent) message after sorting
         const latestMessage = discussion.messages[0];
+
+        
 
         res.status(200).json({ latestMessage });
     } catch (error) {
@@ -217,4 +284,4 @@ const updateMessage = async (req, res) => {
     }
 }
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage};
+module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};

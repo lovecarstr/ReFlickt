@@ -9,13 +9,18 @@ import RequestPasswordReset from '@/views/RequestPasswordReset.vue'
 import ResetPassword from '@/views/ResetPassword.vue'
 import ChangePassword from '@/views/ChangePassword.vue'
 import MoviePage from './views/MoviePage.vue'
+import Discussion from '@/views/Discussion.vue';
+import DiscussionFull from '@/views/DiscussionFull.vue';
 
 const routes = [
   { path: '/', name: 'home', component: Home },
   { path: '/login', name: 'login', component: Login, meta: { requiresGuest: true } },
   { path: '/register', name: 'register', component: Register, meta: { requiresGuest: true } },
   { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },
-  { path: '/movies/:movieId', name: 'MoviePage', component: MoviePage, meta: { requiresAuth: true } },
+  { path: '/discussion', name: 'discussion', component: Discussion, meta: { requiresAuth: true } },
+  { path: '/movie/:movieId', name: 'MoviePage', component: MoviePage, meta: { requiresAuth: true } },
+  { path: '/discussion/:discussionId', name: 'discussionFull', component: DiscussionFull, meta: { requiresAuth: true } },
+
   {
     path: '/request-password-reset',
     name: 'requestPasswordReset',

@@ -160,7 +160,7 @@ export default {
   },
   methods: {
     async fetchMatch(matchId) {
-      const response = await Api.get(`/movies/matches/${matchId}`)
+      const response = await Api.get(`/matches/${matchId}`)
       return response.data.match
     },
     async fetchMovie(movieId) {

@@ -33,38 +33,38 @@
       </div>
     </div>
   </template>
-  
-  <script>
-  import { Api } from '@/Api';
-  
-  export default {
-    name: 'RequestPasswordReset',
-    data() {
-      return {
-        email: '',
-        message: '',
-        errorMessage: '',
-      };
-    },
-    methods: {
-      async requestReset() {
-        try {
-          const response = await Api.post('/auth/request-password-reset', {
-            email: this.email,
-          });
-          this.message =
+
+<script>
+import { Api } from '@/Api'
+
+export default {
+  name: 'RequestPasswordReset',
+  data() {
+    return {
+      email: '',
+      message: '',
+      errorMessage: ''
+    }
+  },
+  methods: {
+    async requestReset() {
+      try {
+        const response = await Api.post('/auth/request-password-reset', {
+          email: this.email
+        })
+        this.message =
             response.data.message ||
-            'If that email address is in our database, we will send you an email to reset your password.';
-          this.errorMessage = '';
-        } catch (error) {
-          this.errorMessage = 'Failed to send password reset link. Please try again.';
-          if (error.response && error.response.data && error.response.data.message) {
-            this.errorMessage = error.response.data.message;
-          }
-          this.message = '';
-          console.error(error);
+            'If that email address is in our database, we will send you an email to reset your password.'
+        this.errorMessage = ''
+      } catch (error) {
+        this.errorMessage = 'Failed to send password reset link. Please try again.'
+        if (error.response && error.response.data && error.response.data.message) {
+          this.errorMessage = error.response.data.message
         }
-      },
-    },
-  };
-  </script>
+        this.message = ''
+        console.error(error)
+      }
+    }
+  }
+}
+</script>

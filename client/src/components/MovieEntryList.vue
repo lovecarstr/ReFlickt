@@ -32,7 +32,7 @@ export default {
   methods: {
     async getMovieEntries() {
       try {
-        const response = await Api.get('/movies')
+        const response = await Api.get('/entries')
         const movies = response.data
 
         // Fetch basic movie details for each movie

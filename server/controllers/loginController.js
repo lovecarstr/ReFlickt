@@ -24,7 +24,6 @@ const logInUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password entered" });
     }
-
     // Generate a JWT (JSON Web Token) for session management
     let token;
     try {
