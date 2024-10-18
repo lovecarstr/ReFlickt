@@ -201,8 +201,8 @@ export default {
           await this.addUserToDiscussion(this.match.discussion, this.user._id)
         }
 
-        await this.resetCurrentMovieMatch(this.user._id)
-        await this.resetCurrentMovieRoll(this.user._id)
+        this.resetCurrentMovieMatch(this.user._id)
+        this.resetCurrentMovieRoll(this.user._id)
 
         // Fetch updated match data
         this.match = await this.fetchMatch(this.match._id)
@@ -220,16 +220,16 @@ export default {
       }
     },
 
-    resetCurrentMovieMatch(userId) {
+    async resetCurrentMovieMatch(userId) {
       try {
-        Api.patch(`/users/${userId}/matches/current`)
+        await Api.patch(`/users/${userId}/matches/current`)
       } catch (error) {
         console.log(error)
       }
     },
-    resetCurrentMovieRoll(userId) {
+    async resetCurrentMovieRoll(userId) {
       try {
-        Api.patch(`/users/${userId}/entries/current`)
+        await Api.patch(`/users/${userId}/entries/current`)
       } catch (error) {
         console.log(error)
       }
