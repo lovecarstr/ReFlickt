@@ -160,8 +160,11 @@ export default {
         if (this.match && this.match.discussion) {
           this.$router.push({ name: 'discussionFull', params: { discussionId: this.match.discussion } })
         }
+
+        // Dispatch Vuex action to fetch updated user data
+        this.$store.dispatch('fetchUser')
       } catch (error) {
-        console.log(error)
+        console.error('Error submitting rating:', error)
       }
     },
 

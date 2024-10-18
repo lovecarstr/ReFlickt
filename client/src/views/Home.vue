@@ -40,6 +40,12 @@ export default {
       // Check if the user has a current match and return the appropriate component
       return this.user && this.user.currentMatch ? 'MovieMatch' : 'MovieRoll'
     }
+  },
+  watch: {
+    'user.currentMatch'(newValue, oldValue) {
+      // Force component re-render when currentMatch changes
+      this.$forceUpdate()
+    }
   }
 }
 </script>

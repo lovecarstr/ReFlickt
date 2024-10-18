@@ -93,20 +93,22 @@ export default {
         const user = userResponse.data.user
 
         if (this.matchId) {
-          // Patch existing match
+        // Patch existing match
           const patchResponse = await Api.patch(`/matches/${this.matchId}`, { userId: user._id })
           console.log('Patch response:', patchResponse)
         } else {
-          // Create new match
+        // Create new match
           const postResponse = await Api.post('/matches', { userId: user._id, movieId: this.movie.movieId })
           console.log('Post response:', postResponse)
         }
 
         this.infoMessage = 'Match accepted successfully!'
         this.hasResponded = true
-        // Logic for switching to MovieMatch module instead of MovieRoll here
+
+        // Dispatch Vuex action to fetch updated user data
+        this.$store.dispatch('fetchUser')
       } catch (error) {
-        console.error('Error accepting match:', error) // Print the error object to inspect the issue
+        console.error('Error accepting match:', error)
         this.infoMessage = error.response?.data?.message || 'Failed to accept match.'
         this.movie = null
       }
@@ -121,8 +123,12 @@ export default {
           userId: user._id,
           matchId: this.matchId || null // Send null if there is no matchId
         })
+
         this.infoMessage = 'Match declined successfully.'
         this.hasResponded = true
+
+        // Dispatch Vuex action to fetch updated user data
+        this.$store.dispatch('fetchUser')
       } catch (error) {
         this.infoMessage = error.response?.data?.message || 'Failed to decline match.'
       }
