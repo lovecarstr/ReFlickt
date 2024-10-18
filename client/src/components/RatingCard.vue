@@ -47,6 +47,7 @@
       :userId="userId"
       @rating-submitted="finishEditing"
     />
+    <CancelButton @cancel-editing="cancelEditing" />
   </div>
 </template>
 
@@ -55,11 +56,13 @@ import defaultPoster from '@/assets/default-poster.png'
 import starFilled from '@/assets/icons8-star-48.png'
 import starOutline from '@/assets/icons8-star-outline-48.png'
 import CreateRating from '@/components/CreateRating.vue'
+import CancelButton from './CancelButton.vue'
 
 export default {
   name: 'RatingCard',
   components: {
-    CreateRating
+    CreateRating,
+    CancelButton
   },
   props: {
     movie: {
@@ -91,6 +94,9 @@ export default {
     finishEditing(newRating) {
       this.isEditing = false;
       this.$emit('rating-updated', newRating);
+    },
+    cancelEditing() {
+      this.isEditing = false
     }
   },
   computed: {

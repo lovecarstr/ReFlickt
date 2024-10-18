@@ -35,7 +35,7 @@
         v-else-if="ratedMovies.length"
         class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
       >
-        <div v-for="movie in ratedMovies" :key="movie.id" class="col">
+        <div v-for="movie in ratedMovies" :key="movie.movieId" class="col">
           <RatingCard
             :movie="movie"
             :userId="user._id"
@@ -123,12 +123,19 @@ export default {
   },
   methods: {
     onRatingUpdated(newRating) {
-      // Assuming ratedMovies is an array that stores movie ratings
       const movieIndex = this.ratedMovies.findIndex(
-        (movie) => movie._id === newRating.movieId
+        (movie) => movie.movieId === newRating.movieId
       )
+
       if (movieIndex !== -1) {
-        this.ratedMovies[movieIndex] = newRating // Directly update the movie's rating
+        // Update the existing movie's rating
+        this.ratedMovies.splice(movieIndex, 1, {
+          ...this.ratedMovies[movieIndex],
+          ...newRating
+        })
+      } else {
+        // If it's a new rating, add it to the list
+        this.ratedMovies.push(newRating)
       }
     }
   }

@@ -72,6 +72,7 @@ export default {
         const existingRatingId = existingRatingResponse.data?._id
 
         if (existingRatingId) {
+          // Update the existing rating
           const response = await Api.put(
             `/movies/ratings/${existingRatingId}`,
             {
@@ -86,9 +87,10 @@ export default {
           )
 
           if (response.status === 200) {
-            this.$emit('rating-submitted', response.data)
+            this.$emit('rating-submitted', response.data) // Emit event with updated rating
           }
         } else {
+          // Create a new rating
           const response = await Api.post('/movies/ratings', {
             movieId: this.movieId,
             userId: this.userId,
@@ -101,7 +103,7 @@ export default {
           })
 
           if (response.status === 201) {
-            this.$emit('rating-submitted', response.data.rating)
+            this.$emit('rating-submitted', response.data.rating) // Emit event with new rating
           }
         }
       } catch (error) {
