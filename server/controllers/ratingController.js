@@ -5,52 +5,54 @@ const User = require("../models/user");
 const MovieRating = require("../models/movieRating");
 
 const ratingController = {
-  rateMovie: async (req, res) => {
-    const {
-      movieId,
-      userId,
-      recommendation,
-      story,
-      performances,
-      directing,
-      visuals,
-      sound,
-    } = req.body;
-
-    try {
-      // Check if a rating already exists for this user and movie
-      const existingRating = await MovieRating.findOne({
-        movieId: movieId,
-        userId: userId,
-      });
-
-      if (existingRating) {
-        // If rating exists, inform the client to use PUT for updating the rating
-        return res
-          .status(409)
-          .json({ message: "Rating already exists, use PUT to update." });
-      }
-
-      // Proceed to create a new rating
-      const newRating = new MovieRating({
-        movieId: movieId,
-        userId: userId,
-        recommendation: recommendation,
-        story: story,
-        performances: performances,
-        directing: directing,
-        visuals: visuals,
-        sound: sound,
-      });
-
-      await newRating.save();
-
-      res
-        .status(201)
-        .json({ message: "Rating submitted successfully", rating: newRating });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
+    
+    rateMovie: async (req, res) => {
+      const {
+        movieId,
+        userId,
+        recommendation,
+        story,
+        performances,
+        directing,
+        visuals,
+        sound,
+      } = req.body;
+  
+      try {
+        // Check if user exists
+        const user = await User.findById(userId);
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+  
+        // Create and save the rating
+        const newRating = new MovieRating({
+          movieId,
+          userId,
+          recommendation,
+          story,
+          performances,
+          directing,
+          visuals,
+          sound,
+        });
+  
+        await newRating.save();
+  
+        // Add movie to user's watchedMovies if not already there
+        if (!user.watchedMovies.includes(movieId)) {
+          user.watchedMovies.push(movieId);
+          await user.save();
+        }
+  
+        res.status(201).json({ 
+          message: "Rating submitted successfully", 
+          rating: newRating 
+        });
+  
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
     }
   },
 
@@ -90,11 +92,11 @@ const ratingController = {
   },
 
   updateMovieRating: async (req, res) => {
-    try {
-      const { ratingId } = req.params;
-      const { story, performances, directing, visuals, sound, recommendation } =
-        req.body;
+    const { ratingId } = req.params; // Get ratingId from the route parameters
+    const { story, performances, directing, visuals, sound, recommendation } =
+      req.body;
 
+    try {
       // Find and update the movie rating by ratingId
       const updatedRating = await MovieRating.findByIdAndUpdate(
         ratingId,
@@ -103,13 +105,14 @@ const ratingController = {
       );
 
       if (!updatedRating) {
-        return res.status(404).json({ message: "Rating not found" });
+        return res.status(404).json({ error: "Rating not found" });
       }
 
-      res.status(200).json(updatedRating);
+      return res.status(200).json(updatedRating);
     } catch (error) {
-      console.error("Error updating rating:", error);
-      res.status(500).json({ message: "Server error", error });
+      return res
+        .status(500)
+        .json({ error: "Error updating rating", details: error.message });
     }
   },
 
