@@ -26,6 +26,7 @@ router.get('/discussions/:discussionId/messages', getNewMessages); // gets a spe
 
 // DELETE (individual)
 router.delete('/discussions/:discussionId', deleteDiscussion) //deletes a specific discussion
+router.delete('/discussions/:discussionId/messages/:messageId', deleteMessage)
 
 // PUT (individual)
 router.put('/messages/:messageId', updateMessage)//updateMessage
