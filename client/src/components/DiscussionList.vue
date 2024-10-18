@@ -1,10 +1,7 @@
 <template>
     <div class="discussion-list">
       <h2>Discussions</h2>
-      <div v-if="isLoading">
-          Loading discussions...
-      </div>
-      <div v-else-if="discussions.length === 0">No discussions yet</div>
+      <div v-if="discussions.length === 0">No discussions yet</div>
       <div v-else>
 
         <DiscussionPreview
