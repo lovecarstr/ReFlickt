@@ -323,6 +323,53 @@ const updateMessage = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
+}
+const deleteMessage = async (req, res) => {
+        try {
+            const { discussionId, messageId } = req.params;
+            const { userId } = req.body;
+            
+            // Fetch the discussion
+            const discussion = await Discussion.findOne({ _id: discussionId });
+            if (!discussion) {
+                return res.status(404).json({ message: "Discussion not found" });
+            }
+    
+            // Fetch the user
+            const user = await User.findById(userId); 
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+    
+            // Fetch the message to delete
+            const messageToDelete = await Message.findById(messageId);
+            if (!messageToDelete) {
+                return res.status(404).json({ message: "Message not found" });
+            }
+    
+            // Check if the user is the sender of the message
+            if (userId !== String(messageToDelete.sender)) {
+                return res.status(403).json({ message: "User is not the sender of the message" });
+            }
+    
+            // Remove the message reference from the discussion's message list
+            discussion.messages = discussion.messages.filter(
+                msgId => String(msgId) !== String(messageId)
+            );
+    
+            // Save the updated discussion document
+            await discussion.save();
+    
+            // Delete the message from the Message collection
+            await Message.deleteOne({ _id: messageId });
+    
+            return res.status(200).json({ message: "Message deleted successfully" });
+    
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};
+    } catch (error){
+        return res.status(500).json({message: "Could not delete message due to internal server error"})
+    }
+    
+} 
+
+module.exports = {getAllMovieDiscussions, deleteMessage, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};

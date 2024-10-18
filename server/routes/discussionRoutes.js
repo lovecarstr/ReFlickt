@@ -1,6 +1,6 @@
 const express = require('express');
 const {createNewDiscussion, getDiscussion, createNewMessage, getAllMovieDiscussions, getAllUserDiscussions, getLatestMessage, 
-   renameDiscussion, deleteDiscussion, updateMessage, getNewMessages, addUserToDiscussion} = require('../controllers/discussionController');
+   renameDiscussion, deleteDiscussion, updateMessage, getNewMessages, addUserToDiscussion, deleteMessage} = require('../controllers/discussionController');
 const router = express.Router();
 
 // UNCATEGORIZED

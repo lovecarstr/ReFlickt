@@ -1,11 +1,18 @@
 <template>
   <div class="discussion-full">
     <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
-    <div class="message-list" ref="messageList" @scroll="onScroll">
+    <div class="message-list" ref="messageList">
       <div v-for="message in messages" :key="message.id" class="message-card">
         <div class="message-header">
           <strong>{{ message.sender?.username || 'Unknown' }}</strong>
           <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
+          <button 
+              v-if="currentUser && message.sender._id === currentUser._id"
+              class="delete-button" 
+              @click="deleteMessage(message._id)"
+              >
+          <i class="fas fa-trash"></i>
+        </button>
         </div>
         <div class="message-body">
           <p>{{ message.content }}</p>
@@ -40,7 +47,8 @@ export default {
       },
       pollinterval: null, // For polling messages every 10 seconds
       latestMessage: null, // Keeps track of the latest message ID
-      newMessage: ''
+      newMessage: '',
+      currentUser: null,
     }
   },
   created() {
@@ -52,6 +60,7 @@ export default {
   },
   mounted() {
     const passedDiscussion = this.$route.params
+    this.getCurrentUser();
     this.loadDiscussion(passedDiscussion)
     this.initLatestMessage(passedDiscussion)
     this.scrollToBottom()
@@ -80,6 +89,15 @@ export default {
       if (this.pollInterval) {
         clearInterval(this.pollInterval)
         this.pollInterval = null
+      }
+    },
+    async getCurrentUser(){
+      try {
+        const userResponse = await Api.get('/users/profile');
+        this.currentUser = userResponse.data.user;
+        console.log("getting the user", this.currentUser)
+      } catch (error) {
+        console.error('Error fetching current user:', error);
       }
     },
     formatDate(dateString) {
@@ -123,6 +141,29 @@ export default {
         const messageList = this.$refs.messageList
         messageList.scrollTop = messageList.scrollHeight
       })
+    },
+    async deleteMessage(messageId){
+      const confirmed = window.confirm("Are you sure you want to delete this message?");
+      if (!confirmed) {
+        return; // If the user cancels, do nothing
+      }
+
+      try {
+      const userResponse = await Api.get('/users/profile')
+      const user = userResponse.data.user
+
+      const passedDiscussion = this.$route.params
+      
+      console.log(user._id)
+      
+      response = await Api.delete(`/discussions/${passedDiscussion.discussionId}/messages/${messageId}`, { userId: user._id})
+      
+      this.loadDiscussion(passedDiscussion)
+
+      }
+      catch (error){
+        console.log("Failed to delete message", error)
+      }
     }
   }
 }
@@ -149,7 +190,7 @@ export default {
 
 .message-card {
   background-color: #357799;
-  border: 1px solid #ddd;
+  border-bottom: 4px solid #155779;
   border-radius: 8px;
   padding-left: 15px;
   padding-right: 15px;
@@ -177,27 +218,54 @@ export default {
   flex-grow: 1;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border-bottom: 4px solid #4587A9;
   margin-right: 10px;
+  color: white;
 }
 
 .message-input button {
   padding: 10px 20px;
-  background-color: #83d8ff;
+  background-color: #75B7D9;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
 }
+.message-input ::placeholder {
+  color: #bbb
+}
 
 .message-timestamp{
   font-size: 0.8em;
   color: #bbb;
-  padding-left: 10px;
+  padding-right: 30px;
   font-weight: normal;
 }
 
 .message-input button:hover {
-  background-color: #81a2f1;
+  background-color: #65A7C9;
+  border-bottom: 4px solid #4587A9;
+}
+.message-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: #155779;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.delete-button:hover {
+  color: red;
 }
 </style>
