@@ -2,42 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const movieService = require("../services/movieService");
 
-const User = require('../models/user');
+const User = require("../models/user");
 
 const movieController = {
-  // Checks open matches to find a movie for a user to be matched with. If there are no
-  // open matches, it will instead select a random one from the list of entries not yet matched with any users.
-  getRandomMovie: async (req, res) => {
-    const { userId } = req.query; // Retrieve userId from query parameters
 
-getCurrentUserMatch: async (req, res) => {
-  const { userId } = req.params; // Get userId from the route parameters
-
-  try {
-      // Find the user by userId and populate the currentMatch field
-      const user = await User.findById(userId).populate("currentMatch");
-
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Check if there is a current match
-      if (!user.currentMatch) {
-        return res
-          .status(200)
-          .json({ message: "No current match found for this user" });
-      }
-
-      // Return the current match
-      return res.status(200).json({ match: user.currentMatch });
-  } catch (error) {
-      return res.status(500).json({ error: 'Error retrieving current match' });
-  }
-},
-
-searchMovie: async (req, res) => {
-  const { title } = req.query;
-  try {
+  searchMovie: async (req, res) => {
+    const { title } = req.query;
+    try {
       const movies = await movieService.searchMovieByTitle(title);
       res.json(movies);
     } catch (error) {
@@ -107,9 +78,8 @@ searchMovie: async (req, res) => {
           .status(400)
           .json({ error: "Invalid request. Please check your input." });
       }
-  }
-},
-
+    }
+  },
 };
 
 module.exports = movieController;

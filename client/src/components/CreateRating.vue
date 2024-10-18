@@ -74,7 +74,7 @@ export default {
         if (existingRatingId) {
           // Update the existing rating
           const response = await Api.put(
-            `/movies/ratings/${existingRatingId}`,
+            `/ratings/${existingRatingId}`,
             {
               movieId: this.movieId,
               recommendation: this.recommendation,
@@ -91,7 +91,7 @@ export default {
           }
         } else {
           // Create a new rating
-          const response = await Api.post('/movies/ratings', {
+          const response = await Api.post('/ratings', {
             movieId: this.movieId,
             userId: this.userId,
             recommendation: this.recommendation,

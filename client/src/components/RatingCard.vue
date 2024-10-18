@@ -69,9 +69,9 @@ export default {
       type: Object,
       required: true,
       validator: (value) => {
-        const requiredProps = ['poster', 'title', 'year', 'recommendation', 'story', 'performances', 'directing', 'visuals', 'sound'];
+        const requiredProps = ['poster', 'title', 'year', 'recommendation', 'story', 'performances', 'directing', 'visuals', 'sound']
         return requiredProps.every(prop => prop in value) &&
-               ['story', 'performances', 'directing', 'visuals', 'sound'].every(prop => value[prop] >= 1 && value[prop] <= 5);
+               ['story', 'performances', 'directing', 'visuals', 'sound'].every(prop => value[prop] >= 1 && value[prop] <= 5)
       }
     },
     userId: {
@@ -89,11 +89,11 @@ export default {
   },
   methods: {
     editRating() {
-      this.isEditing = true;
+      this.isEditing = true
     },
     finishEditing(newRating) {
-      this.isEditing = false;
-      this.$emit('rating-updated', newRating);
+      this.isEditing = false
+      this.$emit('rating-updated', newRating)
     },
     cancelEditing() {
       this.isEditing = false
@@ -161,7 +161,6 @@ export default {
   background-color: transparent;
 }
 </style>
-
 
 <style scoped>
 .movie-card {
