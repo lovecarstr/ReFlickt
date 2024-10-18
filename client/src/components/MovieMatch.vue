@@ -112,15 +112,15 @@ export default {
       return response.data
     },
     async createDiscussion(matchId, userId) {
-      const response = await Api.post(`/discussions`, {
-        matchId: matchId,
-        userId: userId,
+      const response = await Api.post('/discussions', {
+        matchId,
+        userId
       })
       console.log(response.data.newDiscussion)
       return response.data.newDiscussion
     },
     async addUserToDiscussion(discussionId, userId) {
-      const response = await Api.patch(`/discussions/${discussionId}`, { userId: userId });
+      const response = await Api.patch(`/discussions/${discussionId}`, { userId })
       return response.data.discussion
     },
     goToMovie(movieId) {
@@ -141,9 +141,9 @@ export default {
     async handleRatingSubmitted(rating) {
       console.log('Rating submitted:', rating)
       try {
-        console.log(this.match.discussion, "discussion id")
+        console.log(this.match.discussion, 'discussion id')
         if (!this.match.discussion) {
-          console.log(this.user._id, "User")
+          console.log(this.user._id, 'User')
           await this.createDiscussion(this.match._id, this.user._id)
         } else {
           await this.addUserToDiscussion(this.match.discussion, this.user._id)
@@ -178,7 +178,7 @@ export default {
       } catch (error) {
         console.log(error)
       }
-    },
+    }
 
   }
 }
