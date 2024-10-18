@@ -304,18 +304,25 @@ const deleteDiscussion = async (req, res) => {
     }
 }
 const updateMessage = async (req, res) => {
-    const {messageId, sender, newContent} = req.body; 
-    try{
-        const updatedMessage = await Message.findByIdAndUpdate({ sender, newContent },
-            { new: true } )
+    const { messageId } = req.params; 
+    const { sender, newContent } = req.body;
+
+    try {
+        const updatedMessage = await Message.findByIdAndUpdate(
+            messageId, 
+            { sender, newContent },
+            { new: true }
+        );
+
         if (!updatedMessage) {
             return res.status(404).json({ error: 'Message not found' });
         }
-        res.status(200).json ({message: "message updated", updatedMessage})
+
+        res.status(200).json({ message: "Message updated", updatedMessage });
         
-    } catch(error){
-        res.status(500).json ({error: error.message})
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
 module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};
