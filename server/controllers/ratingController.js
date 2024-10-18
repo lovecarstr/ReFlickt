@@ -18,8 +18,20 @@ const ratingController = {
     } = req.body;
 
     try {
-      // We need to check that the movieID is a valid one here
+      // Check if a rating already exists for this user and movie
+      const existingRating = await MovieRating.findOne({
+        movieId: movieId,
+        userId: userId,
+      });
 
+      if (existingRating) {
+        // If rating exists, inform the client to use PUT for updating the rating
+        return res
+          .status(409)
+          .json({ message: "Rating already exists, use PUT to update." });
+      }
+
+      // Proceed to create a new rating
       const newRating = new MovieRating({
         movieId: movieId,
         userId: userId,
@@ -78,11 +90,11 @@ const ratingController = {
   },
 
   updateMovieRating: async (req, res) => {
-    const { ratingId } = req.params; // Get ratingId from the route parameters
-    const { story, performances, directing, visuals, sound, recommendation } =
-      req.body;
-
     try {
+      const { ratingId } = req.params;
+      const { story, performances, directing, visuals, sound, recommendation } =
+        req.body;
+
       // Find and update the movie rating by ratingId
       const updatedRating = await MovieRating.findByIdAndUpdate(
         ratingId,
@@ -91,14 +103,13 @@ const ratingController = {
       );
 
       if (!updatedRating) {
-        return res.status(404).json({ error: "Rating not found" });
+        return res.status(404).json({ message: "Rating not found" });
       }
 
-      return res.status(200).json(updatedRating);
+      res.status(200).json(updatedRating);
     } catch (error) {
-      return res
-        .status(500)
-        .json({ error: "Error updating rating", details: error.message });
+      console.error("Error updating rating:", error);
+      res.status(500).json({ message: "Server error", error });
     }
   },
 

@@ -16,6 +16,8 @@ import { Api } from '@/Api'
 export default {
   data() {
     return {
+      ratedMovies: [], // Initialize as empty array
+      activeDiscussions: [], // Initialize as empty array
       movieEntries: []
     }
   },

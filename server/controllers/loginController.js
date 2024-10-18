@@ -5,6 +5,8 @@ const User = require("../models/user");
 const logInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    process.env.JWT_SECRET;
+
     // Input validation
     if (!email || !password) {
       return res

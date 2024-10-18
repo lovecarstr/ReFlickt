@@ -41,7 +41,7 @@ export default {
         console.log(this.discussions)
       } catch (error) {
         console.error('Error loading discussions:', error)
-        // this.isloading = false
+        this.isloading = false
       }
     }
   }

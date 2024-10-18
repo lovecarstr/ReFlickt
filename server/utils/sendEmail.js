@@ -36,7 +36,7 @@ async function sendEmail({ to, subject, text }) {
 
     // Create the email content
     const messageParts = [
-      `From: "Your App" <${USER_EMAIL}>`,
+      `From: "ReFlickt" <${USER_EMAIL}>`,
       `To: ${to}`,
       `Subject: ${subject}`,
       "",

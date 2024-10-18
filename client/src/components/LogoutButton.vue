@@ -1,4 +1,3 @@
-<!-- src/components/LogoutButton.vue -->
 <template>
   <button @click="logout" class="btn btn-link nav-link">Logout</button>
 </template>

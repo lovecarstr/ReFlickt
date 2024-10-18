@@ -67,7 +67,6 @@ export default {
       const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
       this.discussion = response.data
       this.messages = this.discussion.messages.reverse() // Reverse to show latest messages at the bottom
-      console.log(this.messages) // Log messages to check if sender is present
     },
     startPolling(passedDiscussion) {
       // Poll every 10 seconds to check for new messages

@@ -1,23 +1,22 @@
-/* Import variables */
 @import '@/assets/variables.css';
 
 /* Typography */
 body {
-  font-family: 'Tahoma', Helvetica, sans-serif;
+  font-family: 'Arial', Helvetica, sans-serif;
   background-color: var(--color-lightest-blue);
-  color: var(--color-white-); /* Set text color to white */
+  color: white; /* Global text color set to white */
   margin: 0;
 }
 
-h1, h2, h3, h4, h5, h6, p {
-  color: var(--color-white-);
+h1, h2, h3, h4, h5, h6 {
+  color: white; /* Headers also white */
 }
 
 /* Buttons */
 .btn-primary {
   background-color: var(--color-medium-blue);
   border-color: var(--color-medium-blue);
-  color: var(--color-white-); /* Set button text to white */
+  color: white; /* Ensure button text is visible */
 }
 
 .btn-primary:hover {
@@ -28,7 +27,7 @@ h1, h2, h3, h4, h5, h6, p {
 .btn-secondary {
   background-color: var(--color-medium-dark-blue);
   border-color: var(--color-medium-dark-blue);
-  color: var(--color-white-);
+  color: #fff;
 }
 
 .btn-secondary:hover {
@@ -37,26 +36,41 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* Forms */
-.form-control {
-  border-radius: 5px;
-  color: var(--color-white-); /* Set form text to white */
+form, 
+.form-container, 
+.form-group, 
+input, 
+label, 
+textarea, 
+select {
+  color: var(--color-dark-blue); /* Dark text for forms */
 }
 
+input, 
+textarea, 
+select {
+  background-color: #ffffff; /* Light background for inputs */
+  color: var(--color-dark-blue); /* Dark text */
+  border: 1px solid var(--color-medium-blue);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Focus States */
 .form-control:focus {
   border-color: var(--color-light-blue);
   box-shadow: 0 0 5px rgba(0, 150, 199, 0.5);
-  color: var(--color-white-); /* Maintain white text on focus */
 }
 
 /* Links */
 a,
 .router-link {
-  color: var(--color-white-); /* Set link text to white */
+  color: var(--color-medium-blue);
 }
 
 a:hover,
 .router-link:hover {
-  color: var(--color-lightest-blue); /* Optionally, change hover color */
+  color: var(--color-medium-dark-blue);
   text-decoration: underline;
 }
 
@@ -69,13 +83,12 @@ a:hover,
 
 .card-body {
   padding: 2rem;
-  color: var(--color-white-); /* Ensure card body text is white */
 }
 
 /* Error Messages */
 .text-danger {
   font-weight: bold;
-  color: var(--color-white-); /* Ensure error messages are white */
+  color: #e74c3c; /* Optional: red color for errors */
 }
 
 /* Navbar */
@@ -84,15 +97,18 @@ a:hover,
 }
 
 .nav-link {
-  color: var(--color-white-) !important;
+  color: white !important;
 }
 
 .nav-link:hover {
   color: var(--color-lightest-blue) !important;
 }
 
+.logout-button {
+  margin-left: 15px;
+}
+
 /* Password Strength Indicator */
 .password-strength {
   font-size: 0.9rem;
-  color: var(--color-white-); /* Password strength text white */
 }
