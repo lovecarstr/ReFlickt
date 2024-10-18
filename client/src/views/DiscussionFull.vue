@@ -24,112 +24,110 @@
   </div>
 </template>
 
+<script>
+import { Api } from '@/Api'
 
-  
-  <script>
-  import { Api } from '@/Api'
-
-  export default {
-    data() {
-      return {
-        discussion: {
-          type: Object,
-          required: true,
-        },
-        messages: {
-          type: Array,
-          required: true,
-        },
-        pollinterval: null, // For polling messages every 10 seconds      
-        latestMessage: null, // Keeps track of the latest message ID
-        newMessage: "",
-      };
-    },
-    created() {
-      this.sendMessage();
-      this.formatDate();
-    },
-    beforeUnmount(){
-      this.stopPolling();
-    },
-    mounted() {
-      const passedDiscussion = this.$route.params;
-      this.loadDiscussion(passedDiscussion);
-      this.initLatestMessage(passedDiscussion);
-      this.scrollToBottom();
-      this.startPolling(passedDiscussion);
-    },
-    methods: {
-      async initLatestMessage(passedDiscussion){
-        const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages/latest`);
-        this.latestMessage = response.data.latestMessage;
-        console.log("latest MEssage", this.latestMessage)
+export default {
+  data() {
+    return {
+      discussion: {
+        type: Object,
+        required: true
       },
-      async loadDiscussion(passedDiscussion) {
-        const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`);
-        this.discussion = response.data;
-        this.messages = this.discussion.messages.reverse(); // Reverse to show latest messages at the bottom
+      messages: {
+        type: Array,
+        required: true
       },
-      startPolling(passedDiscussion) {
-        // Poll every 10 seconds to check for new messages
-        this.pollInterval = setInterval(() => {
-          this.loadDiscussion(passedDiscussion);
-          console.log("polled")
-        }, 5000); // 10 seconds
-      },
-      stopPolling() {
+      pollinterval: null, // For polling messages every 10 seconds
+      latestMessage: null, // Keeps track of the latest message ID
+      newMessage: ''
+    }
+  },
+  created() {
+    this.sendMessage()
+    this.formatDate()
+  },
+  beforeUnmount() {
+    this.stopPolling()
+  },
+  mounted() {
+    const passedDiscussion = this.$route.params
+    this.loadDiscussion(passedDiscussion)
+    this.initLatestMessage(passedDiscussion)
+    this.scrollToBottom()
+    this.startPolling(passedDiscussion)
+  },
+  methods: {
+    async initLatestMessage(passedDiscussion) {
+      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages/latest`)
+      this.latestMessage = response.data.latestMessage
+      console.log('latest MEssage', this.latestMessage)
+    },
+    async loadDiscussion(passedDiscussion) {
+      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
+      this.discussion = response.data
+      this.messages = this.discussion.messages.reverse() // Reverse to show latest messages at the bottom
+    },
+    startPolling(passedDiscussion) {
+      // Poll every 10 seconds to check for new messages
+      this.pollInterval = setInterval(() => {
+        this.loadDiscussion(passedDiscussion)
+        console.log('polled')
+      }, 5000) // 10 seconds
+    },
+    stopPolling() {
       // Clears the polling when the component is destroyed
-        if (this.pollInterval) {
-          clearInterval(this.pollInterval);
-          this.pollInterval = null;
-        }
-      },
-      formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'long', 
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        },)
-      },
-      
-      async sendMessage(){
-        if (!this.newMessage.trim()) {
-          return; // Prevent sending empty messages
-        }
+      if (this.pollInterval) {
+        clearInterval(this.pollInterval)
+        this.pollInterval = null
+      }
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString)
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    },
 
-        const passedDiscussion = this.$route.params;
+    async sendMessage() {
+      if (!this.newMessage.trim()) {
+        return // Prevent sending empty messages
+      }
+
+      const passedDiscussion = this.$route.params
       try {
-        const userResponse = await Api.get(`/users/profile`)
+        const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
         const response = await Api.post(`/discussions/${passedDiscussion.discussionId}/messages`, {
           userId: user._id,
-          content: this.newMessage,
-        });
+          content: this.newMessage
+        })
 
         // Assuming response contains the newly added message
-        const newMsg = response.data.message; // Add the new message to the list (unshift because we're displaying in reverse)
-        this.newMessage = ""; // Clear the input field
-        this.loadDiscussion(passedDiscussion);
-        this.scrollToBottom();
-        } catch (error) {
-          console.error("Error sending message:", error);
-        }
-      },
-        scrollToBottom() {
-        this.$nextTick(() => {
-          const messageList = this.$refs.messageList;
-          messageList.scrollTop = messageList.scrollHeight;
-        });
-      },
+        const newMsg = response.data.message // Add the new message to the list (unshift because we're displaying in reverse)
+        this.newMessage = '' // Clear the input field
+        this.loadDiscussion(passedDiscussion)
+        this.scrollToBottom()
+      } catch (error) {
+        console.error('Error sending message:', error)
+      }
     },
-  };
-  </script>
-  
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const messageList = this.$refs.messageList
+        messageList.scrollTop = messageList.scrollHeight
+      })
+    }
+  }
+}
+</script>
+
   <style scoped>
 .discussion-name {
   color: White;

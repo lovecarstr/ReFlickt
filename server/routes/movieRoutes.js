@@ -1,5 +1,5 @@
-const express = require('express');
-const movieController = require('../controllers/movieController');
+const express = require("express");
+const movieController = require("../controllers/movieController");
 const router = express.Router();
 
 router.get("/movies/search", movieController.searchMovie); // Search the external movie database for a movie based on title

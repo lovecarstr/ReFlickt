@@ -4,9 +4,9 @@
       <div v-if="isLoading">
           Loading discussions...
       </div>
-      <div v-else-if="discussions.length === 0">No discussions yet</div> 
+      <div v-else-if="discussions.length === 0">No discussions yet</div>
       <div v-else>
-        
+
         <DiscussionPreview
           v-for="discussion in discussions"
           :key="discussion._id"
@@ -16,36 +16,36 @@
       </div>
     </div>
   </template>
-  
-  <script>
-  import DiscussionPreview from './DiscussionPreview.vue';
-  export default {
-    components: {
-      DiscussionPreview,
-    },
-    props: {
-      discussions: {
-        type: Array,
-        required: true,
-      },
-    },
-    /*watch: {
+
+<script>
+import DiscussionPreview from './DiscussionPreview.vue'
+export default {
+  components: {
+    DiscussionPreview
+  },
+  props: {
+    discussions: {
+      type: Array,
+      required: true
+    }
+  },
+  /* watch: {
       discussions(newDiscussions) {
       // This will trigger whenever discussions are updated
         if (newDiscussions.length > 0) {
           this.alertData(newDiscussions);
         }
       },
-    },*/
-    methods: {
-      goToDiscussion(discussionId) {
-        console.log(discussionId)
-        this.$router.push({ name: 'discussionFull', params: { discussionId } });
-      },
-    },
-  };
-  </script>
-  
+    }, */
+  methods: {
+    goToDiscussion(discussionId) {
+      console.log(discussionId)
+      this.$router.push({ name: 'discussionFull', params: { discussionId } })
+    }
+  }
+}
+</script>
+
   <style scoped>
   .discussion-list {
     padding: 20px;

@@ -1,43 +1,193 @@
 <template>
-  <div>
-    <div v-if="user">
-      <h1>Welcome, {{ user.username }}!</h1>
-      <router-link to="/change-password" class="btn btn-secondary">
-        Change Password
-      </router-link>
-    </div>
-    <div v-else>
-      <p>Loading...</p>
+  <div class="dashboard-container">
+    <div class="container">
+      <!-- Display Error Message if Exists -->
+      <div v-if="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <!-- User Profile Section -->
+      <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+          <div class="card user-profile">
+            <div class="card-body text-center">
+              <h2 class="card-title">
+                Hello, <strong>{{ user.username }}</strong>
+              </h2>
+              <p class="card-text">Email: {{ user.email }}</p>
+              <router-link to="/change-password" class="btn btn-primary">
+                Change Password
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rated Movies Section -->
+      <h3 class="mb-3">Your Rated Movies</h3>
+      <div v-if="isLoading" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading rated movies...</p>
+      </div>
+      <div
+        v-else-if="ratedMovies.length"
+        class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+      >
+        <div v-for="movie in ratedMovies" :key="movie.movieId" class="col">
+          <RatingCard
+            :movie="movie"
+            :userId="user._id"
+            @rating-updated="onRatingUpdated"
+          />
+        </div>
+      </div>
+      <div v-else class="alert alert-info" role="alert">
+        You haven't rated any movies yet.
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Api } from '@Api'
+import { Api } from '@/Api'
 import { mapState } from 'vuex'
-import ChangePassword from './ChangePassword.vue'
+import RatingCard from '@/components/RatingCard.vue'
 
 export default {
   name: 'Dashboard',
+  components: {
+    RatingCard
+  },
   data() {
     return {
-      recentActivities: [] // Can implement this as QoL feature
+      ratedMovies: [],
+      errorMessage: '',
+      isLoading: false
     }
   },
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user', 'token'])
   },
   async created() {
-    try {
-      const response = await Api.get('/users/me/recent-activities')
-      this.recentActivities = response.data.activities
-    } catch (error) {
-      console.error('Error fetching recent activities:', error)
+    if (this.token) {
+      this.isLoading = true
+      try {
+        const profileResponse = await Api.get('/users/profile')
+        const user = profileResponse.data.user
+
+        const ratedResponse = await Api.get(`/users/${user._id}/ratings`)
+
+        const ratings = ratedResponse.data.ratings || []
+
+        if (ratings.length === 0) {
+          this.ratedMovies = []
+          console.log('No rated movies found.')
+          return
+        }
+
+        const movieDetailsPromises = ratings.map((rating) =>
+          Api.get(`/movies/${rating.movieId}/details`)
+        )
+
+        const moviesResponses = await Promise.all(movieDetailsPromises)
+
+        this.ratedMovies = ratings.map((rating, index) => {
+          const movieData = moviesResponses[index].data
+          return {
+            movieId: movieData.movieId,
+            title: movieData.title,
+            year: movieData.year,
+            poster: movieData.poster,
+            recommendation: rating.recommendation,
+            story: rating.story,
+            performances: rating.performances,
+            directing: rating.directing,
+            visuals: rating.visuals,
+            sound: rating.sound
+          }
+        })
+
+        console.log('Rated Movies:', this.ratedMovies)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+        this.errorMessage =
+          error.response?.data?.message || 'Failed to fetch data.'
+      } finally {
+        this.isLoading = false
+      }
+    } else {
+      this.errorMessage = 'You are not authenticated. Please log in.'
+    }
+  },
+  methods: {
+    onRatingUpdated(newRating) {
+      const movieIndex = this.ratedMovies.findIndex(
+        (movie) => movie.movieId === newRating.movieId
+      )
+
+      if (movieIndex !== -1) {
+        // Update the existing movie's rating
+        this.ratedMovies.splice(movieIndex, 1, {
+          ...this.ratedMovies[movieIndex],
+          ...newRating
+        })
+      } else {
+        // If it's a new rating, add it to the list
+        this.ratedMovies.push(newRating)
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-/* Add styles */
+.dashboard-container {
+  min-height: 100vh;
+  color: white;
+}
+
+header {
+  background-color: rgba(0, 119, 182, 0.7); /* Semi-transparent background */
+}
+
+.user-profile {
+  border: none;
+  background-color: transparent; /* Semi-transparent background */
+  color: white;
+}
+
+h3 {
+  color: white;
+  border-bottom: 2px solid white;
+  padding-bottom: 0.5rem;
+}
+
+.alert-info {
+  background-color: rgba(72, 202, 228, 0.7); /* Semi-transparent background */
+  color: white;
+  border-color: #0096c7;
+}
+
+.alert-danger {
+  background-color: rgba(231, 76, 60, 0.7); /* Semi-transparent background */
+  color: white;
+  border-color: #c0392b;
+}
+
+.card-title,
+.card-text {
+  color: white;
+}
+
+.btn-primary {
+  background-color: #0096c7;
+  border-color: #0096c7;
+}
+
+.btn-primary:hover {
+  background-color: #00b4d8;
+  border-color: #00b4d8;
+}
 </style>
