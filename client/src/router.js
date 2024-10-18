@@ -9,8 +9,8 @@ import RequestPasswordReset from '@/views/RequestPasswordReset.vue'
 import ResetPassword from '@/views/ResetPassword.vue'
 import ChangePassword from '@/views/ChangePassword.vue'
 import MoviePage from './views/MoviePage.vue'
-import Discussion from '@/views/Discussion.vue';
-import DiscussionFull from '@/views/DiscussionFull.vue';
+import Discussion from '@/views/Discussion.vue'
+import DiscussionFull from '@/views/DiscussionFull.vue'
 
 const routes = [
   { path: '/', name: 'home', component: Home },
