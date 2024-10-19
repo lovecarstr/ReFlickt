@@ -1,5 +1,26 @@
 <template>
   <div>
+    <!-- Invisible Unlock Button for devs step 1 -->
+    <button 
+      @click="devUnlockStep1"
+      class="invisible-button bottom-left"
+    ></button>
+
+    <!-- Invisible Unlock Button for devs step 2 -->
+    <button 
+      @click="devUnlockStep2"
+      v-if="step1Unlocked" 
+      class="invisible-button bottom-right"
+    ></button>
+    <!-- Reset Button: Visible Only When Both Unlock Steps Are Completed -->
+    <button 
+      @click="resetMovieEntries" 
+      v-if="resetUnlocked" 
+      class="reset-button"
+    >
+      Reset Movie Entries
+    </button>
+
     <div class="d-flex overflow-auto movie-list">
       <div v-for="movie in movieEntries" :key="movie.movieId" class="movie-item text-center"
         @click="goToMovie(movie.movieId)" style="cursor: pointer;">
@@ -18,7 +39,9 @@ export default {
     return {
       ratedMovies: [], // Initialize as empty array
       activeDiscussions: [], // Initialize as empty array
-      movieEntries: []
+      movieEntries: [],
+      step1Unlocked: false, // Track the first dev unlock step      
+      resetUnlocked: false  // Track second dev unlock step
     }
   },
   mounted() {
@@ -76,6 +99,25 @@ export default {
       event.preventDefault() // Prevent default vertical scroll
       const movieList = event.currentTarget
       movieList.scrollLeft += event.deltaY // Scroll horizontally based on vertical scroll input
+    },
+    async resetMovieEntries() {
+      try {
+        //await Api.delete('/entries'); // resets the movie entry list in the backend.
+
+        // Clear the movie entries on the frontend
+        this.movieEntries = [];
+        console.log('Movie entries have been reset.');
+      } catch (error) {
+        console.error('Error resetting movie entries:', error);
+      }
+    },
+    devUnlockStep1() {
+      this.step1Unlocked = true;
+    },
+    devUnlockStep2() {
+      if (this.step1Unlocked) {
+        this.resetUnlocked = true;
+      }
     }
   }
 }
@@ -111,4 +153,38 @@ export default {
   object-fit: cover;
   max-width: 100%;
 }
+.reset-button {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  background-color: #c00;
+}
+
+.invisible-button {
+  background: transparent;
+  border: none;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  cursor: default;
+  z-index: 10;
+  opacity: 0;
+}
+.bottom-left {
+  bottom: 10px;
+  left: 10px;
+}
+
+.bottom-right {
+  bottom: 10px;
+  right: 10px;
+}
+
 </style>

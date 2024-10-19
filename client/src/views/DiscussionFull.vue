@@ -54,7 +54,7 @@ export default {
   created() {
     this.sendMessage();
     this.formatDate();
-    this.loadNewMessages();
+    //this.loadNewMessages();
   },
   beforeUnmount() {
     this.stopPolling()
