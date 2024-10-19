@@ -102,7 +102,7 @@ export default {
     },
     async resetMovieEntries() {
       try {
-        //await Api.delete('/entries'); // resets the movie entry list in the backend.
+        await Api.delete('/entries'); // resets the movie entry list in the backend.
 
         // Clear the movie entries on the frontend
         this.movieEntries = [];
