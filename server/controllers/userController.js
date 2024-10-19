@@ -5,6 +5,7 @@ const User = require("../models/user");
 const { getLatestMessage } = require("./discussionController");
 const Discussion = require("../models/discussion");
 const MovieRating = require("../models/movieRating");
+const MovieMatch = require("../models/movieMatch");
 
 const HOURS_BETWEEN_TOKEN_REFILLS = 24;
 const DAILY_TOKEN_AMOUNT = 5;
