@@ -16,7 +16,7 @@
     <button 
       @click="resetMovieEntries" 
       v-if="resetUnlocked" 
-      class="reset-button"
+      id="reset-button"
     >
       Reset Movie Entries
     </button>
@@ -153,7 +153,7 @@ export default {
   object-fit: cover;
   max-width: 100%;
 }
-.reset-button {
+#reset-button {
   margin-bottom: 1rem;
   padding: 0.5rem 1rem;
   background-color: #f00;

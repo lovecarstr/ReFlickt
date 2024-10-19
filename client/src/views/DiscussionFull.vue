@@ -26,7 +26,7 @@
         placeholder="Type a message..."
         @keyup.enter="sendMessage"
       />
-      <button @click="sendMessage">Send</button>
+      <button id="send-button" @click="sendMessage">Send</button>
     </div>
   </div>
 </template>
@@ -240,13 +240,17 @@ export default {
   color: white;
 }
 
-.message-input button {
+#send-button {
   padding: 10px 20px;
   background-color: #75B7D9;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+#send-button:hover {
+  background-color: #65A7C9;
+  border-bottom: 4px solid #4587A9;
 }
 .message-input ::placeholder {
   color: #bbb
@@ -257,11 +261,6 @@ export default {
   color: #bbb;
   padding-right: 30px;
   font-weight: normal;
-}
-
-.message-input button:hover {
-  background-color: #65A7C9;
-  border-bottom: 4px solid #4587A9;
 }
 .message-header {
   display: flex;
