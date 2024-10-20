@@ -1,21 +1,21 @@
 <template>
   <div>
     <!-- Invisible Unlock Button for devs step 1 -->
-    <button 
+    <button
       @click="devUnlockStep1"
       class="invisible-button bottom-left"
     ></button>
 
     <!-- Invisible Unlock Button for devs step 2 -->
-    <button 
+    <button
       @click="devUnlockStep2"
-      v-if="step1Unlocked" 
+      v-if="step1Unlocked"
       class="invisible-button bottom-right"
     ></button>
     <!-- Reset Button: Visible Only When Both Unlock Steps Are Completed -->
-    <button 
-      @click="resetMovieEntries" 
-      v-if="resetUnlocked" 
+    <button
+      @click="resetMovieEntries"
+      v-if="resetUnlocked"
       id="reset-button"
     >
       Reset Movie Entries
@@ -40,8 +40,8 @@ export default {
       ratedMovies: [], // Initialize as empty array
       activeDiscussions: [], // Initialize as empty array
       movieEntries: [],
-      step1Unlocked: false, // Track the first dev unlock step      
-      resetUnlocked: false  // Track second dev unlock step
+      step1Unlocked: false, // Track the first dev unlock step
+      resetUnlocked: false // Track second dev unlock step
     }
   },
   mounted() {
@@ -62,6 +62,7 @@ export default {
   methods: {
     async getMovieEntries() {
       try {
+        await Api.delete('/entries/reset') // Resets entries if they have reached max match count
         const response = await Api.get('/entries')
         const movies = response.data
 
@@ -102,21 +103,21 @@ export default {
     },
     async resetMovieEntries() {
       try {
-        await Api.delete('/entries'); // resets the movie entry list in the backend.
+        await Api.delete('/entries') // resets the movie entry list in the backend.
 
         // Clear the movie entries on the frontend
-        this.movieEntries = [];
-        console.log('Movie entries have been reset.');
+        this.movieEntries = []
+        console.log('Movie entries have been reset.')
       } catch (error) {
-        console.error('Error resetting movie entries:', error);
+        console.error('Error resetting movie entries:', error)
       }
     },
     devUnlockStep1() {
-      this.step1Unlocked = true;
+      this.step1Unlocked = true
     },
     devUnlockStep2() {
       if (this.step1Unlocked) {
-        this.resetUnlocked = true;
+        this.resetUnlocked = true
       }
     }
   }
