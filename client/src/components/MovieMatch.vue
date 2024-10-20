@@ -196,14 +196,6 @@ export default {
 
         this.$store.dispatch('fetchUser');
         this.match = await this.fetchMatch(this.match._id)
-        console.log(this.match.watchWindowExpiresAt)
-        if (this.match.watchWindowExpiresAt < Date.now()) {
-          await this.resetCurrentMovieMatch(this.user._id)
-          await this.resetCurrentMovieRoll(this.user._id)
-
-          await this.$store.dispatch('fetchUser');
-          
-        } else {
 
         console.log(this.match.discussion, 'discussion id')
         if (!this.match.discussion) {
@@ -227,7 +219,6 @@ export default {
 
         // Dispatch Vuex action to fetch updated user data
         this.$store.dispatch('fetchUser')
-      }
       } catch (error) {
         console.error('Error submitting rating:', error)
       }
