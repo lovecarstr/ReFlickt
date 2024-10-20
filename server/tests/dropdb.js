@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 // Variables
-var mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/animalDevelopmentDB";;
+var mongoURI = process.env.MONGODB_URI;
 
 if (!mongoURI) {
     console.error('Missing MONGODB_URI for dropping test database.');
