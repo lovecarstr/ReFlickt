@@ -20,7 +20,7 @@ router.patch('/discussions/:discussionId', addUserToDiscussion); // adds user to
 router.get('/discussions/:discussionId', getDiscussion); // gets a specific discussion
 
 // GET (collection)
-router.get('/discussions/:discussionId/messages', getDiscussionMessages); // gets a specific discussion
+router.get('/discussions/:discussionId/messages', getDiscussionMessages); // gets a all messages from a specific discussion
 
 // GET (relationship)
 router.get('/users/:userId/discussions', getAllUserDiscussions) //gets all the discussions for a specific user
