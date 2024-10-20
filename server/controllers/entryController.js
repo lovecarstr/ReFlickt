@@ -12,7 +12,7 @@ const TIME_LIMIT_FOR_RESERVATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 const entryController = {
   // Spends tokens to add movies to the movieEntries collection
   addMovieEntry: async (req, res) => {
-    const { userId, movieId, movieTitle, moviePoster, tokens } = req.body;
+    const { userId, movieId, tokens } = req.body;
 
     try {
       const user = await User.findById(userId);
