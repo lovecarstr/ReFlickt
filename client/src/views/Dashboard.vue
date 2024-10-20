@@ -1,11 +1,6 @@
 <template>
   <div class="dashboard-container">
     <div class="container">
-      <!-- Display Error Message if Exists -->
-      <div v-if="errorMessage" class="alert alert-danger" role="alert">
-        {{ errorMessage }}
-      </div>
-
       <!-- User Profile Section -->
       <div class="row mb-4">
         <div class="col-md-6 offset-md-3">
