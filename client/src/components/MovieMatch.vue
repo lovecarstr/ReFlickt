@@ -1,48 +1,13 @@
 <template>
   <div v-if="user && match" class="movie-match-container">
     <div class="poster-rain">
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
     </div>
     <h2>Your Movie Match</h2>
     <div v-if="otherUser">
@@ -54,16 +19,8 @@
       <h3>Waiting for other user...</h3>
     </div>
     <div class="row justify-content-center mb-3">
-      <div
-        class="col-12 col-md-6 col-lg-4 text-center movie-poster-container"
-        @click="goToMovie(movie.movieId)"
-      >
-        <img
-          v-if="movie"
-          :src="movie.poster"
-          alt="Movie Poster"
-          class="img-fluid rounded movie-poster"
-        />
+      <div class="col-12 col-md-6 col-lg-4 text-center movie-poster-container" @click="goToMovie(movie.movieId)">
+        <img v-if="movie" :src="movie.poster" alt="Movie Poster" class="img-fluid rounded movie-poster" />
       </div>
     </div>
     <h3 v-if="movie">{{ movie.title }} ({{ movie.year }})</h3>
@@ -95,7 +52,8 @@ export default {
       countdownInterval: null,
       otherUser: null,
       watchWindowExpiresAt: null,
-      currentTime: Date.now()
+      currentTime: Date.now(),
+      hasHandledExpiration: false
     }
   },
   async created() {
@@ -119,8 +77,14 @@ export default {
                 this.match.firstUserId?.username
             }
 
-            if (this.watchWindowExpiresAt) {
-              this.startCountdown()
+            // Check if already expired when loading
+            if (this.watchWindowExpiresAt && !this.hasHandledExpiration) {
+              const now = Date.now()
+              if (this.watchWindowExpiresAt.getTime() <= now) {
+                await this.handleCountdownExpiration()
+              } else {
+                this.startCountdown()
+              }
             }
           }
         }
@@ -131,6 +95,16 @@ export default {
   },
   beforeUnmount() {
     this.stopCountdown()
+  },
+  watch: {
+    timeLeft: {
+      handler(newValue) {
+        if (newValue === 0 && !this.hasHandledExpiration) {
+          this.handleCountdownExpiration()
+        }
+      },
+      immediate: true
+    }
   },
   computed: {
     timeLeft() {
@@ -155,6 +129,24 @@ export default {
     }
   },
   methods: {
+    async handleCountdownExpiration() {
+      if (this.hasHandledExpiration) return
+
+      this.hasHandledExpiration = true
+      this.stopCountdown()
+
+      try {
+        this.resetCurrentMovieMatch(this.user._id)
+        this.resetCurrentMovieRoll(this.user._id)
+
+        // Optionally: We can send a message to the other user if they have already rated the movie to inform that the other user did not rate it in time.
+
+        // Dispatch Vuex action to fetch updated user data
+        this.$store.dispatch('fetchUser')
+      } catch (error) {
+        console.error('Error handling countdown expiration:', error)
+      }
+    },
     async fetchMatch(matchId) {
       const response = await Api.get(`/matches/${matchId}`)
       return response.data.match
@@ -179,9 +171,9 @@ export default {
       this.$router.push({ name: 'MoviePage', params: { movieId } })
     },
     startCountdown() {
-      this.stopCountdown() // Clear any existing interval
+      this.stopCountdown()
       this.countdownInterval = setInterval(() => {
-        this.currentTime = Date.now() // Update the reactive property
+        this.currentTime = Date.now()
       }, 1000)
     },
     stopCountdown() {
@@ -193,8 +185,7 @@ export default {
     async handleRatingSubmitted(rating) {
       console.log('Rating submitted:', rating)
       try {
-
-        this.$store.dispatch('fetchUser');
+        this.$store.dispatch('fetchUser')
         this.match = await this.fetchMatch(this.match._id)
 
         console.log(this.match.discussion, 'discussion id')
@@ -208,7 +199,6 @@ export default {
         this.resetCurrentMovieMatch(this.user._id)
         this.resetCurrentMovieRoll(this.user._id)
 
-        // Fetch updated match data
         this.match = await this.fetchMatch(this.match._id)
 
         console.log('Updated match discussion:', this.match.discussion)
@@ -217,13 +207,11 @@ export default {
           this.$router.push({ name: 'discussionFull', params: { discussionId: this.match.discussion } })
         }
 
-        // Dispatch Vuex action to fetch updated user data
         this.$store.dispatch('fetchUser')
       } catch (error) {
         console.error('Error submitting rating:', error)
       }
     },
-
     async resetCurrentMovieMatch(userId) {
       try {
         await Api.patch(`/users/${userId}/matches/current`)
@@ -238,7 +226,6 @@ export default {
         console.log(error)
       }
     }
-
   }
 }
 </script>
