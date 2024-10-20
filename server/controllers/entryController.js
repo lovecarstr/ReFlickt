@@ -31,9 +31,7 @@ const entryController = {
 
       for (let i = 0; i < tokens; i++) {
         const entry = new MovieEntry({
-          movieId: movieId,
-          movieTitle: movieTitle,
-          moviePoster: moviePoster,
+          movieId: movieId
         });
         await entry.save(); // Save each entry in the database
         user.tokens -= 1; // Decrement tokens by one for each vote
