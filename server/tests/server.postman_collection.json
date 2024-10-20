@@ -1761,12 +1761,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/movies/:movieId/discussions",
-					"protocol": "http",
+					"raw": "{{host}}/api/movies/:movieId/discussions",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -1802,12 +1800,10 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api//users/:userId/matches/current",
-					"protocol": "http",
+					"raw": "{{host}}/api//users/:userId/matches/current",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"",
@@ -1845,12 +1841,10 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/users/:userId/entries/current",
-					"protocol": "http",
+					"raw": "{{host}}/api/users/:userId/entries/current",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -1887,12 +1881,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/matches",
-					"protocol": "http",
+					"raw": "{{host}}/api/matches",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"matches"
@@ -1921,12 +1913,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/discussions/:discussionId",
-					"protocol": "http",
+					"raw": "{{host}}/api/discussions/:discussionId",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
@@ -1960,12 +1950,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/entries/reset",
-					"protocol": "http",
+					"raw": "{{host}}/api/entries/reset",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"entries",
@@ -1993,12 +1981,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/ratings/:ratingId",
-					"protocol": "http",
+					"raw": "{{host}}/api/ratings/:ratingId",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"ratings",
@@ -2032,12 +2018,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/users/:userId/movies/:movieId",
-					"protocol": "http",
+					"raw": "{{host}}/api/users/:userId/movies/:movieId",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -2077,12 +2061,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/entries",
-					"protocol": "http",
+					"raw": "{{host}}/api/entries",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"entries"
@@ -2130,12 +2112,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/auth/change-password",
-					"protocol": "http",
+					"raw": "{{host}}/api/auth/change-password",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -2181,12 +2161,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/auth/request-password-reset",
-					"protocol": "http",
+					"raw": "{{host}}/api/auth/request-password-reset",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -2228,12 +2206,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/auth/reset-password/:resetToken",
-					"protocol": "http",
+					"raw": "{{host}}/api/auth/reset-password/:resetToken",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -2243,7 +2219,7 @@
 					"variable": [
 						{
 							"key": "resetToken",
-							"value": "{{token}}"
+							"value": ""
 						}
 					]
 				}
