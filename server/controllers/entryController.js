@@ -12,7 +12,7 @@ const TIME_LIMIT_FOR_RESERVATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 const entryController = {
   // Spends tokens to add movies to the movieEntries collection
   addMovieEntry: async (req, res) => {
-    const { userId, movieId, movieTitle, moviePoster, tokens } = req.body;
+    const { userId, movieId, tokens } = req.body;
 
     try {
       const user = await User.findById(userId);
@@ -31,9 +31,7 @@ const entryController = {
 
       for (let i = 0; i < tokens; i++) {
         const entry = new MovieEntry({
-          movieId: movieId,
-          movieTitle: movieTitle,
-          moviePoster: moviePoster,
+          movieId: movieId
         });
         await entry.save(); // Save each entry in the database
         user.tokens -= 1; // Decrement tokens by one for each vote

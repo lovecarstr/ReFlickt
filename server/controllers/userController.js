@@ -25,7 +25,7 @@ const userController = {
   getUserProfile: async (req, res) => {
     try {
       // Get the user ID from the authenticated user
-      const userId = req.user.userId; // This assumes your token contains 'userId'
+      const userId = req.user.userId;
 
       // Fetch the user from the database, excluding the password field
       const user = await User.findById(userId).select("-password");
