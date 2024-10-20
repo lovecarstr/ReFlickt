@@ -1297,13 +1297,7 @@
 							"});",
 							"",
 							"let responseData = pm.response.json();",
-<<<<<<< HEAD
 							"pm.environment.set(\"discussion1Id\", responseData.newDiscussion._id);"
-=======
-							"pm.environment.set(\"discussionId\", responseData.discussionId);",
-							"console.log(pm.environment.get(\"discussionId\"));",
-							""
->>>>>>> ba8650e3d485f89245d6e8c10e3290344ac8d01f
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -1323,19 +1317,12 @@
 					}
 				},
 				"url": {
-<<<<<<< HEAD
 					"raw": "http://localhost:3000/api/discussions",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
-=======
-					"raw": "{{host}}/api/discussions",
-					"host": [
-						"{{host}}"
-					],
->>>>>>> ba8650e3d485f89245d6e8c10e3290344ac8d01f
 					"path": [
 						"api",
 						"discussions"
