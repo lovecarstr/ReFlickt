@@ -1237,7 +1237,7 @@
 							"});",
 							"",
 							"let responseData = pm.response.json();",
-							"pm.environment.set(\"discussionId\", responseData.discussionId);",
+							"pm.environment.set(\"discussionId\", responseData.newDicussion._id);",
 							"console.log(pm.environment.get(\"discussionId\"));",
 							""
 						],
