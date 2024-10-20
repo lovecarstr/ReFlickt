@@ -41,7 +41,7 @@ const createNewDiscussion = async (req, res) => {
         movieMatch.discussion = savedDiscussion;
         await movieMatch.save()
 
-        res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion});//, discussionId: savedDiscussion._id });
+        res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion, discussionId: savedDiscussion._id });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new discussion', details: error.message });
     }
