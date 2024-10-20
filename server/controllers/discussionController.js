@@ -96,7 +96,7 @@ const createNewMessage = async (req, res) => {
         discussion.messages.push(newMessage._id); // Push only the message ID if messages are referenced
         await discussion.save();
 
-        res.status(201).json({ newMessage, _id:newMessage});
+        res.status(201).json({ newMessage });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new message', details: error.message });
     }
@@ -343,7 +343,7 @@ const updateMessage = async (req, res) => {
     try {
         const updatedMessage = await Message.findByIdAndUpdate(
             messageId, 
-            { sender, newContent },
+            { sender: sender, content: newContent },
             { new: true }
         );
 
