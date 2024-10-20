@@ -3,8 +3,8 @@
 		"_postman_id": "9c9c1d42-0615-4c05-8c4b-e7abeacea029",
 		"name": "ReFlick",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38095574",
-		"_collection_link": "https://reflick-development.postman.co/workspace/ReFlick-Development-Workspace~c4a49572-858a-4495-bb87-370b23c933c7/collection/38095574-9c9c1d42-0615-4c05-8c4b-e7abeacea029?action=share&source=collection_link&creator=38095574"
+		"_exporter_id": "38240962",
+		"_collection_link": "https://reflick-development.postman.co/workspace/ReFlick-Development-Workspace~c4a49572-858a-4495-bb87-370b23c933c7/collection/38095574-9c9c1d42-0615-4c05-8c4b-e7abeacea029?action=share&source=collection_link&creator=38240962"
 	},
 	"item": [
 		{
@@ -39,10 +39,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/register",
+					"raw": "http://localhost:3000/api/auth/register",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -84,10 +86,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/register",
+					"raw": "http://localhost:3000/api/auth/register",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -129,10 +133,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/register",
+					"raw": "http://localhost:3000/api/auth/register",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -177,10 +183,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/login/",
+					"raw": "http://localhost:3000/api/auth/login/",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -211,10 +219,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users",
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users"
@@ -243,10 +253,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/tokens",
+					"raw": "http://localhost:3000/api/users/:userId/tokens",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -305,10 +317,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/users/profile",
+					"raw": "http://localhost:3000/api/users/profile",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -338,10 +352,12 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/tokens",
+					"raw": "http://localhost:3000/api/users/:userId/tokens",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -378,10 +394,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/movies/search?title=Goodfellas",
+					"raw": "http://localhost:3000/api/movies/search?title=Goodfellas",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -418,10 +436,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/movies/:movieId/details",
+					"raw": "http://localhost:3000/api/movies/:movieId/details",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -459,10 +479,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/movies/:movieId/basic",
+					"raw": "http://localhost:3000/api/movies/:movieId/basic",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -508,10 +530,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/entries",
+					"raw": "http://localhost:3000/api/entries",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries"
@@ -549,10 +573,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/entries",
+					"raw": "http://localhost:3000/api/entries",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries"
@@ -576,10 +602,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/entries",
+					"raw": "http://localhost:3000/api/entries",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries"
@@ -608,10 +636,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/entries/:movieId",
+					"raw": "http://localhost:3000/api/entries/:movieId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries",
@@ -647,10 +677,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/entries",
+					"raw": "http://localhost:3000/api/entries",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries"
@@ -679,10 +711,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/entries/random?userId={{user1Id}}",
+					"raw": "http://localhost:3000/api/entries/random?userId={{user1Id}}",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries",
@@ -730,10 +764,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/matches",
+					"raw": "http://localhost:3000/api/matches",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"matches"
@@ -762,10 +798,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/entries/random?userId={{user3Id}}",
+					"raw": "http://localhost:3000/api/entries/random?userId={{user3Id}}",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries",
@@ -810,10 +848,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/matches/decline",
+					"raw": "http://localhost:3000/api/matches/decline",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"matches",
@@ -853,10 +893,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/matches/:matchId",
+					"raw": "http://localhost:3000/api/matches/:matchId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"matches",
@@ -891,10 +933,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/matches",
+					"raw": "http://localhost:3000/api/matches",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"matches"
@@ -922,10 +966,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/matches/:matchId",
+					"raw": "http://localhost:3000/api/matches/:matchId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"matches",
@@ -960,10 +1006,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/matches/window",
+					"raw": "http://localhost:3000/api/users/:userId/matches/window",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -1013,10 +1061,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/ratings",
+					"raw": "http://localhost:3000/api/ratings",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"ratings"
@@ -1044,10 +1094,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/movies/:movieId/ratings",
+					"raw": "http://localhost:3000/api/movies/:movieId/ratings",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -1083,10 +1135,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/movies/:movieId/ratings/:userId",
+					"raw": "http://localhost:3000/api/movies/:movieId/ratings/:userId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -1136,10 +1190,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/ratings/:ratingId",
+					"raw": "http://localhost:3000/api/ratings/:ratingId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"ratings",
@@ -1174,10 +1230,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/ratings",
+					"raw": "http://localhost:3000/api/users/:userId/ratings",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -1213,10 +1271,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/ratings",
+					"raw": "http://localhost:3000/api/ratings",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"ratings"
@@ -1227,52 +1287,49 @@
 		},
 		{
 			"name": "Create new discussion",
-    "event": [
-        {
-            "listen": "test",
-            "script": {
-                "exec": [
-                    "pm.test(\"Creating new discussion from a match should return 201\", function () {",
-                    "    pm.response.to.have.status(201);",
-                    "});",
-                    "",
-                    "let responseData = pm.response.json();",
-                    "pm.environment.set(\"discussionId\", responseData.discussionId);",
-                    "console.log(pm.environment.get(\"discussionId\"));"
-                ],
-                "type": "text/javascript",
-                "packages": {}
-            }
-        }
-    ],
-    "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-            "mode": "urlencoded",
-            "urlencoded": [
-                {
-                    "key": "matchId",
-                    "value": "{{match1Id}}"
-                },
-                {
-                    "key": "userId",
-                    "value": "{{user1Id}}"
-                }
-            ]
-        },
-        "url": {
-            "raw": "{{host}}/api/discussions",
-            "host": [
-                "{{host}}"
-            ],
-            "path": [
-                "api",
-                "discussions"
-            ]
-        }
-    },
-    "response": []
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creating new discussion from a match should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"discussion1Id\", responseData.newDiscussion._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : \"{{match1Id}}\",\n    \"userId\" :  \"{{user1Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/discussions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"discussions"
+					]
+				}
+			},
+			"response": []
 		},
 		{
 			"name": "Add second user to discussion",
@@ -1303,14 +1360,22 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}",
+					"raw": "http://localhost:3000/api/discussions/:discussionId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}"
+						":discussionId"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1348,14 +1413,22 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}",
+					"raw": "http://localhost:3000/api/discussions/:discussionId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}"
+						":discussionId"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1381,10 +1454,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/discussions",
+					"raw": "http://localhost:3000/api/users/:userId/discussions",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -1433,15 +1508,23 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
+					"raw": "http://localhost:3000/api/discussions/:discussionId/messages",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}",
+						":discussionId",
 						"messages"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1476,15 +1559,23 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
+					"raw": "http://localhost:3000/api/discussions/:discussionId/messages",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}",
+						":discussionId",
 						"messages"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1510,16 +1601,24 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/latest",
+					"raw": "http://localhost:3000/api/discussions/:discussionId/messages/latest",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}",
+						":discussionId",
 						"messages",
 						"latest"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1545,15 +1644,23 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
+					"raw": "http://localhost:3000/api/discussions/:discussionId/messages",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}",
+						":discussionId",
 						"messages"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1588,10 +1695,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/messages/:messageId",
+					"raw": "http://localhost:3000/api/messages/:messageId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"messages",
@@ -1636,18 +1745,24 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/:messageId",
+					"raw": "http://localhost:3000/api/discussions/:discussionId/messages/:messageId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}",
+						":discussionId",
 						"messages",
 						":messageId"
 					],
 					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						},
 						{
 							"key": "messageId",
 							"value": "{{message1Id}}"
@@ -1686,15 +1801,23 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}/rename",
+					"raw": "http://localhost:3000/api/discussions/:discussionId/rename",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}",
+						":discussionId",
 						"rename"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1720,10 +1843,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/movies/:movieId/discussions",
+					"raw": "http://localhost:3000/api/movies/:movieId/discussions",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"movies",
@@ -1759,10 +1884,12 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api//users/:userId/matches/current",
+					"raw": "http://localhost:3000/api//users/:userId/matches/current",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"",
@@ -1800,10 +1927,12 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/entries/current",
+					"raw": "http://localhost:3000/api/users/:userId/entries/current",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -1840,10 +1969,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/matches",
+					"raw": "http://localhost:3000/api/matches",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"matches"
@@ -1872,14 +2003,22 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussionId}}",
+					"raw": "http://localhost:3000/api/discussions/:discussionId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"discussions",
-						"{{discussionId}}"
+						":discussionId"
+					],
+					"variable": [
+						{
+							"key": "discussionId",
+							"value": "{{discussion1Id}}"
+						}
 					]
 				}
 			},
@@ -1903,10 +2042,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/entries/reset",
+					"raw": "http://localhost:3000/api/entries/reset",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries",
@@ -1934,10 +2075,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/ratings/:ratingId",
+					"raw": "http://localhost:3000/api/ratings/:ratingId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"ratings",
@@ -1971,10 +2114,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/users/:userId/movies/:movieId",
+					"raw": "http://localhost:3000/api/users/:userId/movies/:movieId",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"users",
@@ -2014,10 +2159,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/entries",
+					"raw": "http://localhost:3000/api/entries",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"entries"
@@ -2065,10 +2212,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/change-password",
+					"raw": "http://localhost:3000/api/auth/change-password",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -2114,10 +2263,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/request-password-reset",
+					"raw": "http://localhost:3000/api/auth/request-password-reset",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -2159,10 +2310,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/auth/reset-password/:resetToken",
+					"raw": "http://localhost:3000/api/auth/reset-password/:resetToken",
+					"protocol": "http",
 					"host": [
-						"{{host}}"
+						"localhost"
 					],
+					"port": "3000",
 					"path": [
 						"api",
 						"auth",
@@ -2172,18 +2325,12 @@
 					"variable": [
 						{
 							"key": "resetToken",
-							"value": "token"
+							"value": "{{token}}"
 						}
 					]
 				}
 			},
 			"response": []
-		}
-	],
-	"variable": [
-		{
-			"key": "discussionId",
-			"value": ""
 		}
 	]
 }
