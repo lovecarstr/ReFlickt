@@ -1237,7 +1237,9 @@
 							"});",
 							"",
 							"let responseData = pm.response.json();",
-							"pm.environment.set(\"discussion1Id\", responseData.discussionId);"
+							"pm.environment.set(\"discussionId\", responseData.discussionId);",
+							"console.log(pm.environment.get(\"discussionId\"));",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -1298,14 +1300,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}",
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}"
+						"{{discussionId}}"
 					]
 				}
 			},
@@ -1343,14 +1345,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}",
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}"
+						"{{discussionId}}"
 					]
 				}
 			},
@@ -1428,14 +1430,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages"
 					]
 				}
@@ -1471,14 +1473,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages"
 					]
 				}
@@ -1505,14 +1507,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages/latest",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/latest",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages",
 						"latest"
 					]
@@ -1540,14 +1542,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages"
 					]
 				}
@@ -1631,14 +1633,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages/:messageId",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/:messageId",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages",
 						":messageId"
 					],
@@ -1681,14 +1683,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/rename",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/rename",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"rename"
 					]
 				}
@@ -1867,20 +1869,14 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId",
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
+						"{{discussionId}}"
 					]
 				}
 			},
@@ -2179,6 +2175,12 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "discussionId",
+			"value": ""
 		}
 	]
 }
