@@ -1298,20 +1298,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
+						"{{discussion1Id}}"
 					]
 				}
 			},
@@ -1349,20 +1343,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
+						"{{discussion1Id}}"
 					]
 				}
 			},
@@ -1440,21 +1428,15 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId/messages",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId",
+						"{{discussion1Id}}",
 						"messages"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
 					]
 				}
 			},
@@ -1489,21 +1471,15 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId/messages",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId",
+						"{{discussion1Id}}",
 						"messages"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
 					]
 				}
 			},
@@ -1529,22 +1505,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId/messages/latest",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages/latest",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId",
+						"{{discussion1Id}}",
 						"messages",
 						"latest"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
 					]
 				}
 			},
@@ -1570,21 +1540,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId/messages",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId",
+						"{{discussion1Id}}",
 						"messages"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
 					]
 				}
 			},
@@ -1667,22 +1631,18 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId/messages/:messageId",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages/:messageId",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId",
+						"{{discussion1Id}}",
 						"messages",
 						":messageId"
 					],
 					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						},
 						{
 							"key": "messageId",
 							"value": "{{message1Id}}"
@@ -1721,21 +1681,15 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId/rename",
+					"raw": "{{host}}/api/discussions/{{discussion1Id}}/rename",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId",
+						"{{discussion1Id}}",
 						"rename"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
 					]
 				}
 			},
@@ -2219,7 +2173,7 @@
 					"variable": [
 						{
 							"key": "resetToken",
-							"value": ""
+							"value": "token"
 						}
 					]
 				}
