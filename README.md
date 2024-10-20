@@ -60,11 +60,11 @@ Open the `server` and `client` in separate VSCode workspaces or open the combine
 
 ## System Definition (MS0)
 
-### ReFlick
+### ReFlickt
 
 #### Purpose
 
-ReFlick matches users randomly from a pool of movies, and once they have watched it, they’re invited to join discussions with others who were matched with the same film. Here users can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which acts as talking points for the discussion participants. The discussions are then saved, and can be viewed on the profile of each user. The pool of movies can be influenced by voting on it with tokes received every 24 hours.
+ReFlickt matches users randomly from a pool of movies, and once they have watched it, they’re invited to join discussions with others who were matched with the same film. Here users can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which acts as talking points for the discussion participants. The discussions are then saved, and can be viewed on the profile of each user. The pool of movies can be influenced by voting on it with tokes received every 24 hours.
 
 #### Advanced Feature Description
 The advanced feature of our project is the seamless integration of The Movie Database (TMDb) API, allowing our application to search for movie titles and retrieve comprehensive movie details using a movie ID. This includes accessing essential information like movie summaries, actor and director details, and their respective images. By leveraging TMDb's robust and regularly updated database, we eliminate the need to store or maintain this data within our own application, streamlining both storage and upkeep. This feature is implemented full-stack, from the backend service to frontend display, ensuring dynamic, up-to-date content for users.
@@ -80,7 +80,7 @@ The advanced feature of our project is the seamless integration of The Movie Dat
 
 ### Entity-Relationship (ER) Diagram
 
-![ER Diagram](./images/ErReFlick_v2.png)
+![ER Diagram](./images/ErReFlickt_v2.png)
 
 ## Teaser (MS3)
 

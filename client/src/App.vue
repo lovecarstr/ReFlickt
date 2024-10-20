@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
-        <router-link class="navbar-brand" to="/">ReFlick</router-link>
+        <router-link class="navbar-brand" to="/">ReFlickt</router-link>
         <button
           class="navbar-toggler"
           type="button"
