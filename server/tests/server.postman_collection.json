@@ -1227,52 +1227,49 @@
 		},
 		{
 			"name": "Create new discussion",
-    "event": [
-        {
-            "listen": "test",
-            "script": {
-                "exec": [
-                    "pm.test(\"Creating new discussion from a match should return 201\", function () {",
-                    "    pm.response.to.have.status(201);",
-                    "});",
-                    "",
-                    "let responseData = pm.response.json();",
-                    "pm.environment.set(\"discussionId\", responseData.discussionId);",
-                    "console.log(pm.environment.get(\"discussionId\"));"
-                ],
-                "type": "text/javascript",
-                "packages": {}
-            }
-        }
-    ],
-    "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-            "mode": "urlencoded",
-            "urlencoded": [
-                {
-                    "key": "matchId",
-                    "value": "{{match1Id}}"
-                },
-                {
-                    "key": "userId",
-                    "value": "{{user1Id}}"
-                }
-            ]
-        },
-        "url": {
-            "raw": "{{host}}/api/discussions",
-            "host": [
-                "{{host}}"
-            ],
-            "path": [
-                "api",
-                "discussions"
-            ]
-        }
-    },
-    "response": []
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creating new discussion from a match should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"discussionId\", responseData.discussionId);",
+							"console.log(pm.environment.get(\"discussionId\"));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : \"{{match1Id}}\",\n    \"userId\" :  \"{{user1Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions"
+					]
+				}
+			},
+			"response": []
 		},
 		{
 			"name": "Add second user to discussion",
