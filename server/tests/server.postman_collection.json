@@ -3,8 +3,8 @@
 		"_postman_id": "9c9c1d42-0615-4c05-8c4b-e7abeacea029",
 		"name": "ReFlick",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38095574",
-		"_collection_link": "https://reflick-development.postman.co/workspace/ReFlick-Development-Workspace~c4a49572-858a-4495-bb87-370b23c933c7/collection/38095574-9c9c1d42-0615-4c05-8c4b-e7abeacea029?action=share&source=collection_link&creator=38095574"
+		"_exporter_id": "38240962",
+		"_collection_link": "https://reflick-development.postman.co/workspace/ReFlick-Development-Workspace~c4a49572-858a-4495-bb87-370b23c933c7/collection/38095574-9c9c1d42-0615-4c05-8c4b-e7abeacea029?action=share&source=collection_link&creator=38240962"
 	},
 	"item": [
 		{
@@ -1237,7 +1237,9 @@
 							"});",
 							"",
 							"let responseData = pm.response.json();",
-							"pm.environment.set(\"discussion1Id\", responseData.discussionId);"
+							"pm.environment.set(\"discussionId\", responseData.newDicussion._id);",
+							"console.log(pm.environment.get(\"discussionId\"));",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -1298,14 +1300,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}",
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}"
+						"{{discussionId}}"
 					]
 				}
 			},
@@ -1343,14 +1345,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}",
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}"
+						"{{discussionId}}"
 					]
 				}
 			},
@@ -1428,14 +1430,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages"
 					]
 				}
@@ -1471,14 +1473,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages"
 					]
 				}
@@ -1505,14 +1507,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages/latest",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/latest",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages",
 						"latest"
 					]
@@ -1540,14 +1542,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages"
 					]
 				}
@@ -1631,14 +1633,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/messages/:messageId",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/:messageId",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"messages",
 						":messageId"
 					],
@@ -1681,14 +1683,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/api/discussions/{{discussion1Id}}/rename",
+					"raw": "{{host}}/api/discussions/{{discussionId}}/rename",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						"{{discussion1Id}}",
+						"{{discussionId}}",
 						"rename"
 					]
 				}
@@ -1867,20 +1869,14 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/discussions/:discussionId",
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"discussions",
-						":discussionId"
-					],
-					"variable": [
-						{
-							"key": "discussionId",
-							"value": "{{discussion1Id}}"
-						}
+						"{{discussionId}}"
 					]
 				}
 			},
@@ -2179,6 +2175,12 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "discussionId",
+			"value": ""
 		}
 	]
 }

@@ -193,6 +193,10 @@ export default {
     async handleRatingSubmitted(rating) {
       console.log('Rating submitted:', rating)
       try {
+
+        this.$store.dispatch('fetchUser');
+        this.match = await this.fetchMatch(this.match._id)
+
         console.log(this.match.discussion, 'discussion id')
         if (!this.match.discussion) {
           console.log(this.user._id, 'User')
