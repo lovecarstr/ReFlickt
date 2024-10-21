@@ -1,35 +1,106 @@
 <template>
   <div class="dashboard-container">
     <div class="container">
-      <!-- Filtering Section -->
-      <div class="filter-container mb-4 d-flex align-items-center">
-        <select
-          id="filterCriteria"
-          v-model="selectedCriteria"
-          class="form-select me-3"
-          style="width: auto"
+      <!-- Filtering and Sorting Section -->
+      <div class="filter-sort-container row mb-4 d-flex align-items-center">
+        <!-- Sort by Dropdown -->
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <label id="sortLabel" for="filterCriteria" class="form-label"
+            >Sort by:</label
+          >
+          <select
+            id="filterCriteria"
+            v-model="selectedCriteria"
+            class="form-select"
+          >
+            <option value="averageRating">Average Rating</option>
+            <option value="story">Story</option>
+            <option value="performances">Performances</option>
+            <option value="directing">Directing</option>
+            <option value="visuals">Visuals</option>
+            <option value="sound">Sound</option>
+          </select>
+        </div>
+
+        <!-- Minimum Rating Criterion Dropdown -->
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <label id="minRatingLabel" for="minCriteria" class="form-label">{{
+            currentFilterLabel
+          }}</label>
+          <select
+            id="minCriteria"
+            v-model="minRatingCriteria"
+            class="form-select"
+          >
+            <option value="">No Filter</option>
+            <option value="story">Story</option>
+            <option value="performances">Performances</option>
+            <option value="directing">Directing</option>
+            <option value="visuals">Visuals</option>
+            <option value="sound">Sound</option>
+          </select>
+        </div>
+
+        <!-- Minimum Rating Input -->
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <label id="minRatingLabel" for="minRating" class="form-label"
+            >Minimum Rating:</label
+          >
+          <input
+            id="minRatingInput"
+            type="number"
+            v-model.number="minRatingValue"
+            min="1"
+            max="5"
+            class="form-control"
+            :disabled="!minRatingCriteria"
+          />
+        </div>
+
+        <!-- Sort Button -->
+        <div
+          class="col-12 col-md-4 mb-3 mb-md-0 d-flex flex-column align-items-center"
         >
-          <option value="averageRating">Average Rating</option>
-          <option value="story">Story</option>
-          <option value="performances">Performances</option>
-          <option value="directing">Directing</option>
-          <option value="visuals">Visuals</option>
-          <option value="sound">Sound</option>
-        </select>
-        <button @click="toggleSortOrder" class="btn btn-primary">
-          Sort: {{ isAscending ? 'Ascending' : 'Descending' }}
-        </button>
+          <button
+            id="sortButton"
+            @click="toggleSortOrder"
+            class="btn btn-primary w-100"
+          >
+            Sort: {{ isAscending ? 'Ascending' : 'Descending' }}
+          </button>
+        </div>
+
+        <!-- Show Recommended Filter Button -->
+        <div class="col-12 col-md-4 d-flex align-items-center">
+          <button
+            id="filterButton"
+            @click="toggleRecommendedFilter"
+            class="btn btn-secondary w-100"
+          >
+            {{ showRecommended ? 'Show All Movies' : 'Show Only Recommended' }}
+          </button>
+        </div>
+
+        <!-- Display Current Filtering Mode -->
+        <div
+          class="col-12 col-md-4 d-flex justify-content-center align-items-center"
+        >
+          <p id="filterStatusText" class="text-white mb-0">
+            Currently showing:
+            {{ showRecommended ? 'Recommended Movies' : 'All Movies' }}
+          </p>
+        </div>
       </div>
 
       <!-- User Profile Section -->
       <div class="row mb-4">
         <div class="col-md-6 offset-md-3">
-          <div class="card user-profile">
+          <div class="card user-profile transparent-card">
             <div class="card-body text-center">
-              <h2 class="card-title">
-                Hello, <strong>{{ user?.username }}</strong>
+              <h2 id="userGreeting" class="card-title">
+                Hello, <strong>{{ user.username }}</strong>
               </h2>
-              <p class="card-text">Email: {{ user?.email }}</p>
+              <p id="userEmail" class="card-text">Email: {{ user.email }}</p>
               <router-link to="/change-password" class="btn btn-primary">
                 Change Password
               </router-link>
@@ -39,7 +110,7 @@
       </div>
 
       <!-- Rated Movies Section -->
-      <h3 class="mb-3">Your Rated Movies</h3>
+      <h3 id="ratedMoviesTitle" class="mb-3">Your Rated Movies</h3>
       <div v-if="isLoading" class="text-center">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
@@ -47,11 +118,11 @@
         <p>Loading rated movies...</p>
       </div>
       <div
-        v-else-if="sortedRatedMovies.length"
+        v-else-if="filteredRatedMovies.length"
         class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
       >
         <div
-          v-for="movie in sortedRatedMovies"
+          v-for="movie in filteredRatedMovies"
           :key="movie.movieId"
           class="col"
         >
@@ -85,11 +156,27 @@ export default {
       errorMessage: '',
       isLoading: false,
       isAscending: true, // Toggle sort order
-      selectedCriteria: 'averageRating' // Default sorting by average rating
+      selectedCriteria: 'averageRating', // Default sorting by average rating
+      showRecommended: false,
+      minRatingValue: 1, // Default value for minimum rating
+      minRatingCriteria: '' // Default criterion for minimum rating (No Filter)
     }
   },
   computed: {
     ...mapState(['user', 'token']),
+
+    // Computed property to update the filter label based on the selected filter criterion
+    currentFilterLabel() {
+      const criteriaMap = {
+        story: 'Story',
+        performances: 'Performances',
+        directing: 'Directing',
+        visuals: 'Visuals',
+        sound: 'Sound'
+      }
+      return `Filter by Minimum ${criteriaMap[this.minRatingCriteria] || 'Rating'}`
+    },
+
     // Computed average rating for each movie
     ratedMoviesWithAverage() {
       return this.ratedMovies.map((movie) => {
@@ -103,18 +190,27 @@ export default {
         return { ...movie, averageRating }
       })
     },
-    // Sorted movies based on selected criteria and sort order
-    sortedRatedMovies() {
-      return this.ratedMoviesWithAverage.sort((a, b) => {
-        const aValue = a[this.selectedCriteria]
-        const bValue = b[this.selectedCriteria]
 
-        if (this.isAscending) {
-          return aValue - bValue
-        } else {
-          return bValue - aValue
-        }
-      })
+    // Filtered and sorted movies based on selected criteria and filter options
+    filteredRatedMovies() {
+      return this.ratedMoviesWithAverage
+        .filter((movie) => {
+          return (
+            (!this.showRecommended || movie.recommendation) &&
+            (!this.minRatingCriteria ||
+              movie[this.minRatingCriteria] >= this.minRatingValue)
+          )
+        })
+        .sort((a, b) => {
+          const aValue = a[this.selectedCriteria]
+          const bValue = b[this.selectedCriteria]
+
+          if (this.isAscending) {
+            return aValue - bValue
+          } else {
+            return bValue - aValue
+          }
+        })
     }
   },
   async created() {
@@ -123,9 +219,9 @@ export default {
       try {
         const profileResponse = await Api.get('/users/profile')
         const user = profileResponse.data.user
-        this.user = user // Correctly set the user object
 
         const ratedResponse = await Api.get(`/users/${user._id}/ratings`)
+
         const ratings = ratedResponse.data.ratings || []
 
         if (ratings.length === 0) {
@@ -187,6 +283,20 @@ export default {
     },
     toggleSortOrder() {
       this.isAscending = !this.isAscending
+    },
+    toggleRecommendedFilter() {
+      this.showRecommended = !this.showRecommended
+    },
+    getSortLabel(criteria) {
+      const criteriaMap = {
+        averageRating: 'Average Rating',
+        story: 'Story',
+        performances: 'Performances',
+        directing: 'Directing',
+        visuals: 'Visuals',
+        sound: 'Sound'
+      }
+      return criteriaMap[criteria] || 'None'
     }
   }
 }
@@ -198,32 +308,62 @@ export default {
   color: white;
 }
 
-header {
-  background-color: rgba(0, 119, 182, 0.7); /* Semi-transparent background */
+.filter-sort-container {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.user-profile {
+#sortLabel,
+#minRatingLabel {
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+#sortButton,
+#filterButton {
+  background-color: #0096c7;
+  border-color: #0096c7;
+  color: white;
+}
+
+#filterButton {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+#minRatingInput {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+}
+
+.transparent-card {
+  background-color: transparent;
   border: none;
-  background-color: transparent; /* Semi-transparent background */
-  color: white;
 }
 
-h3 {
-  color: white;
+#userGreeting {
+  font-size: 2rem;
+  color: #fff;
+}
+
+#userEmail {
+  font-size: 1.2rem;
+  color: #f8f9fa;
+}
+
+#ratedMoviesTitle {
+  font-size: 1.8rem;
+  color: #fff;
+  text-transform: uppercase;
   border-bottom: 2px solid white;
   padding-bottom: 0.5rem;
 }
 
 .alert-info {
-  background-color: rgba(72, 202, 228, 0.7); /* Semi-transparent background */
+  background-color: rgba(72, 202, 228, 0.7);
   color: white;
   border-color: #0096c7;
-}
-
-.alert-danger {
-  background-color: rgba(231, 76, 60, 0.7); /* Semi-transparent background */
-  color: white;
-  border-color: #c0392b;
 }
 
 .card-title,
@@ -239,5 +379,31 @@ h3 {
 .btn-primary:hover {
   background-color: #00b4d8;
   border-color: #00b4d8;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}
+
+#filterStatusText {
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+/* Add margin-top to the buttons below the top row */
+#sortButton,
+#filterButton,
+#filterStatusText {
+  margin-top: 1rem; /* Consistent margin for all elements */
+}
+
+/* Responsive design for alignment */
+@media (min-width: 768px) {
+  #sortButton,
+  #filterButton,
+  #filterStatusText {
+    margin-top: 1.5rem; /* Adjust for larger screens */
+  }
 }
 </style>
