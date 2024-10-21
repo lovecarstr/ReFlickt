@@ -276,7 +276,7 @@ const getLatestMessage = async (req, res) => {
 
         if (discussion.messages.length === 0){
             const latestMessage = new Message({
-                content: "Be the first one to send a message :) !",
+                content: "No Messages Yet",
                 sender: null, 
             }); 
             return res.status(200).json({latestMessage});
