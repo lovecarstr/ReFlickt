@@ -136,6 +136,8 @@ const entryController = {
 
   getAllEntries: async (req, res) => {
     try {
+      const sortDirection = req.query.sortDirection === "asc" ? 1 : -1; // Ascending or descending
+  
       const movieVotes = await MovieEntry.aggregate([
         {
           $group: {
@@ -146,24 +148,25 @@ const entryController = {
             },
             voteCount: { $sum: 1 },
           },
-        }, // Group by movieId, movieTitle, and moviePoster
-        { $sort: { voteCount: -1 } }, // Sort descending by vote count
+        },
+        { $sort: { voteCount: sortDirection } }, // Sort based on direction
         {
           $project: {
-            movieId: "$_id.movieId", // Project movieId from the group
-            movieTitle: "$_id.movieTitle", // Project movieTitle from the group
-            moviePoster: "$_id.moviePoster", // Project moviePoster from the group
+            movieId: "$_id.movieId",
+            movieTitle: "$_id.movieTitle",
+            moviePoster: "$_id.moviePoster",
             voteCount: 1,
-            _id: 0, // Remove the original _id field
+            _id: 0,
           },
         },
       ]);
-
+  
       return res.status(200).json(movieVotes);
     } catch (error) {
       return res.status(500).json({ error: "Error fetching movie votes" });
     }
   },
+  
 
   deleteAllEntries: async (req, res) => {
     try {
