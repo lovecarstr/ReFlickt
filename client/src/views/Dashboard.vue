@@ -1,6 +1,24 @@
 <template>
   <div class="dashboard-container">
     <div class="container">
+
+      <!-- User Profile Section -->
+      <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+          <div class="card user-profile transparent-card">
+            <div class="card-body text-center">
+              <h2 id="userGreeting" class="card-title">
+                Hello, <strong>{{ user.username }}</strong>
+              </h2>
+              <p id="userEmail" class="card-text">Email: {{ user.email }}</p>
+              <router-link to="/change-password" class="btn btn-primary">
+                Change Password
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Filtering and Sorting Section -->
       <div class="filter-sort-container row mb-4 d-flex align-items-center">
         <!-- Sort by Dropdown -->
@@ -89,23 +107,6 @@
             Currently showing:
             {{ showRecommended ? 'Recommended Movies' : 'All Movies' }}
           </p>
-        </div>
-      </div>
-
-      <!-- User Profile Section -->
-      <div class="row mb-4">
-        <div class="col-md-6 offset-md-3">
-          <div class="card user-profile transparent-card">
-            <div class="card-body text-center">
-              <h2 id="userGreeting" class="card-title">
-                Hello, <strong>{{ user.username }}</strong>
-              </h2>
-              <p id="userEmail" class="card-text">Email: {{ user.email }}</p>
-              <router-link to="/change-password" class="btn btn-primary">
-                Change Password
-              </router-link>
-            </div>
-          </div>
         </div>
       </div>
 
