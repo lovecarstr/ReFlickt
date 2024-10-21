@@ -1,21 +1,26 @@
 <template>
-  <div class="discussion-full" v-if="discussion && this.user1Rating">
+  <div class="discussion-full">
     <div class="sidebar">
-      <div class="rating-cards-container">
+      <div class="rating-cards-container" v-if="this.discussion && this.user1RatedMovie">
       <!-- Left Sidebar for Rating Cards -->
-      <RatingCard
-        :movie="this.user1Rating.movie"
-        :userId="this.discussion.firstUser"
-      />
-      <RatingCard
-        v-if="this.discussion.secondUser"
-        :movie=" this.user2Rating.movie"
-        :userId="this.discussion.secondUser"
-      />
+        <div>
+          <strong>{{ this.discussion.firstUser.username }} rated</strong>
+          <RatingCard
+            :movie="this.user1RatedMovie"
+            :userId="this.discussion.firstUser._id"
+          />
+        </div>
+        <div>
+          <strong>{{ this.discussion.secondUser?.username || "Other user has not"}} rated </strong>
+          <RatingCard v-if="this.user2RatedMovie"
+            :movie="this.user2RatedMovie"
+            :userId="this.discussion.secondUser._id"
+          />
+        </div>
       </div>
     </div>
     <div class="discussion-section">
-      <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
+      <h2 class="discussion-name">{{ this.discussion.discussionName }}</h2>
       <div class="message-list" ref="messageList">
         <div v-for="message in messages" :key="message.id" class="message-card">
           <div class="message-header">
@@ -24,7 +29,7 @@
             <button 
                 v-if="currentUser && message?.sender?._id ===currentUser._id"
                 class="delete-button" 
-                @click="deleteMessage(message._id)"
+                @click="deleteMessage(message._id, this.discussion)"
                 >
             <i class="fas fa-trash"></i>
           </button>
@@ -39,7 +44,7 @@
           v-model="newMessage"
           type="text"
           placeholder="Type a message..."
-          @keyup.enter="sendMessage"
+          @keyup.enter="sendMessage(this.discussion)"
         />
         <button id="send-button" @click="sendMessage">Send</button>
       </div>
@@ -58,14 +63,23 @@ export default {
         RatingCard
       },
 
-      discussion: null,
-      messages: [],
+      discussion: {
+        type: Object,
+        required: true
+      },
+      messages: {        
+        type: Array,        
+        required: true      
+      },
       pollinterval: null, // For polling messages every 10 seconds
       latestMessage: null, // Keeps track of the latest message ID
       newMessage: '',
       currentUser: null,
       user1Rating: null,
       user2Rating: null,
+      movieData: null,
+      user1RatedMovie: null,
+      user2RatedMovie: null,
     }
   },
   created() {
@@ -79,12 +93,12 @@ export default {
     let passedDiscussion = this.$route.params
     this.getCurrentUser();
     this.discussion = await this.loadDiscussion(passedDiscussion);
-    console.log(this.discussion)
+    console.log(this.discussion, "Log step 2")
     this.loadMessages(this.discussion);
     this.initLatestMessage(this.discussion);
     this.scrollToBottom();
     this.startPolling(this.discussion);
-    //this.loadRating(passedDiscussion);
+    this.loadRatedMovie(this.discussion);
   },
   methods: {
     async initLatestMessage(passedDiscussion) {
@@ -103,24 +117,65 @@ export default {
       const response = await Api.get(`/discussions/${passedDiscussion._id}/messages`)
       this.messages = response.data.allMessages
       this.messages = this.messages.reverse() // Reverse to show latest messages at the bottom
+      console.log(this.messages)
     },
-    async loadRating(passedDiscussion){
+    async loadRatedMovie(passedDiscussion){
       try {
+        
+        const response = await Api.get(`/movies/${passedDiscussion.movieId}/details`);
+        console.log(response, "response")
+        this.movieData = response.data
 
-        const response1 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.firstUser}`); 
+        console.log(this.movieData, "rated movie")
 
-        let response2 = null; 
-        try {
-          response2 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.secondUser}`); 
-        } catch (error) {
-          //Other user has not rated the movie yet
-        }
-
+        const response1 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.firstUser._id}`); 
         this.user1Rating = response1.data.rating; 
-        this.user2Rating = response2.data.rating; 
 
-        console.log(this.user1Rating, "user 1 rating");
-        console.log(this.user2Rating, "user 2 rating");
+        this.user1RatedMovie = {
+            movieId: this.movieData.movieId,
+            title: this.movieData.title,
+            year: this.movieData.year,
+            poster: this.movieData.poster,
+            recommendation: this.user1Rating.recommendation,
+            story: this.user1Rating.story,
+            performances: this.user1Rating.performances,
+            directing: this.user1Rating.directing,
+            visuals: this.user1Rating.visuals,
+            sound: this.user1Rating.sound
+        };
+
+        console.log(this.user1RatedMovie)
+
+        try {
+          const response2 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.secondUser._id}`); 
+          this.user2Rating = response2.data.rating; 
+
+          this.user2RatedMovie = {
+            movieId: this.movieData.movieId,
+            title: this.movieData.title,
+            year: this.movieData.year,
+            poster: this.movieData.poster,
+            recommendation: this.user2Rating.recommendation,
+            story: this.user2Rating.story,
+            performances: this.user2Rating.performances,
+            directing: this.user2Rating.directing,
+            visuals: this.user2Rating.visuals,
+            sound: this.user2Rating.sound
+
+            
+        };
+        
+        console.log(this.user2RatedMovie, "Seconmd user rating")
+
+        } catch (error) {
+          this.user2RatedMovie = {
+            movieId: this.movieData.movieId,
+            title: this.movieData.title,
+            year: this.movieData.year,
+            poster: this.movieData.poster,
+        }
+      }
+        
       } catch (error) {
         console.error('Error fetching user ratings:', error);
       }
@@ -159,17 +214,15 @@ export default {
       })
     },
 
-    async sendMessage() {
+    async sendMessage(passedDiscussion) {
       if (!this.newMessage.trim()) {
         return // Prevent sending empty messages
       }
-
-      const passedDiscussion = this.$route.params
       try {
         const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
-        await Api.post(`/discussions/${passedDiscussion.discussionId}/messages`, {
+        await Api.post(`/discussions/${passedDiscussion._id}/messages`, {
           userId: user._id,
           content: this.newMessage
         })
@@ -186,16 +239,15 @@ export default {
         messageList.scrollTop = messageList.scrollHeight
       })
     },
-    async deleteMessage(messageId) {
+    async deleteMessage(messageId, passedDiscussion) {
       const confirmed = window.confirm('Are you sure you want to delete this message?')
       if (!confirmed) {
         return // If the user cancels, do nothing
       }
 
       try {
-        const passedDiscussion = this.$route.params
 
-        const respone = await Api.delete(`/discussions/${passedDiscussion.discussionId}/messages/${messageId}`, {
+        const respone = await Api.delete(`/discussions/${passedDiscussion._id}/messages/${messageId}`, {
           data: { userId: this.currentUser._id }
         })
 
@@ -225,8 +277,6 @@ export default {
   margin: 0 auto;
 }
 
-/* Sidebar styling */
-/* Sidebar styling */
 .sidebar {
   width: 50%; 
   padding: 10px;
@@ -245,6 +295,12 @@ export default {
 .rating-cards-container > * {
   flex: 1; /* Ensure cards are of equal width */
   max-width: 45%; /* Prevent them from growing too wide */
+}
+.rating-cards-container strong {
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 1.1em;
 }
 .discussion-section {
   width: 50%; 

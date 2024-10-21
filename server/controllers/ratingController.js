@@ -148,9 +148,9 @@ const ratingController = {
 
       // Query the rating for the specific movie and user
       const rating = await MovieRating.findOne({ movieId, userId })
-        .populate("userId", "username") 
-        .populate("movieId",
-        "title director year"); 
+       .populate(  "movieId",
+        "title director year"
+      );
 
       // If no rating is found, send a 404 error
       if (!rating) {

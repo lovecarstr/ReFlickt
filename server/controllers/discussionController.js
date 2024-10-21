@@ -229,8 +229,7 @@ const getDiscussion = async (req, res) => {
     const { discussionId } = req.params;
 
     try {
-        // Fetch the discussion and populate the 'messages' and 'participants' fields
-        const discussion = await Discussion.findById({ _id: discussionId });
+        const discussion = await Discussion.findById({ _id: discussionId }).populate("firstUser", "username").populate("secondUser", "username");
             
 
         if (!discussion) {
