@@ -101,6 +101,7 @@ nav {
   width: auto; /* Remove full width to avoid overflow */
   text-align: center;
   margin: 0 auto; /* Center the link inside its parent */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 nav a {
