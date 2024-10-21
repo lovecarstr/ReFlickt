@@ -1,17 +1,18 @@
 <template>
-  <div class="discussion-full">
+  <div class="discussion-full" v-if="discussion && this.user1Rating">
     <div class="sidebar">
+      <div class="rating-cards-container">
       <!-- Left Sidebar for Rating Cards -->
       <RatingCard
-        v-if="user1Rating"
-        :movie="user1Rating"
-        :userId="user1Rating.userId"
+        :movie="this.user1Rating.movie"
+        :userId="this.discussion.firstUser"
       />
       <RatingCard
-        v-if="user2Rating"
-        :movie="user2Rating"
-        :userId="user2Rating.userId"
+        v-if="this.discussion.secondUser"
+        :movie=" this.user2Rating.movie"
+        :userId="this.discussion.secondUser"
       />
+      </div>
     </div>
     <div class="discussion-section">
       <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
@@ -56,14 +57,9 @@ export default {
       components: {
         RatingCard
       },
-      discussion: {
-        type: Object,
-        required: true
-      },
-      messages: {
-        type: Array,
-        required: true
-      },
+
+      discussion: null,
+      messages: [],
       pollinterval: null, // For polling messages every 10 seconds
       latestMessage: null, // Keeps track of the latest message ID
       newMessage: '',
@@ -75,76 +71,64 @@ export default {
   created() {
     this.sendMessage()
     this.formatDate()
-    // this.loadNewMessages();
   },
   beforeUnmount() {
     this.stopPolling()
   },
   async mounted() {
     let passedDiscussion = this.$route.params
-    console.log(passedDiscussion)
-    passedDiscussion = await this.loadDiscussion(passedDiscussion);
-    console.log(passedDiscussion)
     this.getCurrentUser();
-    this.loadMessages(passedDiscussion);
-    this.initLatestMessage(passedDiscussion);
+    this.discussion = await this.loadDiscussion(passedDiscussion);
+    console.log(this.discussion)
+    this.loadMessages(this.discussion);
+    this.initLatestMessage(this.discussion);
     this.scrollToBottom();
-    this.startPolling(passedDiscussion);
-    this.loadRating(passedDiscussion);
+    this.startPolling(this.discussion);
+    //this.loadRating(passedDiscussion);
   },
   methods: {
     async initLatestMessage(passedDiscussion) {
       const response = await Api.get(`/discussions/${passedDiscussion._id}/messages/latest`)
       this.latestMessage = response.data.latestMessage
-      console.log('latest MEssage', this.latestMessage)
     },
     async loadDiscussion(passedDiscussion) {
       try {
-        const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
-      return response.data
+        const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`);
+        return response.data;
       } catch (error) {
-        console.log (respone.data, "Faillledd")
+        console.error("Failed to load discussion:", error);
       }
     },
     async loadMessages(passedDiscussion) {
       const response = await Api.get(`/discussions/${passedDiscussion._id}/messages`)
-      console.log(response.data)
       this.messages = response.data.allMessages
       this.messages = this.messages.reverse() // Reverse to show latest messages at the bottom
     },
     async loadRating(passedDiscussion){
       try {
-        console.log(passedDiscussion)
 
-        const response1 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.firstUser}`); // Assuming an endpoint that fetches the rating for user 1
+        const response1 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.firstUser}`); 
+
         let response2 = null; 
         try {
-          response2 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.secondUser}`); // Assuming an endpoint that fetches the rating for user 2
+          response2 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.secondUser}`); 
         } catch (error) {
           //Other user has not rated the movie yet
         }
 
-        this.user1Rating = response1.data.rating; // Adjust property names as per your response structure
-        this.user2Rating = response2.data.rating; // Adjust property names as per your response structure
+        this.user1Rating = response1.data.rating; 
+        this.user2Rating = response2.data.rating; 
+
+        console.log(this.user1Rating, "user 1 rating");
+        console.log(this.user2Rating, "user 2 rating");
       } catch (error) {
         console.error('Error fetching user ratings:', error);
       }
     },
-    /*async loadNewMessages(passedDiscussion) {
-      console.log(this.latestMessage._id)
-      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`, { params: {aftermessageid: this.latestMessage._id}} )
-      console.log(response.data, "bla bla bla")
-
-      let preReverseMessages = response.data.newMessages
-      const reversedMessages = preReverseMessages.reverse()
-
-      this.messages.push(...reversedMessages);
-    }, */
     startPolling(passedDiscussion) {
       // Poll every 10 seconds to check for new messages
       this.pollInterval = setInterval(() => {
         this.loadMessages(passedDiscussion)
-        console.log('polled')
       }, 5000) // 10 seconds
     },
     stopPolling() {
@@ -242,15 +226,26 @@ export default {
 }
 
 /* Sidebar styling */
+/* Sidebar styling */
 .sidebar {
   width: 50%; 
-  height: 90vh;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
+/* New container for Rating Cards */
+.rating-cards-container {
+  display: flex;
+  gap: 10px; /* Space between the two cards */
+  justify-content: center;
+}
+
+/* Ensure RatingCard takes equal space and adjusts for smaller screens */
+.rating-cards-container > * {
+  flex: 1; /* Ensure cards are of equal width */
+  max-width: 45%; /* Prevent them from growing too wide */
+}
 .discussion-section {
   width: 50%; 
   display: flex;
@@ -262,7 +257,7 @@ export default {
   display: flex;
   flex-direction: column-reverse; /* Display messages from bottom up */
   overflow-y: scroll;
-  height: 70vh;
+  height: 70vh; /* Set a height to enable scrolling */
   border-radius: 8px;
   margin-bottom: 20px;
   padding: 10px;
