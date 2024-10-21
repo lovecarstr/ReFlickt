@@ -1,19 +1,32 @@
 <template>
-  <div class="discussion-container">
-    <div class="discussion-full">
+  <div class="discussion-full">
+    <div class="sidebar">
+      <!-- Left Sidebar for Rating Cards -->
+      <RatingCard
+        v-if="user1Rating"
+        :movie="user1Rating"
+        :userId="user1Rating.userId"
+      />
+      <RatingCard
+        v-if="user2Rating"
+        :movie="user2Rating"
+        :userId="user2Rating.userId"
+      />
+    </div>
+    <div class="discussion-section">
       <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
       <div class="message-list" ref="messageList">
         <div v-for="message in messages" :key="message.id" class="message-card">
           <div class="message-header">
             <strong>{{ message.sender?.username || 'Unknown' }}</strong>
             <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
-            <button
-              v-if="currentUser && message?.sender?._id === currentUser._id"
-              class="delete-button"
-              @click="deleteMessage(message._id)"
-            >
-              <i class="fas fa-trash"></i>
-            </button>
+            <button 
+                v-if="currentUser && message?.sender?._id ===currentUser._id"
+                class="delete-button" 
+                @click="deleteMessage(message._id)"
+                >
+            <i class="fas fa-trash"></i>
+          </button>
           </div>
           <div class="message-body">
             <p>{{ message.content }}</p>
@@ -29,16 +42,20 @@
         />
         <button id="send-button" @click="sendMessage">Send</button>
       </div>
-    </div>
   </div>
+</div>
 </template>
 
 <script>
 import { Api } from '@/Api'
+import RatingCard from '@/components/RatingCard.vue';
 
 export default {
   data() {
     return {
+      components: {
+        RatingCard
+      },
       discussion: {
         type: Object,
         required: true
@@ -50,7 +67,9 @@ export default {
       pollinterval: null, // For polling messages every 10 seconds
       latestMessage: null, // Keeps track of the latest message ID
       newMessage: '',
-      currentUser: null
+      currentUser: null,
+      user1Rating: null,
+      user2Rating: null,
     }
   },
   created() {
@@ -61,32 +80,57 @@ export default {
   beforeUnmount() {
     this.stopPolling()
   },
-  mounted() {
-    const passedDiscussion = this.$route.params
-    this.getCurrentUser()
-    this.loadMessages(passedDiscussion)
-    this.initLatestMessage(passedDiscussion)
-    this.scrollToBottom()
-    this.startPolling(passedDiscussion)
+  async mounted() {
+    let passedDiscussion = this.$route.params
+    console.log(passedDiscussion)
+    passedDiscussion = await this.loadDiscussion(passedDiscussion);
+    console.log(passedDiscussion)
+    this.getCurrentUser();
+    this.loadMessages(passedDiscussion);
+    this.initLatestMessage(passedDiscussion);
+    this.scrollToBottom();
+    this.startPolling(passedDiscussion);
+    this.loadRating(passedDiscussion);
   },
   methods: {
     async initLatestMessage(passedDiscussion) {
-      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages/latest`)
+      const response = await Api.get(`/discussions/${passedDiscussion._id}/messages/latest`)
       this.latestMessage = response.data.latestMessage
       console.log('latest MEssage', this.latestMessage)
     },
-    /* async loadDiscussion(passedDiscussion) {
-      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
-      this.discussion = response.data
-      this.messages = this.discussion.messages.reverse() // Reverse to show latest messages at the bottom
-    }, */
+    async loadDiscussion(passedDiscussion) {
+      try {
+        const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
+      return response.data
+      } catch (error) {
+        console.log (respone.data, "Faillledd")
+      }
+    },
     async loadMessages(passedDiscussion) {
-      const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`)
+      const response = await Api.get(`/discussions/${passedDiscussion._id}/messages`)
       console.log(response.data)
       this.messages = response.data.allMessages
       this.messages = this.messages.reverse() // Reverse to show latest messages at the bottom
     },
-    /* async loadNewMessages(passedDiscussion) {
+    async loadRating(passedDiscussion){
+      try {
+        console.log(passedDiscussion)
+
+        const response1 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.firstUser}`); // Assuming an endpoint that fetches the rating for user 1
+        let response2 = null; 
+        try {
+          response2 = await Api.get(`/movies/${passedDiscussion.movieId}/ratings/${passedDiscussion.secondUser}`); // Assuming an endpoint that fetches the rating for user 2
+        } catch (error) {
+          //Other user has not rated the movie yet
+        }
+
+        this.user1Rating = response1.data.rating; // Adjust property names as per your response structure
+        this.user2Rating = response2.data.rating; // Adjust property names as per your response structure
+      } catch (error) {
+        console.error('Error fetching user ratings:', error);
+      }
+    },
+    /*async loadNewMessages(passedDiscussion) {
       console.log(this.latestMessage._id)
       const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`, { params: {aftermessageid: this.latestMessage._id}} )
       console.log(response.data, "bla bla bla")
@@ -192,36 +236,33 @@ export default {
 }
 
 .discussion-full {
-  width: 100%;
-  max-width: 1200px; /* Maximum width for very large screens */
+  display: flex;
+  max-width: 90vw;
   margin: 0 auto;
 }
 
-/* For medium-sized screens */
-@media (min-width: 768px) {
-  .discussion-full {
-    width: 90%;
-  }
+/* Sidebar styling */
+.sidebar {
+  width: 50%; 
+  height: 90vh;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* For larger screens */
-@media (min-width: 1400px) {
-  .discussion-full {
-    width: 70%;
-  }
-}
-
-.discussion-name {
-  color: white;
-  margin-bottom: 20px;
-  text-align: left;
+.discussion-section {
+  width: 50%; 
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
 }
 
 .message-list {
   display: flex;
-  flex-direction: column-reverse;
-  overflow-y: auto;
-  height: calc(80vh - 120px); /* Adjust height accounting for header and input */
+  flex-direction: column-reverse; /* Display messages from bottom up */
+  overflow-y: scroll;
+  height: 70vh;
   border-radius: 8px;
   margin-bottom: 20px;
   padding: 10px;

@@ -226,22 +226,11 @@ const getNewMessages = async (req, res) => {
 
 //get a specific discussion
 const getDiscussion = async (req, res) => {
-    const { discussionId, userId} = req.params;
+    const { discussionId } = req.params;
 
     try {
         // Fetch the discussion and populate the 'messages' and 'participants' fields
-        const discussion = await Discussion.findById({ _id: discussionId })
-            .populate('messages')  
-            .populate({
-                path: 'messages',
-                select: 'sender content createdAt',
-                populate: ({
-                    path: 'sender',
-                    select: 'username'
-                })
-              })
-            .populate('firstUser', 'username')
-            .populate('secondUser', 'username');
+        const discussion = await Discussion.findById({ _id: discussionId });
             
 
         if (!discussion) {
