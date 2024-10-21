@@ -1,32 +1,34 @@
 <template>
-  <div class="discussion-full">
-    <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
-    <div class="message-list" ref="messageList">
-      <div v-for="message in messages" :key="message.id" class="message-card">
-        <div class="message-header">
-          <strong>{{ message.sender?.username || 'Unknown' }}</strong>
-          <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
-          <button 
-              v-if="currentUser && message?.sender?._id ===currentUser._id"
-              class="delete-button" 
+  <div class="discussion-container">
+    <div class="discussion-full">
+      <h2 class="discussion-name">{{ discussion.discussionName }}</h2>
+      <div class="message-list" ref="messageList">
+        <div v-for="message in messages" :key="message.id" class="message-card">
+          <div class="message-header">
+            <strong>{{ message.sender?.username || 'Unknown' }}</strong>
+            <span class="message-timestamp">{{ formatDate(message.createdAt) }}</span>
+            <button
+              v-if="currentUser && message?.sender?._id === currentUser._id"
+              class="delete-button"
               @click="deleteMessage(message._id)"
-              >
-          <i class="fas fa-trash"></i>
-        </button>
-        </div>
-        <div class="message-body">
-          <p>{{ message.content }}</p>
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <div class="message-body">
+            <p>{{ message.content }}</p>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="message-input">
-      <input
-        v-model="newMessage"
-        type="text"
-        placeholder="Type a message..."
-        @keyup.enter="sendMessage"
-      />
-      <button id="send-button" @click="sendMessage">Send</button>
+      <div class="message-input">
+        <input
+          v-model="newMessage"
+          type="text"
+          placeholder="Type a message..."
+          @keyup.enter="sendMessage"
+        />
+        <button id="send-button" @click="sendMessage">Send</button>
+      </div>
     </div>
   </div>
 </template>
@@ -48,21 +50,21 @@ export default {
       pollinterval: null, // For polling messages every 10 seconds
       latestMessage: null, // Keeps track of the latest message ID
       newMessage: '',
-      currentUser: null,
+      currentUser: null
     }
   },
   created() {
-    this.sendMessage();
-    this.formatDate();
-    //this.loadNewMessages();
+    this.sendMessage()
+    this.formatDate()
+    // this.loadNewMessages();
   },
   beforeUnmount() {
     this.stopPolling()
   },
   mounted() {
     const passedDiscussion = this.$route.params
-    this.getCurrentUser();
-    this.loadMessages(passedDiscussion);
+    this.getCurrentUser()
+    this.loadMessages(passedDiscussion)
     this.initLatestMessage(passedDiscussion)
     this.scrollToBottom()
     this.startPolling(passedDiscussion)
@@ -73,18 +75,18 @@ export default {
       this.latestMessage = response.data.latestMessage
       console.log('latest MEssage', this.latestMessage)
     },
-   /* async loadDiscussion(passedDiscussion) {
+    /* async loadDiscussion(passedDiscussion) {
       const response = await Api.get(`/discussions/${passedDiscussion.discussionId}`)
       this.discussion = response.data
       this.messages = this.discussion.messages.reverse() // Reverse to show latest messages at the bottom
-    },*/
+    }, */
     async loadMessages(passedDiscussion) {
       const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`)
       console.log(response.data)
       this.messages = response.data.allMessages
       this.messages = this.messages.reverse() // Reverse to show latest messages at the bottom
     },
-    /*async loadNewMessages(passedDiscussion) {
+    /* async loadNewMessages(passedDiscussion) {
       console.log(this.latestMessage._id)
       const response = await Api.get(`/discussions/${passedDiscussion.discussionId}/messages`, { params: {aftermessageid: this.latestMessage._id}} )
       console.log(response.data, "bla bla bla")
@@ -93,7 +95,7 @@ export default {
       const reversedMessages = preReverseMessages.reverse()
 
       this.messages.push(...reversedMessages);
-    },*/
+    }, */
     startPolling(passedDiscussion) {
       // Poll every 10 seconds to check for new messages
       this.pollInterval = setInterval(() => {
@@ -108,13 +110,13 @@ export default {
         this.pollInterval = null
       }
     },
-    async getCurrentUser(){
+    async getCurrentUser() {
       try {
-        const userResponse = await Api.get('/users/profile');
-        this.currentUser = userResponse.data.user;
-        console.log("getting the user", this.currentUser)
+        const userResponse = await Api.get('/users/profile')
+        this.currentUser = userResponse.data.user
+        console.log('getting the user', this.currentUser)
       } catch (error) {
-        console.error('Error fetching current user:', error);
+        console.error('Error fetching current user:', error)
       }
     },
     formatDate(dateString) {
@@ -139,12 +141,10 @@ export default {
         const userResponse = await Api.get('/users/profile')
         const user = userResponse.data.user
 
-        const response = await Api.post(`/discussions/${passedDiscussion.discussionId}/messages`, {
+        await Api.post(`/discussions/${passedDiscussion.discussionId}/messages`, {
           userId: user._id,
           content: this.newMessage
         })
-
-        // Assuming response contains the newly added message
         this.newMessage = '' // Clear the input field
         this.loadMessages(passedDiscussion)
         this.scrollToBottom()
@@ -158,115 +158,136 @@ export default {
         messageList.scrollTop = messageList.scrollHeight
       })
     },
-    async deleteMessage(messageId){
-      const confirmed = window.confirm("Are you sure you want to delete this message?");
+    async deleteMessage(messageId) {
+      const confirmed = window.confirm('Are you sure you want to delete this message?')
       if (!confirmed) {
-        return; // If the user cancels, do nothing
+        return // If the user cancels, do nothing
       }
 
       try {
-
         const passedDiscussion = this.$route.params
-        
+
         const respone = await Api.delete(`/discussions/${passedDiscussion.discussionId}/messages/${messageId}`, {
           data: { userId: this.currentUser._id }
         })
-        
-        if (respone.status === 200){
-          console.log("Message deleted with id ", messageId, " By user " ,this.currentUser.username)
+
+        if (respone.status === 200) {
+          console.log('Message deleted with id ', messageId, ' By user ', this.currentUser.username)
         }
         this.loadMessages(passedDiscussion)
-      
-      }
-      catch (error){
-        console.log("Failed to delete message", error)
+      } catch (error) {
+        console.log('Failed to delete message', error)
       }
     }
   }
 }
 </script>
 
-  <style scoped>
-.discussion-name {
-  color: White;
-  margin-bottom: 10px;
+<style scoped>
+.discussion-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
 }
+
 .discussion-full {
-  max-width: 80vw;
+  width: 100%;
+  max-width: 1200px; /* Maximum width for very large screens */
   margin: 0 auto;
+}
+
+/* For medium-sized screens */
+@media (min-width: 768px) {
+  .discussion-full {
+    width: 90%;
+  }
+}
+
+/* For larger screens */
+@media (min-width: 1400px) {
+  .discussion-full {
+    width: 70%;
+  }
+}
+
+.discussion-name {
+  color: white;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
 .message-list {
   display: flex;
-  flex-direction: column-reverse; /* Display messages from bottom up */
-  overflow-y: scroll;
-  height: 70vh; /* Set a height to enable scrolling */
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  height: calc(80vh - 120px); /* Adjust height accounting for header and input */
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
 }
 
 .message-card {
   background-color: #357799;
   border-bottom: 4px solid #155779;
   border-radius: 8px;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 15px;
+  padding: 15px;
   margin-bottom: 10px;
+  max-width: 100%;
 }
 
 .message-header {
-  font-weight: bold;
-  margin-bottom: 0px;
-  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  margin-bottom: 8px;
 }
 
 .message-body {
   text-align: left;
-  margin-bottom: 5px;
+  word-wrap: break-word;
 }
+
 .message-input {
   display: flex;
-  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #256789;
+  border-radius: 8px;
 }
 
 .message-input input {
-  background-color: #256789;
-  flex-grow: 1;
-  padding: 10px;
+  flex: 1;
+  min-width: 0; /* Prevents input from overflowing */
+  padding: 12px;
   border-radius: 8px;
+  border: none;
   border-bottom: 4px solid #4587A9;
-  margin-right: 10px;
+  background-color: #357799;
   color: white;
 }
 
 #send-button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   background-color: #75B7D9;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, border-bottom 0.2s;
 }
+
 #send-button:hover {
   background-color: #65A7C9;
   border-bottom: 4px solid #4587A9;
 }
-.message-input ::placeholder {
-  color: #bbb
-}
 
-.message-timestamp{
+.message-timestamp {
   font-size: 0.8em;
   color: #bbb;
-  padding-right: 30px;
   font-weight: normal;
-}
-.message-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
 }
 
 .delete-button {
@@ -275,13 +296,19 @@ export default {
   color: #155779;
   cursor: pointer;
   font-size: 1em;
-  padding: 0;
+  padding: 5px;
   position: absolute;
-  top: 0;
   right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: color 0.2s;
 }
 
 .delete-button:hover {
   color: red;
+}
+
+.message-input ::placeholder {
+  color: #bbb;
 }
 </style>
