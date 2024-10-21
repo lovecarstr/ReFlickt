@@ -21,7 +21,7 @@
         </button>
       </p>
       <div class="mt-auto">
-        <div v-for="(rating, aspect) in ratings" :key="aspect" class="mb-2">
+        <div v-if="userId "v-for="(rating, aspect) in ratings" :key="aspect" class="mb-2">
           <div class="d-flex justify-content-between align-items-center">
             <span class="fw-bold">{{ aspect }}:</span>
             <div class="stars">
@@ -36,6 +36,7 @@
             </div>
           </div>
         </div>
+        <p v-else class="text-center mb-0">No rating yet</p>
       </div>
     </div>
   </div>
