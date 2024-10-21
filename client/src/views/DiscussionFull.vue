@@ -10,11 +10,11 @@
             :userId="this.discussion.firstUser._id"
           />
         </div>
-        <div>
+        <div >
           <strong>{{ this.discussion.secondUser?.username || "Other user has not"}} rated </strong>
           <RatingCard v-if="this.user2RatedMovie"
             :movie="this.user2RatedMovie"
-            :userId="this.discussion.secondUser._id"
+            :userId="this.discussion.secondUser?._id"
           />
         </div>
       </div>
@@ -306,7 +306,7 @@ export default {
   width: 50%; 
   display: flex;
   flex-direction: column;
-  margin-left: 20px;
+  margin: auto;
 }
 
 .message-list {
@@ -402,5 +402,47 @@ export default {
 
 .message-input ::placeholder {
   color: #bbb;
+}
+@media (max-width: 1480px) {
+  .discussion-full {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 90vw; /* Take full width when on smaller screens */
+    margin-bottom: 20px; /* Add some space below the rating cards */
+    order: 2; /* Make sure this comes after the discussion section */
+  }
+
+  .discussion-section {
+    width: 90vw; /* Take full width on smaller screens */
+    order: 1; /* Place the chat above the sidebar */
+  }
+
+  .rating-cards-container {
+    display: flex;
+    gap: 20px; /* Space between the two cards */
+    justify-content: center;
+  }
+
+/* Ensure RatingCard takes equal space and adjusts for smaller screens */
+  .rating-cards-container > * {
+    flex: 1; /* Ensure cards are of equal width */
+    max-width: 45%; /* Prevent them from growing too wide */
+  }
+
+  .rating-cards-container > * {
+    max-width: 100%; /* Ensure cards take up full width */
+  }
+  @media (max-width: 768px) {
+  .rating-cards-container {
+    flex-direction: column; /* Stack the rating cards vertically */
+    align-items: center; /* Center the cards */
+    gap: 20px; /* Increase gap for better readability */
+  }
+  .rating-cards-container > * {
+    max-width: 100%; /* Ensure cards take up full width */
+  }
+}
 }
 </style>
