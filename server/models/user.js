@@ -31,11 +31,6 @@ const userSchema = new Schema(
     watchedMovies: [{
         type: Number
     }],
-    notifications: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Notification',
-      default: null
-    }],
     currentMatch: { // The current movie a user is matched with.
         type: Schema.Types.ObjectId,
         ref: 'MovieMatch',
@@ -45,8 +40,8 @@ const userSchema = new Schema(
       movieId: { type: Number, default: null }, 
       matchId: { type: Schema.Types.ObjectId, ref: 'MovieMatch', default: null },
       canRollAgainAt: { type: Date, default: null },
-    },
-      passwordResetToken: {
+    },    
+    passwordResetToken: {
       type: String,
     },
     passwordResetExpires: {

@@ -22,13 +22,15 @@ const registerUser = async (req, res) => {
       password: hashedPassword, // Store the hashed password
     });
 
-    // Save the user to database
-    await newUser.save();
+    // Save the user to the database
+    const savedUser = await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Return the userId along with the success message
+    res.status(201).json({ message: "User registered successfully", userId: savedUser._id });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
 
 module.exports = { registerUser };

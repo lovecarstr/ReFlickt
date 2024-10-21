@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
-        <router-link class="navbar-brand" to="/">ReFlick</router-link>
+        <router-link class="navbar-brand" to="/">ReFlickt</router-link>
         <button
           class="navbar-toggler"
           type="button"
@@ -101,6 +101,7 @@ nav {
   width: auto; /* Remove full width to avoid overflow */
   text-align: center;
   margin: 0 auto; /* Center the link inside its parent */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 nav a {

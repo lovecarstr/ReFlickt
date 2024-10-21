@@ -1,9 +1,13 @@
 <template>
-    <div class="discussion-page">
-      <DiscussionList :discussions="discussions" />
-      <router-view></router-view>
+  <div class="discussion-page container py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <DiscussionList :discussions="discussions" />
+        <router-view></router-view>
+      </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import { Api } from '@/Api'
@@ -35,10 +39,6 @@ export default {
         const response = await Api.get(`/users/${user._id}/discussions`, { headers: { 'Cache-Control': 'no-cache' } })
         const data = response.data
         this.discussions = data.discussions
-
-        // this.isloading = false;
-
-        console.log(this.discussions)
       } catch (error) {
         console.error('Error loading discussions:', error)
         this.isloading = false
@@ -49,4 +49,8 @@ export default {
 </script>
 
 <style scoped>
+.discussion-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 </style>

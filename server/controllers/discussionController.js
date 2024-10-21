@@ -41,7 +41,7 @@ const createNewDiscussion = async (req, res) => {
         movieMatch.discussion = savedDiscussion;
         await movieMatch.save()
 
-        res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion });
+        res.status(201).json({ message: 'New discussion created successfully', newDiscussion: savedDiscussion, discussionId: savedDiscussion._id });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new discussion', details: error.message });
     }
@@ -96,7 +96,7 @@ const createNewMessage = async (req, res) => {
         discussion.messages.push(newMessage._id); // Push only the message ID if messages are referenced
         await discussion.save();
 
-        res.status(201).json({ newMessage, _id:newMessage});
+        res.status(201).json({ newMessage });
     } catch (error) {
         res.status(500).json({ error: 'Error creating new message', details: error.message });
     }
@@ -145,6 +145,39 @@ const getAllMovieDiscussions = async (req, res) => {
         res.status(500).json({ error: 'Error when getting discussions' });
     }
 };
+const getDiscussionMessages = async (req, res) => {
+    try {
+        const { discussionId } = req.params;
+    
+        if (!discussionId) {
+          return res.status(400).json({ error: 'Discussion ID is required' });
+        }
+
+        const discussion = await Discussion.findById(discussionId).populate('messages')  
+        .populate({
+            path: 'messages',
+            select: 'sender content createdAt',
+            populate: ({
+                path: 'sender',
+                select: 'username'
+            })
+          })
+        .populate('firstUser', 'username')
+        .populate('secondUser', 'username');
+
+        if (!discussion) {
+            return res.status(404).json({ error: 'Discussion ID is required' });
+        }
+  
+        let allMessages = discussion.messages
+    
+        // Send the new messages to the client
+        return res.status(200).json({ allMessages });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Server error' });
+      }
+    };
 
 const getNewMessages = async (req, res) => {
     try {
@@ -243,7 +276,7 @@ const getLatestMessage = async (req, res) => {
 
         if (discussion.messages.length === 0){
             const latestMessage = new Message({
-                content: "Be the first one to send a message :) !",
+                content: "No Messages Yet",
                 sender: null, 
             }); 
             return res.status(200).json({latestMessage});
@@ -310,7 +343,7 @@ const updateMessage = async (req, res) => {
     try {
         const updatedMessage = await Message.findByIdAndUpdate(
             messageId, 
-            { sender, newContent },
+            { sender: sender, content: newContent },
             { new: true }
         );
 
@@ -323,6 +356,53 @@ const updateMessage = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
+}
+const deleteMessage = async (req, res) => {
+        try {
+            const { discussionId, messageId } = req.params;
+            const { userId } = req.body;
+            
+            // Fetch the discussion
+            const discussion = await Discussion.findOne({ _id: discussionId });
+            if (!discussion) {
+                return res.status(404).json({ message: "Discussion not found" });
+            }
+    
+            // Fetch the user
+            const user = await User.findById(userId); 
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+    
+            // Fetch the message to delete
+            const messageToDelete = await Message.findById(messageId);
+            if (!messageToDelete) {
+                return res.status(404).json({ message: "Message not found" });
+            }
+    
+            // Check if the user is the sender of the message
+            if (userId !== String(messageToDelete.sender)) {
+                return res.status(403).json({ message: "User is not the sender of the message" });
+            }
+    
+            // Remove the message reference from the discussion's message list
+            discussion.messages = discussion.messages.filter(
+                msgId => String(msgId) !== String(messageId)
+            );
+    
+            // Save the updated discussion document
+            await discussion.save();
+    
+            // Delete the message from the Message collection
+            await Message.deleteOne({ _id: messageId });
+    
+            return res.status(200).json({ message: "Message deleted successfully" });
+    
 
-module.exports = {getAllMovieDiscussions, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};
+    } catch (error){
+        return res.status(500).json({message: "Could not delete message due to internal server error"})
+    }
+    
+} 
+
+module.exports = {getAllMovieDiscussions, getDiscussionMessages, deleteMessage, getAllUserDiscussions, createNewDiscussion, addUserToDiscussion, createNewMessage, getDiscussion, getLatestMessage, renameDiscussion, deleteDiscussion, updateMessage, getNewMessages};

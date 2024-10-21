@@ -1,48 +1,13 @@
 <template>
   <div v-if="user && match" class="movie-match-container">
     <div class="poster-rain">
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
-      <img
-        v-if="movie"
-        :src="movie.poster"
-        alt="Poster"
-        class="poster-rain-item"
-      />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
+      <img v-if="movie" :src="movie.poster" alt="Poster" class="poster-rain-item" />
     </div>
     <h2>Your Movie Match</h2>
     <div v-if="otherUser">
@@ -54,16 +19,8 @@
       <h3>Waiting for other user...</h3>
     </div>
     <div class="row justify-content-center mb-3">
-      <div
-        class="col-12 col-md-6 col-lg-4 text-center movie-poster-container"
-        @click="goToMovie(movie.movieId)"
-      >
-        <img
-          v-if="movie"
-          :src="movie.poster"
-          alt="Movie Poster"
-          class="img-fluid rounded movie-poster"
-        />
+      <div class="col-12 col-md-6 col-lg-4 text-center movie-poster-container" @click="goToMovie(movie.movieId)">
+        <img v-if="movie" :src="movie.poster" alt="Movie Poster" class="img-fluid rounded movie-poster" />
       </div>
     </div>
     <h3 v-if="movie">{{ movie.title }} ({{ movie.year }})</h3>
@@ -95,66 +52,116 @@ export default {
       countdownInterval: null,
       otherUser: null,
       watchWindowExpiresAt: null,
-      currentTime: Date.now()
+      currentTime: Date.now(),
+      hasHandledExpiration: false,
+      loading: true
     }
   },
   async created() {
-    try {
-      const userResponse = await Api.get('/users/profile')
-      this.user = userResponse.data.user
-      if (this.user && this.user.currentMatch) {
-        this.match = await this.fetchMatch(this.user.currentMatch)
-        if (this.match) {
-          if (this.match.movieId) {
-            this.movie = await this.fetchMovie(this.match.movieId)
-            this.watchWindowExpiresAt = new Date(
-              this.match.watchWindowExpiresAt
-            )
-
-            if (this.user._id === this.match.firstUserId?._id) {
-              this.otherUser =
-                this.match.secondUserId?.username
-            } else {
-              this.otherUser =
-                this.match.firstUserId?.username
-            }
-
-            if (this.watchWindowExpiresAt) {
-              this.startCountdown()
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching user profile or match:', error)
+    await this.initializeComponent()
+  },
+  activated() {
+    // Handle keeping-alive component
+    if (this.watchWindowExpiresAt) {
+      this.startCountdown()
     }
+  },
+  deactivated() {
+    this.stopCountdown()
   },
   beforeUnmount() {
     this.stopCountdown()
   },
+  watch: {
+    timeLeft: {
+      handler(newValue) {
+        if (newValue === 0 && !this.hasHandledExpiration && this.watchWindowExpiresAt) {
+          const now = Date.now()
+          if (this.watchWindowExpiresAt.getTime() <= now) {
+            this.handleCountdownExpiration()
+          }
+        }
+      }
+    }
+  },
   computed: {
     timeLeft() {
-      if (this.watchWindowExpiresAt) {
-        const timeDiff = this.watchWindowExpiresAt.getTime() - this.currentTime
-        return Math.max(Math.ceil(timeDiff / 1000), 0)
-      }
-      return null
+      if (!this.watchWindowExpiresAt) return null
+      const timeDiff = this.watchWindowExpiresAt.getTime() - this.currentTime
+      return Math.max(Math.ceil(timeDiff / 1000), 0)
     },
     formattedTimeLeft() {
       const totalSeconds = this.timeLeft
-      if (totalSeconds !== null) {
-        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
-        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
-          2,
-          '0'
-        )
-        const seconds = String(totalSeconds % 60).padStart(2, '0')
-        return `${hours}:${minutes}:${seconds}`
-      }
-      return '00:00:00'
+      if (totalSeconds === null) return '00:00:00'
+
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0')
+      const seconds = String(totalSeconds % 60).padStart(2, '0')
+      return `${hours}:${minutes}:${seconds}`
     }
   },
   methods: {
+    async initializeComponent() {
+      this.loading = true
+      try {
+        const userResponse = await Api.get('/users/profile')
+        this.user = userResponse.data.user
+
+        if (!this.user?.currentMatch) {
+          this.loading = false
+          return
+        }
+
+        this.match = await this.fetchMatch(this.user.currentMatch)
+
+        if (!this.match) {
+          this.loading = false
+          return
+        }
+
+        if (this.match.movieId) {
+          this.movie = await this.fetchMovie(this.match.movieId)
+
+          // Only set expiration if it's in the future
+          const expirationDate = new Date(this.match.watchWindowExpiresAt)
+          if (expirationDate > new Date()) {
+            this.watchWindowExpiresAt = expirationDate
+            this.startCountdown()
+          }
+
+          this.setOtherUser()
+        }
+      } catch (error) {
+        console.error('Error initializing component:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+    setOtherUser() {
+      if (this.user._id === this.match.firstUserId?._id) {
+        this.otherUser = this.match.secondUserId?.username
+      } else {
+        this.otherUser = this.match.firstUserId?.username
+      }
+    },
+    async handleCountdownExpiration() {
+      if (this.hasHandledExpiration) return
+
+      this.hasHandledExpiration = true
+      this.stopCountdown()
+
+      try {
+        // Only reset if the expiration is actually past due
+        const now = new Date()
+        if (this.watchWindowExpiresAt && this.watchWindowExpiresAt <= now) {
+          await this.resetCurrentMovieMatch(this.user._id)
+          await this.resetCurrentMovieRoll(this.user._id)
+          await this.$store.dispatch('fetchUser')
+        }
+      } catch (error) {
+        console.error('Error handling countdown expiration:', error)
+      }
+    },
     async fetchMatch(matchId) {
       const response = await Api.get(`/matches/${matchId}`)
       return response.data.match
@@ -179,9 +186,9 @@ export default {
       this.$router.push({ name: 'MoviePage', params: { movieId } })
     },
     startCountdown() {
-      this.stopCountdown() // Clear any existing interval
+      this.stopCountdown()
       this.countdownInterval = setInterval(() => {
-        this.currentTime = Date.now() // Update the reactive property
+        this.currentTime = Date.now()
       }, 1000)
     },
     stopCountdown() {
@@ -193,6 +200,9 @@ export default {
     async handleRatingSubmitted(rating) {
       console.log('Rating submitted:', rating)
       try {
+        this.$store.dispatch('fetchUser')
+        this.match = await this.fetchMatch(this.match._id)
+
         console.log(this.match.discussion, 'discussion id')
         if (!this.match.discussion) {
           console.log(this.user._id, 'User')
@@ -204,7 +214,6 @@ export default {
         this.resetCurrentMovieMatch(this.user._id)
         this.resetCurrentMovieRoll(this.user._id)
 
-        // Fetch updated match data
         this.match = await this.fetchMatch(this.match._id)
 
         console.log('Updated match discussion:', this.match.discussion)
@@ -213,13 +222,11 @@ export default {
           this.$router.push({ name: 'discussionFull', params: { discussionId: this.match.discussion } })
         }
 
-        // Dispatch Vuex action to fetch updated user data
         this.$store.dispatch('fetchUser')
       } catch (error) {
         console.error('Error submitting rating:', error)
       }
     },
-
     async resetCurrentMovieMatch(userId) {
       try {
         await Api.patch(`/users/${userId}/matches/current`)
@@ -234,7 +241,6 @@ export default {
         console.log(error)
       }
     }
-
   }
 }
 </script>

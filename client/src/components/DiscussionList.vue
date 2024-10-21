@@ -1,18 +1,19 @@
 <template>
-    <div class="discussion-list">
-      <h2>Discussions</h2>
-      <div v-if="discussions.length === 0">No discussions yet</div>
-      <div v-else>
-
-        <DiscussionPreview
-          v-for="discussion in discussions"
-          :key="discussion._id"
-          :discussion="discussion"
-          @click="goToDiscussion(discussion._id)"
-        />
-      </div>
+  <div class="discussion-list">
+    <h2 class="text-center mb-4">Discussions</h2>
+    <div v-if="discussions.length === 0" class="text-center">
+      <p class="lead">No discussions yet</p>
     </div>
-  </template>
+    <div v-else class="discussion-grid">
+      <DiscussionPreview
+        v-for="discussion in discussions"
+        :key="discussion._id"
+        :discussion="discussion"
+        @click="goToDiscussion(discussion._id)"
+      />
+    </div>
+  </div>
+</template>
 
 <script>
 import DiscussionPreview from './DiscussionPreview.vue'
@@ -26,14 +27,6 @@ export default {
       required: true
     }
   },
-  /* watch: {
-      discussions(newDiscussions) {
-      // This will trigger whenever discussions are updated
-        if (newDiscussions.length > 0) {
-          this.alertData(newDiscussions);
-        }
-      },
-    }, */
   methods: {
     goToDiscussion(discussionId) {
       console.log(discussionId)
@@ -43,8 +36,13 @@ export default {
 }
 </script>
 
-  <style scoped>
-  .discussion-list {
-    padding: 20px;
-  }
-  </style>
+<style scoped>
+.discussion-list {
+  padding: 20px;
+}
+.discussion-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+</style>

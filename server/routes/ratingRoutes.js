@@ -6,7 +6,10 @@ const router = express.Router();
 router.post("/ratings", ratingController.rateMovie); // Creates a rating for a movie from a specific user
 
 // DELETE (individual)
-router.delete('/ratings/:ratingId', ratingController.deleteMovieRating);
+//router.delete('/ratings/:ratingId', ratingController.deleteMovieRating);
+// Use the POST route with method override to handle delete requests
+// Method overriding, send a POST to Delete a movie rating.
+router.post('/ratings/:ratingId', ratingController.deleteMovieRating);
 
 // GET (collection)
 router.get('/ratings', ratingController.getAllRatings); // Get all ratings (with optional filtering)

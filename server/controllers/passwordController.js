@@ -90,7 +90,7 @@ const requestPasswordReset = async (req, res) => {
       text: message,
     });
 
-    res.status(200).json({ message: "Password reset email sent." });
+    res.status(200).json({ message: "Password reset email sent.", token: resetToken });
   } catch (error) {
     console.error("Password Reset Request Error:", error);
     res.status(500).json({ message: "Server error." });

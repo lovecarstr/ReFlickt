@@ -12,7 +12,9 @@ var discussionRoutes = require("./routes/discussionRoutes");
 var entryRoutes = require("./routes/entryRoutes");
 var matchRoutes = require("./routes/matchRoutes");
 var ratingRoutes = require("./routes/ratingRoutes");
-var errorHandler = require("./middleware/errorHandler"); // Adjust the path as needed
+var errorHandler = require("./middleware/errorHandler");
+var methodOverride = require('method-override');
+
 
 var mongoURI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/animalDevelopmentDB";
@@ -59,6 +61,9 @@ app.get("/api", function (req, res) {
 app.use("/api/*", function (req, res) {
   res.status(404).json({ message: "Not Found" });
 });
+
+// Override HTTP methods using a query string like ?_method=DELETE
+app.use(methodOverride('_method'));
 
 // Configuration for serving frontend in production mode
 // Support Vuejs HTML 5 history mode

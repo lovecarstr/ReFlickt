@@ -1,75 +1,2229 @@
 {
 	"info": {
-		"_postman_id": "f7ee95b5-9cb9-442f-a6a9-42de46138872",
-		"name": "server",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "9c9c1d42-0615-4c05-8c4b-e7abeacea029",
+		"name": "ReFlickt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38095574",
+		"_collection_link": "https://reflick-development.postman.co/workspace/ReFlickt-Development-Workspace~c4a49572-858a-4495-bb87-370b23c933c7/collection/38095574-9c9c1d42-0615-4c05-8c4b-e7abeacea029?action=share&source=collection_link&creator=38095574"
 	},
 	"item": [
 		{
-			"name": "GET /api",
+			"name": "Register user1",
 			"event": [
 				{
-					"listen": "prerequest",
+					"listen": "test",
 					"script": {
-						"id": "b58d92ec-5214-450c-adb0-28e068aa71b9",
 						"exec": [
-							""
+							"pm.test(\"User registration should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"user1Id\", responseData.userId);"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"User1\",\n    \"email\": \"user1@mail.com\",\n    \"password\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/register",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User registration should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"user2Id\", responseData.userId);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"User2\",\n    \"email\": \"user2@mail.com\",\n    \"password\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/register",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User registration should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"user3Id\", responseData.userId);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"User3\",\n    \"email\": \"user3@mail.com\",\n    \"password\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/register",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful ser login should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"user1token\", responseData.token);  // Save User 1's ID"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user1@mail.com\",\n    \"password\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/login/",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Retrieving a list of users should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
-					"raw": "{{host}}/api",
+					"raw": "{{host}}/api/users",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"api"
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get remaining tokens for a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Retrieving user tokens should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/tokens",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"tokens"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current user profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting current authorized user should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/users/profile",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset user tokens",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Resetting user tokens too early should return 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/tokens",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"tokens"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search movie title",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Searching for any title should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/movies/search?title=Goodfellas",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movies",
+						"search"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "Goodfellas"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get movie details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting movie details with valid movieId should return 200\", ",
+							"function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/movies/:movieId/details",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movies",
+						":movieId",
+						"details"
+					],
+					"variable": [
+						{
+							"key": "movieId",
+							"value": "238"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get movie basic info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting movie basic info with valid movieId should return 200\", ",
+							"function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/movies/:movieId/basic",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movies",
+						":movieId",
+						"basic"
+					],
+					"variable": [
+						{
+							"key": "movieId",
+							"value": "238"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add movie entry user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Adding available tokens should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"{{user1Id}}\",\n  \"movieId\": 238,\n  \"tokens\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/entries",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add movie entry user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Adding not available tokens should return 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"{{user2Id}}\",\n  \"movieId\": 238,\n  \"tokens\": 6\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/entries",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add movie entry user 3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\" : \"{{user3Id}}\",\n    \"movieId\" : 238,\n    \"tokens\" : 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/entries",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get how many entries a movie has",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting entries should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/entries/:movieId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries",
+						":movieId"
+					],
+					"variable": [
+						{
+							"key": "movieId",
+							"value": "238"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All entries with votes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting entries should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/entries",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Roll for a movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Rolling for a movie should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/entries/random?userId={{user1Id}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries",
+						"random"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new match",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creating match after rolling should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"match1Id\", responseData.match._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\" : \"{{user1Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/matches",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"matches"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Roll for a movie 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Rolling for a movie should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/entries/random?userId={{user3Id}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries",
+						"random"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{user3Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Decline match",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Declining an open match should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : \"{{match1Id}}\",\n    \"userId\" : \"{{user3Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/matches/decline",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"matches",
+						"decline"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add user to match",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Adding user to valid match should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\" : \"{{user2Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/matches/:matchId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"matches",
+						":matchId"
+					],
+					"variable": [
+						{
+							"key": "matchId",
+							"value": "{{match1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all matches (collection)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting all matches should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/matches",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"matches"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get match from matchId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting valid match should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/matches/:matchId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"matches",
+						":matchId"
+					],
+					"variable": [
+						{
+							"key": "matchId",
+							"value": "{{match1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check watch window for a users current match",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Checking watch window should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/matches/window",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"matches",
+						"window"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rate movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Adding a valid movie rating should return 201\", ",
+							"function () {    pm.response.to.have.status(201);});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"user1RatingId\", responseData.rating._id);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"movieId\": 238, // Replace with a valid movie ID from your database\n  \"userId\": \"{{user1Id}}\", // Replace with a valid user ID from your database\n  \"recommendation\": false, // true if the user recommends the movie, false otherwise\n  \"story\": 2, // Rating for the story out of 5\n  \"performances\": 2, // Rating for performances out of 5\n  \"directing\": 2, // Rating for directing out of 5\n  \"visuals\": 1, // Rating for visuals out of 5\n  \"sound\": 1 // Rating for sound out of 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/ratings",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all ratings for a movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting rating for a movie should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/movies/:movieId/ratings",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movies",
+						":movieId",
+						"ratings"
+					],
+					"variable": [
+						{
+							"key": "movieId",
+							"value": "238"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific user ratings for a specific movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting a users rating for a movie should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/movies/:movieId/ratings/:userId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movies",
+						":movieId",
+						"ratings",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "movieId",
+							"value": "238"
+						},
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user rating",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Replacing a valid rating should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"story\": 5,\n  \"performances\": 5,\n  \"directing\": 5,\n  \"visuals\": 5,\n  \"sound\": 5,\n  \"recommendation\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/ratings/:ratingId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"ratings",
+						":ratingId"
+					],
+					"variable": [
+						{
+							"key": "ratingId",
+							"value": "{{user1RatingId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all ratings for a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting all user ratings should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/ratings",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"ratings"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all ratings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting all ratings should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/ratings",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new discussion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creating new discussion from a match should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"discussionId\", responseData.discussionId);",
+							"console.log(pm.environment.get(\"discussionId\"));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"matchId\" : \"{{match1Id}}\",\n    \"userId\" :  \"{{user1Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add second user to discussion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Adding a user to a discussion should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"{{user2Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get discussion from id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting discussion from Id should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get User Discussions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting a specific users discussion should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/discussions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"discussions"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send new message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creating a new message in a discussison should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.environment.set(\"message1Id\", responseData.newMessage._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\" : \"{{user1Id}}\",\n    \"content\" : \"The first message in the discusison\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send new message other user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creating a new message in a discussison should return 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\" : \"{{user2Id}}\",\n    \"content\" : \"Bonjour! other user!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get latest message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting the latest message in a discussion should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/latest",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}",
+						"messages",
+						"latest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get messages from a discussion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting messages from a discussison should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Updating a message in a discussison should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sender\" : \"{{user1Id}}\",\n    \"newContent\" : \"Updated message!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/messages/:messageId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"messages",
+						":messageId"
+					],
+					"variable": [
+						{
+							"key": "messageId",
+							"value": "{{message1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete message from discussion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting a message from a discussison should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\" : \"{{user1Id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}/messages/:messageId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}",
+						"messages",
+						":messageId"
+					],
+					"variable": [
+						{
+							"key": "messageId",
+							"value": "{{message1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rename discussion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Renaming a valid discussison should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newName\" : \"Test discussion\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}/rename",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}",
+						"rename"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all discussions for a movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting movie discussisons should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/movies/:movieId/discussions",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movies",
+						":movieId",
+						"discussions"
+					],
+					"variable": [
+						{
+							"key": "movieId",
+							"value": "238"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset user currentMatch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Reseting user current match should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api//users/:userId/matches/current",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"",
+						"users",
+						":userId",
+						"matches",
+						"current"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset user currentMovieRoll",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Reseting user current roll should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/entries/current",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"entries",
+						"current"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all matches",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting all matches should return 200\", function () {    pm.response.to.have.status(200);});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/matches",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"matches"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a discussion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting a discussion should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/discussions/{{discussionId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"discussions",
+						"{{discussionId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset entries by criteria",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Reseting movie entries should return 200\", function () {    pm.response.to.have.status(200);});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/entries/reset",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete rating from id (using overriding)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting a valid rating should return 200\", function () {    pm.response.to.have.status(200);});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-HTTP-Method-Override",
+						"value": "DELETE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/ratings/:ratingId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"ratings",
+						":ratingId"
+					],
+					"variable": [
+						{
+							"key": "ratingId",
+							"value": "{{user1RatingId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete movie from user's watched movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting a valid watched movie should return 200\", function () {    pm.response.to.have.status(200);});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId/movies/:movieId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId",
+						"movies",
+						":movieId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user1Id}}"
+						},
+						{
+							"key": "movieId",
+							"value": "238"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all entries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting all entries should return 200\", function () {    pm.response.to.have.status(200);});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/entries",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleting a user should return 200\", function () {    pm.response.to.have.status(204);});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users/:userId",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{user3Id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Changing password should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"oldPassword\" : \"1234\",\n    \"newPassword\" : \"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/change-password",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pasword reset request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Sending reset e-mail should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// We cannot test the this route for user1, because it does not ",
+							"// have a valid email address, and we cannot create one in postman.",
+							"// The response we get is for when the user does NOT exist in the database"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"example_email@mail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/request-password-reset",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"request-password-reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Reseting password without token should return 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// Since we cannot try the password reset request without a valid email,",
+							"// we get a 400 error here too, since we have no token."
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"password\" : \"pass123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/reset-password/:resetToken",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"reset-password",
+						":resetToken"
+					],
+					"variable": [
+						{
+							"key": "resetToken",
+							"value": "token"
+						}
 					]
 				}
 			},
 			"response": []
 		}
 	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"id": "05864cff-5cba-4070-bac3-a59328954ebf",
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"id": "e9c319be-3306-4fc5-ba34-fcf64391213a",
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
 	"variable": [
 		{
-			"id": "cd185905-a834-4211-8030-583d17702534",
-			"key": "host",
-			"value": "http://localhost:3000",
-			"type": "string"
+			"key": "discussionId",
+			"value": ""
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

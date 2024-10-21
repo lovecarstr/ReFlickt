@@ -16,6 +16,9 @@ router.get('/users', userController.getAllUsers);
 // GET (individual)
 // router.get('/users/:userId', getUser);
 
+// DELETE (individual)
+router.delete("/users/:userId", userController.deleteUserById); // Deletes a user
+
 // GET (relationship, example: /cars/:car_id/drivers)
 router.get('/users/:userId/tokens', userController.getUserTokens); // Returns remaining vote tokens for a user
 

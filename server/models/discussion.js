@@ -15,7 +15,7 @@ const discussionSchema = new Schema({
         default: null,
     },
     movieId: {
-        type: String,
+        type: Number,
         required: true,
     },
     messages: [{

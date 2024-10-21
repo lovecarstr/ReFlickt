@@ -5,6 +5,7 @@ const User = require("../models/user");
 const { getLatestMessage } = require("./discussionController");
 const Discussion = require("../models/discussion");
 const MovieRating = require("../models/movieRating");
+const MovieMatch = require("../models/movieMatch");
 
 const HOURS_BETWEEN_TOKEN_REFILLS = 24;
 const DAILY_TOKEN_AMOUNT = 5;
@@ -24,7 +25,7 @@ const userController = {
   getUserProfile: async (req, res) => {
     try {
       // Get the user ID from the authenticated user
-      const userId = req.user.userId; // This assumes your token contains 'userId'
+      const userId = req.user.userId;
 
       // Fetch the user from the database, excluding the password field
       const user = await User.findById(userId).select("-password");
@@ -81,18 +82,14 @@ const userController = {
       // Save the updated user
       await user.save();
 
-      res
-        .status(200)
-        .json({
-          message: "Movie removed from user's watched list successfully",
-        });
+      res.status(200).json({
+        message: "Movie removed from user's watched list successfully",
+      });
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: "Error removing movie from watched list",
-          details: error.message,
-        });
+      res.status(500).json({
+        error: "Error removing movie from watched list",
+        details: error.message,
+      });
     }
   },
 
@@ -120,13 +117,11 @@ const userController = {
           .json({ message: "Tokens refilled", tokens: user.tokens });
       } else {
         const hoursLeft = HOURS_BETWEEN_TOKEN_REFILLS - hoursSinceLastRefill;
-        return res
-          .status(400)
-          .json({
-            message: `Tokens refill not available yet. Try again in ${hoursLeft.toFixed(
-              2
-            )} hours.`,
-          });
+        return res.status(400).json({
+          message: `Tokens refill not available yet. Try again in ${hoursLeft.toFixed(
+            2
+          )} hours.`,
+        });
       }
     } catch (error) {
       return res.status(500).json({ error: "Error refilling tokens" });
@@ -171,45 +166,75 @@ const userController = {
   // Sets a user's currentMatch to null
   resetCurrentMatch: async (req, res) => {
     const { userId } = req.params;
-  
+
     try {
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
-  
+
       user.currentMatch = null;
-  
+
       await user.save();
-      return res.status(200).json({ message: 'Current match reset successfully' });
+      return res
+        .status(200)
+        .json({ message: "Current match reset successfully" });
     } catch (error) {
-      console.error('Error resetting current match:', error);
-      return res.status(500).json({ error: 'Server error, could not reset current match' });
+      console.error("Error resetting current match:", error);
+      return res
+        .status(500)
+        .json({ error: "Server error, could not reset current match" });
     }
   },
 
   // Resets the currentMovieRoll object values to null
   resetCurrentMovieRoll: async (req, res) => {
     const { userId } = req.params;
-  
+
     try {
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
-  
+
       // Reset the fields in currentMovieRoll
       user.currentMovieRoll = {
         movieId: null,
         matchId: null,
-        canRollAgainAt: null
+        canRollAgainAt: null,
       };
-  
+
       await user.save();
-      return res.status(200).json({ message: 'Current movie roll reset successfully' });
+      return res
+        .status(200)
+        .json({ message: "Current movie roll reset successfully" });
     } catch (error) {
-      console.error('Error resetting current movie roll:', error);
-      return res.status(500).json({ error: 'Server error, could not reset current movie roll' });
+      console.error("Error resetting current movie roll:", error);
+      return res
+        .status(500)
+        .json({ error: "Server error, could not reset current movie roll" });
+    }
+  },
+
+  // Deletes a user by their ID
+  deleteUserById: async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Delete the user
+      await User.findByIdAndDelete(userId);
+
+      return res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return res
+        .status(500)
+        .json({ error: "Server error, could not delete user" });
     }
   },
 
