@@ -5,7 +5,9 @@
       <div class="col-md-6 col-lg-5">
         <div class="card shadow-lg">
           <div class="card-body">
-            <h2 class="text-center mb-4">Create an Account</h2>
+            <h2 class="text-center mb-4" style="color: black">
+              Create an Account
+            </h2>
             <form @submit.prevent="registerUser">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
