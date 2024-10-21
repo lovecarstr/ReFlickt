@@ -71,10 +71,10 @@ The advanced feature of our project is the seamless integration of The Movie Dat
 
 ### Pages
 
-* **Log-in Page:** First page you are met by when you enter the application and are not signed in. Here you can enter your credentials to log in and end up on the Home page or sign up to end om on the Register page.
+* **Log-in Page:** First page you are met by when you enter the application and are not signed in. Here you can enter your credentials to log in and end up on the Home Page or sign up to end om on the Register page.
 * **Register Page:** Here you create an account with a unique email and username.
-* **Home page:** Here you can see what movies are in the pool, roll for a movie match and see your current match.
-* **Chat Page:** The chat room for a certain movie involving two users, that is creating after rating a movie you have been matched with.
+* **Home Page:** Here you can see what movies are in the pool, roll for a movie match and see your current match.
+* **Discussion Page:** The chat room for a certain movie involving two users, that is creating after rating a movie you have been matched with.
 * **Dashboard Page:** Contains user ratings and actions, like changing password. 
 * **Movie Page:** You can search for a movie on the home page or click any poster to navigate here, displaying information for said movie. Here you can also add it to the random pool of movies spending tokens.
 
