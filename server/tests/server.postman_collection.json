@@ -1226,51 +1226,6 @@
 			"response": []
 		},
 		{
-			"name": "Test create discussion",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Creating discussion after rolling should return 201\", function () {",
-							"    pm.response.to.have.status(201);",
-							"});",
-							"",
-							"let responseData = pm.response.json();",
-							"pm.environment.set(\"discussionIdTest\", responseData.match._id);",
-							"console.log(responseData.match._id);"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"matchId\": \"{{match1Id}}\",\n    \"userId\": \"{{user2Id}}\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{host}}/api/discussions",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"discussions"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Create new discussion",
 			"event": [
 				{
