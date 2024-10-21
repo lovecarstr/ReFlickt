@@ -16,7 +16,7 @@
           {{ movie.recommendation ? 'Recommended' : 'Not Recommended' }}
         </span>
         <!-- Change Rating Button -->
-        <button class="btn btn-primary btn-sm ms-2" @click="editRating">
+        <button v-if="userId === this.currentUser?._id" class="btn btn-primary btn-sm ms-2" @click="editRating">
           Change Rating
         </button>
       </p>
@@ -58,6 +58,7 @@ import starFilled from '@/assets/icons8-star-48.png'
 import starOutline from '@/assets/icons8-star-outline-48.png'
 import CreateRating from '@/components/CreateRating.vue'
 import CancelButton from './CancelButton.vue'
+import { Api } from '@/Api'
 
 export default {
   name: 'RatingCard',
@@ -85,8 +86,18 @@ export default {
       defaultPoster,
       starFilled,
       starOutline,
-      isEditing: false
+      isEditing: false,
+      currentUser: null
     }
+  },
+  async mounted() {
+    try {
+        const userResponse = await Api.get('/users/profile')
+        this.currentUser = userResponse.data.user
+        console.log('Card user', this.currentUser)
+      } catch (error) {
+        console.error('Error fetching current user:', error)
+      }
   },
   methods: {
     editRating() {
