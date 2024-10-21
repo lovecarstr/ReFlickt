@@ -45,8 +45,8 @@ const userSchema = new Schema(
       movieId: { type: Number, default: null }, 
       matchId: { type: Schema.Types.ObjectId, ref: 'MovieMatch', default: null },
       canRollAgainAt: { type: Date, default: null },
-    },
-      passwordResetToken: {
+    },    
+    passwordResetToken: {
       type: String,
     },
     passwordResetExpires: {

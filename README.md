@@ -64,23 +64,23 @@ Open the `server` and `client` in separate VSCode workspaces or open the combine
 
 #### Purpose
 
-ReFlickt matches users randomly from a pool of movies, and once they have watched it, they’re invited to join discussions with others who were matched with the same film. Here users can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which acts as talking points for the discussion participants. The discussions are then saved, and can be viewed on the profile of each user. The pool of movies can be influenced by voting on it with tokes received every 24 hours.
+ReFlickt matches users randomly from a pool of movies, and once they have watched it, they’re invited to join discussions with another user who was matched with the same film. Here they can share thoughts and debate plot twists —all while discovering new films and making new friends. </br> Users are prompted to rate certain aspects of the film after seeing it and choose to recommend the movie or not, which acts as talking points for the discussion participants. The ratings and discussions are saved and always accessible to users. The pool of movies can be influenced by voting on it with vote tokens received every 24 hours.
 
 #### Advanced Feature Description
 The advanced feature of our project is the seamless integration of The Movie Database (TMDb) API, allowing our application to search for movie titles and retrieve comprehensive movie details using a movie ID. This includes accessing essential information like movie summaries, actor and director details, and their respective images. By leveraging TMDb's robust and regularly updated database, we eliminate the need to store or maintain this data within our own application, streamlining both storage and upkeep. This feature is implemented full-stack, from the backend service to frontend display, ensuring dynamic, up-to-date content for users.
 
 ### Pages
 
-* **Login page:** First page you are met by when you enter the application and are not signed in. Here you can enter your credentials to log in and end up on the Home page or sign up to end om on the Register page.
+* **Log-in Page:** First page you are met by when you enter the application and are not signed in. Here you can enter your credentials to log in and end up on the Home page or sign up to end om on the Register page.
 * **Register Page:** Here you create an account with a unique email and username.
-* **Home page:** A dashboard where you are matched with movies, can see your current matches and access current active chats.
-* **Chat page:** The cat room for a certain movie involving several users.
-* **Profile page:** Contains information about a user and a list of their ratings. 
-* **Movie page:** You can search for a movie to display information about it. Here you can also add it to the random pool of movies using tokens.
+* **Home page:** Here you can see what movies are in the pool, roll for a movie match and see your current match.
+* **Chat Page:** The chat room for a certain movie involving two users, that is creating after rating a movie you have been matched with.
+* **Dashboard Page:** Contains user ratings and actions, like changing password. 
+* **Movie Page:** You can search for a movie on the home page or click any poster to navigate here, displaying information for said movie. Here you can also add it to the random pool of movies spending tokens.
 
 ### Entity-Relationship (ER) Diagram
 
-![ER Diagram](./images/ErReFlickt_v2.png)
+![ER Diagram](./images/ER-Diagram.png)
 
 ## Teaser (MS3)
 
