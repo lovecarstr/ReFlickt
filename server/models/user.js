@@ -31,11 +31,6 @@ const userSchema = new Schema(
     watchedMovies: [{
         type: Number
     }],
-    notifications: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Notification',
-      default: null
-    }],
     currentMatch: { // The current movie a user is matched with.
         type: Schema.Types.ObjectId,
         ref: 'MovieMatch',
