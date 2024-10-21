@@ -53,45 +53,21 @@ export default {
       otherUser: null,
       watchWindowExpiresAt: null,
       currentTime: Date.now(),
-      hasHandledExpiration: false
+      hasHandledExpiration: false,
+      loading: true
     }
   },
   async created() {
-    try {
-      const userResponse = await Api.get('/users/profile')
-      this.user = userResponse.data.user
-      if (this.user && this.user.currentMatch) {
-        this.match = await this.fetchMatch(this.user.currentMatch)
-        if (this.match) {
-          if (this.match.movieId) {
-            this.movie = await this.fetchMovie(this.match.movieId)
-            this.watchWindowExpiresAt = new Date(
-              this.match.watchWindowExpiresAt
-            )
-
-            if (this.user._id === this.match.firstUserId?._id) {
-              this.otherUser =
-                this.match.secondUserId?.username
-            } else {
-              this.otherUser =
-                this.match.firstUserId?.username
-            }
-
-            // Check if already expired when loading
-            if (this.watchWindowExpiresAt && !this.hasHandledExpiration) {
-              const now = Date.now()
-              if (this.watchWindowExpiresAt.getTime() <= now) {
-                await this.handleCountdownExpiration()
-              } else {
-                this.startCountdown()
-              }
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching user profile or match:', error)
+    await this.initializeComponent()
+  },
+  activated() {
+    // Handle keeping-alive component
+    if (this.watchWindowExpiresAt) {
+      this.startCountdown()
     }
+  },
+  deactivated() {
+    this.stopCountdown()
   },
   beforeUnmount() {
     this.stopCountdown()
@@ -99,36 +75,75 @@ export default {
   watch: {
     timeLeft: {
       handler(newValue) {
-        if (newValue === 0 && !this.hasHandledExpiration) {
-          this.handleCountdownExpiration()
+        if (newValue === 0 && !this.hasHandledExpiration && this.watchWindowExpiresAt) {
+          const now = Date.now()
+          if (this.watchWindowExpiresAt.getTime() <= now) {
+            this.handleCountdownExpiration()
+          }
         }
-      },
-      immediate: true
+      }
     }
   },
   computed: {
     timeLeft() {
-      if (this.watchWindowExpiresAt) {
-        const timeDiff = this.watchWindowExpiresAt.getTime() - this.currentTime
-        return Math.max(Math.ceil(timeDiff / 1000), 0)
-      }
-      return null
+      if (!this.watchWindowExpiresAt) return null
+      const timeDiff = this.watchWindowExpiresAt.getTime() - this.currentTime
+      return Math.max(Math.ceil(timeDiff / 1000), 0)
     },
     formattedTimeLeft() {
       const totalSeconds = this.timeLeft
-      if (totalSeconds !== null) {
-        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
-        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
-          2,
-          '0'
-        )
-        const seconds = String(totalSeconds % 60).padStart(2, '0')
-        return `${hours}:${minutes}:${seconds}`
-      }
-      return '00:00:00'
+      if (totalSeconds === null) return '00:00:00'
+
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0')
+      const seconds = String(totalSeconds % 60).padStart(2, '0')
+      return `${hours}:${minutes}:${seconds}`
     }
   },
   methods: {
+    async initializeComponent() {
+      this.loading = true
+      try {
+        const userResponse = await Api.get('/users/profile')
+        this.user = userResponse.data.user
+
+        if (!this.user?.currentMatch) {
+          this.loading = false
+          return
+        }
+
+        this.match = await this.fetchMatch(this.user.currentMatch)
+
+        if (!this.match) {
+          this.loading = false
+          return
+        }
+
+        if (this.match.movieId) {
+          this.movie = await this.fetchMovie(this.match.movieId)
+
+          // Only set expiration if it's in the future
+          const expirationDate = new Date(this.match.watchWindowExpiresAt)
+          if (expirationDate > new Date()) {
+            this.watchWindowExpiresAt = expirationDate
+            this.startCountdown()
+          }
+
+          this.setOtherUser()
+        }
+      } catch (error) {
+        console.error('Error initializing component:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+    setOtherUser() {
+      if (this.user._id === this.match.firstUserId?._id) {
+        this.otherUser = this.match.secondUserId?.username
+      } else {
+        this.otherUser = this.match.firstUserId?.username
+      }
+    },
     async handleCountdownExpiration() {
       if (this.hasHandledExpiration) return
 
@@ -136,13 +151,13 @@ export default {
       this.stopCountdown()
 
       try {
-        this.resetCurrentMovieMatch(this.user._id)
-        this.resetCurrentMovieRoll(this.user._id)
-
-        // Optionally: We can send a message to the other user if they have already rated the movie to inform that the other user did not rate it in time.
-
-        // Dispatch Vuex action to fetch updated user data
-        this.$store.dispatch('fetchUser')
+        // Only reset if the expiration is actually past due
+        const now = new Date()
+        if (this.watchWindowExpiresAt && this.watchWindowExpiresAt <= now) {
+          await this.resetCurrentMovieMatch(this.user._id)
+          await this.resetCurrentMovieRoll(this.user._id)
+          await this.$store.dispatch('fetchUser')
+        }
       } catch (error) {
         console.error('Error handling countdown expiration:', error)
       }
