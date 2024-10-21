@@ -1,15 +1,35 @@
 <template>
   <div class="dashboard-container">
     <div class="container">
+      <!-- Filtering Section -->
+      <div class="filter-container mb-4 d-flex align-items-center">
+        <select
+          id="filterCriteria"
+          v-model="selectedCriteria"
+          class="form-select me-3"
+          style="width: auto"
+        >
+          <option value="averageRating">Average Rating</option>
+          <option value="story">Story</option>
+          <option value="performances">Performances</option>
+          <option value="directing">Directing</option>
+          <option value="visuals">Visuals</option>
+          <option value="sound">Sound</option>
+        </select>
+        <button @click="toggleSortOrder" class="btn btn-primary">
+          Sort: {{ isAscending ? 'Ascending' : 'Descending' }}
+        </button>
+      </div>
+
       <!-- User Profile Section -->
       <div class="row mb-4">
         <div class="col-md-6 offset-md-3">
           <div class="card user-profile">
             <div class="card-body text-center">
               <h2 class="card-title">
-                Hello, <strong>{{ user.username }}</strong>
+                Hello, <strong>{{ user?.username }}</strong>
               </h2>
-              <p class="card-text">Email: {{ user.email }}</p>
+              <p class="card-text">Email: {{ user?.email }}</p>
               <router-link to="/change-password" class="btn btn-primary">
                 Change Password
               </router-link>
@@ -27,10 +47,14 @@
         <p>Loading rated movies...</p>
       </div>
       <div
-        v-else-if="ratedMovies.length"
+        v-else-if="sortedRatedMovies.length"
         class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
       >
-        <div v-for="movie in ratedMovies" :key="movie.movieId" class="col">
+        <div
+          v-for="movie in sortedRatedMovies"
+          :key="movie.movieId"
+          class="col"
+        >
           <RatingCard
             :movie="movie"
             :userId="user._id"
@@ -59,11 +83,39 @@ export default {
     return {
       ratedMovies: [],
       errorMessage: '',
-      isLoading: false
+      isLoading: false,
+      isAscending: true, // Toggle sort order
+      selectedCriteria: 'averageRating' // Default sorting by average rating
     }
   },
   computed: {
-    ...mapState(['user', 'token'])
+    ...mapState(['user', 'token']),
+    // Computed average rating for each movie
+    ratedMoviesWithAverage() {
+      return this.ratedMovies.map((movie) => {
+        const totalRating =
+          movie.story +
+          movie.performances +
+          movie.directing +
+          movie.visuals +
+          movie.sound
+        const averageRating = totalRating / 5
+        return { ...movie, averageRating }
+      })
+    },
+    // Sorted movies based on selected criteria and sort order
+    sortedRatedMovies() {
+      return this.ratedMoviesWithAverage.sort((a, b) => {
+        const aValue = a[this.selectedCriteria]
+        const bValue = b[this.selectedCriteria]
+
+        if (this.isAscending) {
+          return aValue - bValue
+        } else {
+          return bValue - aValue
+        }
+      })
+    }
   },
   async created() {
     if (this.token) {
@@ -71,9 +123,9 @@ export default {
       try {
         const profileResponse = await Api.get('/users/profile')
         const user = profileResponse.data.user
+        this.user = user // Correctly set the user object
 
         const ratedResponse = await Api.get(`/users/${user._id}/ratings`)
-
         const ratings = ratedResponse.data.ratings || []
 
         if (ratings.length === 0) {
@@ -132,6 +184,9 @@ export default {
         // If it's a new rating, add it to the list
         this.ratedMovies.push(newRating)
       }
+    },
+    toggleSortOrder() {
+      this.isAscending = !this.isAscending
     }
   }
 }
