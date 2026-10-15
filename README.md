@@ -1,3 +1,10 @@
+# ReFlickt
+
+> **Team project** · DIT342 Web Development, University of Gothenburg (Sep 2024 – Jan 2025)  
+> **Team:** Martin Lidgren, Love Carlander Strandäng, Edvin Sanfridsson
+
+**Stack:** Vue 3 + Vite (client), Node.js/Express + Mongoose (server), MongoDB, JWT, TMDb API.
+
 
 ## System Definition (MS0)
 
